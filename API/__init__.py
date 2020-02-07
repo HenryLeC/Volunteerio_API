@@ -1,12 +1,10 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
-api = Flask(__name__)
-db = SQLAlchemy(api)
+app = Flask(__name__)
+db = SQLAlchemy(app)
 
-api.config.from_pyfile("config.py")
-
-api.run()
-
-import API.routes
+import API.studentRoutes
+import API.adminRoutes
+import API.commRoutes
 import API.database

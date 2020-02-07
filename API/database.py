@@ -1,4 +1,4 @@
-from API import db, api
+from API import db, app
 from itsdangerous import TimedJSONWebSignatureSerializer, SignatureExpired, BadSignature
 
 class User(db.Model):
@@ -18,25 +18,24 @@ class User(db.Model):
         self.is_comunity = community
         self.is_student = student
 
-    def generate_auth_token(self, u_id, expiration=3600):
-        s = TimedJSONWebSignatureSerializer(
-               api.config['SECRET_KEY'],
-               expires_in=expiration
-               )
-        return s.dumps({'id': u_id})
+def generate_auth_token(self, u_id, expiration=3600):
+    s = TimedJSONWebSignatureSerializer(
+            app.config['SECRET_KEY'],
+            expires_in=expiration
+            )
+    return s.dumps({'id': u_id})
 
-    @staticmethod
-    def verify_auth_token(self, token):
-        s = TimedJSONWebSignatureSerializer(
-               api.config['SECRET_KEY']
-               )
-        try:
-            data = s.loads(token)
-        except SignatureExpired:
-            return None  # valid token, but expired
-        except BadSignature:
-            return None  # invalid token
-        user = User.query.filter_by(id=data['id']).first()
-        return user
+def verify_auth_token(token):
+    s = TimedJSONWebSignatureSerializer(
+            app.config['SECRET_KEY']
+            )
+    try:
+        data = s.loads(token)
+    except SignatureExpired:
+        return None  # valid token, but expired
+    except BadSignature:
+        return None  # invalid token
+    user = User.query.filter_by(id=data['id']).first()
+    return user
 
     

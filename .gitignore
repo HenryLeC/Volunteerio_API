@@ -4,4 +4,4 @@ env/
 
 *.pyc
 
-API/config.py
+API/__pycache__

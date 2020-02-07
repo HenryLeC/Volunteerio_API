@@ -1,5 +1,7 @@
 import API
+from API import app
 
-print("""
-    Shuting down mVolunteerio API
-""")
+app.config.from_pyfile("config.py")
+
+if __name__ == "__main__":
+    app.run(debug=True)
