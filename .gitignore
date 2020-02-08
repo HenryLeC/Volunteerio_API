@@ -1,7 +1,5 @@
 env/
 
-.vscode/
-
 *.pyc
 
 API/__pycache__
