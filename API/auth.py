@@ -4,6 +4,7 @@ from API import app
 from functools import wraps
 from flask import request, jsonify
 
+# Generate Auth Token Func
 def generate_auth_token(u_id, expiration=3600):
     s = TimedJSONWebSignatureSerializer(
             app.config['SECRET_KEY'],
@@ -11,6 +12,7 @@ def generate_auth_token(u_id, expiration=3600):
             )
     return s.dumps({'id': u_id})
 
+# Check Auth Token Func
 def verify_auth_token(token):
     s = TimedJSONWebSignatureSerializer(
             app.config['SECRET_KEY']
@@ -24,6 +26,7 @@ def verify_auth_token(token):
     user = User.query.filter_by(id=data['id']).first()
     return user
 
+# Decorator to check if thre is a vilid token in a request
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):

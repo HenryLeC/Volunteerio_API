@@ -1,11 +1,8 @@
-import API, os, secrets
+import API, os
 from API import app, db
 from API.database import User
 
-app.config["DEBUG"] = True
-app.config["SECRET_KEY"] = secrets.token_urlsafe(32)
-app.config["SQLALCHEMY_DATABASE_URI"] = 'sqlite:///' + os.path.join(os.path.abspath(os.path.dirname(__file__)), 'app.db')
-
+# CLI command to make DB
 @app.cli.command("StartDB")
 def makeDB():
     db.drop_all()
