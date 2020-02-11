@@ -19,4 +19,5 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + dbpath + '\\app.db'
 import API.studentRoutes
 import API.adminRoutes
 import API.commRoutes
+import API.commonRoutes
 import API.database

@@ -8,9 +8,9 @@ def makeDB():
     db.drop_all()
     db.create_all()
 
-    u1 = User("U1", "12345", student=True)
-    u2 = User("U2", "12345", admin=True)
-    u3 = User("U3", "12345", community=True)
+    u1 = User("U1", "12345","User, User 1","1111111", student=True)
+    u2 = User("U2", "12345","User, User 2","2222222", admin=True)
+    u3 = User("U3", "12345","User, User 3","3333333", community=True)
 
     db.session.add(u1)
     db.session.add(u2)
