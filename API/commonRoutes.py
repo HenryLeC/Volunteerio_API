@@ -32,3 +32,4 @@ def login():
         })
     else:
         return jsonify({'msg' : 'Invalid Login information'})
+

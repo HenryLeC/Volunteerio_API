@@ -3,6 +3,8 @@ from API import app, db
 from API.database import User
 from API.auth import verify_auth_token, generate_auth_token, token_required
 from werkzeug.security import generate_password_hash as hash, check_password_hash
+from json import loads
+import pickle
 
 @app.route("/hours", methods=["POST"])
 @token_required
@@ -20,32 +22,45 @@ def add_hours(user):
         return jsonify({'msg' : 'Hours and reason is required.'})
     # Try to get confirmed
     conf = request.form.get('confirmation')
-    try:
-        id = int(user.unconfHours[-1].id) + 1
-    except IndexError:
-        id = 1
+    id = user.HoursId
     if conf == 'True':
-        user.hours += hours
-        user.confHours.append({
+        # Increment HoursId by 1
+        user.HoursId += 1
+
+        # Add Hours to Confirmed List
+        ConfHrs = pickle.loads(user.confHours)
+        user.hours += int(hours)
+        ConfHrs.append({
             'id' : id,
             'hours' : int(hours),
             'reason' : reason
         })
+
+        # Add To DB
+        user.confHours = pickle.dumps(ConfHrs)
         db.session.add(user)
         db.session.commit()
     else:
+        # Increment HoursId by 1
+        user.HoursId += 1
+
+        # Add Hours to Unconfirmed List
+        UnConfHrs = pickle.loads(user.unconfHours)
         # Add hous and reason to unconfirmed list
-        user.unconfHours.append({
+        print(pickle.loads(user.unconfHours))
+        UnConfHrs.append({
             'id' : id,
             'hours' : int(hours),
             'reason' : reason
         })
+
+        # Add To DB
+        user.unconfHours = pickle.dumps(UnConfHrs)
         db.session.add(user)
         db.session.commit()
 
     return jsonify({
         'msg' : 'Hours added',
-        'unconfHours' : user.unconfHours,
-        'confHours' : user.confHours
+        'unconfHours' : pickle.loads(user.unconfHours),
+        'confHours' : pickle.loads(user.confHours)
     })
-    
