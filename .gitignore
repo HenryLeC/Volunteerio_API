@@ -6,4 +6,5 @@ env/
 
 API/__pycache__
 
-".vscode\settings.json"
+.vscode/*
+.vscode/settings.json
