@@ -17,7 +17,8 @@
             "args": [
                 "run",
                 "--no-debugger",
-                "--no-reload"
+                "--no-reload",
+                "--cert=adhoc"
             ],
             "jinja": true
         },
