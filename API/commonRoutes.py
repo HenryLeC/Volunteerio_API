@@ -1,8 +1,9 @@
 from API import app, db
 from API.auth import verify_auth_token, generate_auth_token, token_required
 from werkzeug.security import check_password_hash
-from API.database import User
+from API.database import User, Opportunity
 from flask import jsonify, request
+import datetime
 
 @app.route('/login', methods=["POST"])
 def login():
@@ -32,4 +33,36 @@ def login():
         })
     else:
         return jsonify({'msg' : 'Invalid Login information'})
+
+@app.route('/AddOpp', methods=["POST"])
+@token_required
+def AddOpp(user):
+    if user.is_admin != True and user.is_community != True:
+        return jsonify({
+            'msg': 'Must not be a Student to preform this task'
+        })
+    try:
+        Name = request.form["Name"]
+        Date = request.form["Date"]
+        Location = request.form["Location"]
+        Hours = request.form["Hours"]
+    except:
+        return jsonify({
+            'msg': 'Please attach the proper parameters'
+        })
+    
+    Parsed = datetime.datetime.strptime(Date, "%Y-%m-%dT%H:%M:%S.%f%z")
+    print(Parsed)
+    
+    Opp = Opportunity(Name, Location, Parsed, Hours, user)
+    user.Opportunities.append(Opp)
+
+    db.session.add(Opp)
+    db.session.add(user)
+    db.session.commit()
+    
+    return jsonify({
+        'msg': 'Opportunity Added'
+    })
+
 

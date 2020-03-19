@@ -11,7 +11,7 @@ class User(db.Model):
     password = db.Column(db.String(), unique=True, nullable=False)
     name = db.Column(db.String(), nullable = False)
     is_admin = db.Column(db.Boolean)
-    is_comunity = db.Column(db.Boolean)
+    is_community = db.Column(db.Boolean)
     is_student = db.Column(db.Boolean)
     hours = db.Column(db.Integer, nullable=True)
     unconfHours = db.Column(db.String())
@@ -30,7 +30,7 @@ class User(db.Model):
         self.password = hash(password)
         self.name = name
         self.is_admin = admin
-        self.is_comunity = community
+        self.is_community = community
         self.is_student = student
         self.hours = 0
         self.unconfHours = pickle.dumps([{
@@ -64,8 +64,9 @@ class Opportunity(db.Model):
     Name = db.Column(db.String())
     SponsorId = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-    def __init__(Name, Location, Time, Hours):
+    def __init__(self, Name, Location, Time, Hours, Sponsor):
         self.Name = Name
         self.Time = Time
         self.Location = Location
         self.Hours = Hours
+        self.SponsorId = Sponsor.id

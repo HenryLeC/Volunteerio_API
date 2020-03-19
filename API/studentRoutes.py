@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from API import app, db
-from API.database import User
+from API.database import User, Opportunity
 from API.auth import verify_auth_token, generate_auth_token, token_required
 from werkzeug.security import generate_password_hash as hash, check_password_hash
 from json import loads
@@ -64,3 +64,19 @@ def add_hours(user):
         'unconfHours' : pickle.loads(user.unconfHours),
         'confHours' : pickle.loads(user.confHours)
     })
+
+@app.route('/Opps', methods=["Post"])
+@token_required
+def list_opps(user):
+    Opps = Opportunity.query.all()
+    CleanOpps = []
+    for opp in Opps:
+        CleanOpps.append({
+            "ID": str(opp.id),
+            "Name": opp.Name,
+            "Location": opp.Location,
+            "Hours": opp.Hours,
+            "Time": opp.Time.strftime("%Y-%m-%dT%H:%M:%S.%f%z"),
+            "Sponsor": User.query.get(int(opp.SponsorId)).name
+        })
+    return jsonify(CleanOpps)

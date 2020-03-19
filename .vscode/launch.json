@@ -5,6 +5,13 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Setup.py",
+            "type": "python",
+            "request": "launch",
+            "program": "setup.py",
+            "console": "integratedTerminal"
+        },
+        {
             "name": "Python: Flask",
             "type": "python",
             "request": "launch",
@@ -16,9 +23,7 @@
             },
             "args": [
                 "run",
-                "--no-debugger",
-                "--no-reload",
-                "--cert=adhoc"
+                "--no-reload"
             ],
             "jinja": true
         },
