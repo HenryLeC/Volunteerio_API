@@ -3,7 +3,7 @@ from API.auth import verify_auth_token, generate_auth_token, token_required
 from werkzeug.security import check_password_hash
 from API.database import User, Opportunity
 from flask import jsonify, request
-import datetime
+import datetime, jwt
 
 @app.route('/login', methods=["POST"])
 def login():
@@ -65,4 +65,33 @@ def AddOpp(user):
         'msg': 'Opportunity Added'
     })
 
+@app.route('/SignInStudents', methods=["POST"])
+@token_required
+def SignInStudents(user):
+    if user.is_admin != True and user.is_community != True:
+        return jsonify({
+            'msg': 'Must not be a Student to preform this task'
+        })
+    try:
+        OppId = request.form["OppId"]
+    except:
+        return jsonify({
+            'msg': 'Please attach the proper parameters'
+        })
+    return jwt.encode({'ID': OppId}, 'VerySecret', algorithm='HS256')
 
+@app.route('/MyOpps', methods=["POST"])
+@token_required
+def MyOpps(user):
+    if user.is_admin != True and user.is_community != True:
+        return jsonify({
+            'msg': 'Must not be a Student to preform this task'
+        })
+    Opps = user.Opportunities
+    CleanOpps = []
+    for opp in Opps:
+        CleanOpps.append({
+            "ID": str(opp.id),
+            "Name": opp.Name
+        })
+    return jsonify(CleanOpps)
