@@ -20,6 +20,7 @@ class User(db.Model):
     PastOpps = db.Column(db.String())
     BookedOpps = db.Column(db.String())
     Opportunities = db.relationship('Opportunity', backref='Sponsor', lazy=True)
+    CurrentOpps = db.Column(db.String())
 
 
     def __init__(self, username, password, name, ID, admin = False, community = False, student = False):
@@ -55,6 +56,7 @@ class User(db.Model):
             'reason' : "Initialization"
         }])
         self.HoursId = 1
+        self.CurrentOpps = pickle.dumps([])
 
 class Opportunity(db.Model):
     id = db.Column(db.Integer, primary_key=True)
