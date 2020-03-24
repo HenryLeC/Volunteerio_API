@@ -76,7 +76,7 @@ def list_opps(user):
             "Name": opp.Name,
             "Location": opp.Location,
             "Hours": opp.Hours,
-            "Time": opp.Time.strftime("%Y-%m-%dT%H:%M:%S.%f%z"),
+            "Time": opp.Time.strftime("%m/%d/%Y, %H:%M"),
             "Sponsor": User.query.get(int(opp.SponsorId)).name
         })
     return jsonify(CleanOpps)
@@ -141,3 +141,50 @@ def Clock(user):
         return jsonify({
             'msg': "Thank You for clocking in, don't forget to clock out later."
         })
+
+@app.route('/BookAnOpp', methods=["POST"])
+@token_required
+def BookAnOpp(user):
+    try:
+        Id = request.form["OppId"]
+    except:
+        return jsonify({
+            'msg': 'Please Pass in The Correct Parameters'
+        })
+    try:
+        Opp = Opportunity.query.get(Id)
+    except:
+        return jsonify({
+            'msg': 'Inavalid Opportunity ID'
+        })
+    
+    user.BookedOpps.append(Opp)
+    return jsonify({
+        'msg': 'Opportunity Booked.'
+    })
+
+@app.route('/BookedOpps', methods=["Post"])
+@token_required
+def BookedOpps(user):
+    Opps = user.BookedOpps
+    CleanOpps = []
+    for opp in Opps:
+        CleanOpps.append({
+            "Name": opp.Name,
+            "Hours": opp.Hours,
+            "Time": opp.Time.strftime("%m/%d/%Y, %H:%M")
+        })
+    return jsonify(CleanOpps)\
+
+@app.route('/PastOpps', methods=["Post"])
+@token_required
+def PastOpps(user):
+    Opps = user.PastOpps
+    CleanOpps = []
+    for opp in Opps:
+        CleanOpps.append({
+           "Name": opp.Name,
+            "Hours": opp.Hours,
+            "Time": opp.Time.strftime("%m/%d/%Y, %H:%M")
+        })
+    return jsonify(CleanOpps)

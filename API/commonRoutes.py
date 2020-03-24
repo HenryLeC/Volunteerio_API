@@ -92,7 +92,6 @@ def MyOpps(user):
     for opp in Opps:
         CleanOpps.append({
             "ID": str(opp.id),
-            "Name": opp.Name,
-            "Date": datetime.datetime.strftime(opp.Time, "%m/%d/%Y, %H:%M")
+            "Name": opp.Name
         })
     return jsonify(CleanOpps)

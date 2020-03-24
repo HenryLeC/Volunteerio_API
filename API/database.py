@@ -17,8 +17,8 @@ class User(db.Model):
     unconfHours = db.Column(db.String())
     confHours = db.Column(db.String())
     pub_ID = db.Column(db.String(), nullable = False, unique=True)
-    PastOpps = db.Column(db.String())
-    BookedOpps = db.Column(db.String())
+    PastOpps = db.relationship('Opportunity', lazy=True)
+    BookedOpps = db.relationship('Opportunity', lazy=True)
     Opportunities = db.relationship('Opportunity', backref='Sponsor', lazy=True)
     CurrentOpps = db.Column(db.String())
 
@@ -45,16 +45,6 @@ class User(db.Model):
             'reason' : "Initialization"
         }])
         self.pub_ID = ID
-        self.PastOpps = pickle.dumps([{
-            'id' : 0,
-            'hours' : 0,
-            'reason' : "Initialization"
-        }])
-        self.BookedOpps = pickle.dumps([{
-            'id' : 0,
-            'hours' : 0,
-            'reason' : "Initialization"
-        }])
         self.HoursId = 1
         self.CurrentOpps = pickle.dumps([])
 
