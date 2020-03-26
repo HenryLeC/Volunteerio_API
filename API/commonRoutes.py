@@ -51,7 +51,7 @@ def AddOpp(user):
             'msg': 'Please attach the proper parameters'
         })
     
-    Parsed = datetime.datetime.strptime(Date, "%Y-%m-%dT%H:%M:%S.%f%z")
+    Parsed = datetime.datetime.strptime(Date, "%Y-%m-%dT%H:%M:%S")
     print(Parsed)
     
     Opp = Opportunity(Name, Location, Parsed, Hours, user)

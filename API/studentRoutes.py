@@ -109,16 +109,9 @@ def Clock(user):
         OppId = jwt.decode(Code, 'VerySecret', algorithm="HS256")["ID"]
         Opp = Opportunity.query.get(OppId)
 
-        ConfHours = pickle.loads(user.confHours)
-        ConfHours.append({
-            'id': OppId,
-            'hours': str(Hours),
-            'reason': 'Scanned Clock In / Out Code. Opportunity Name: {}'.format(Opp.Name)
-        })
-        CurrentOpps = pickle.loads(user.CurrentOpps)
-        CurrentOpps.remove(RightDict)
-
-        user.confHours = pickle.dumps(ConfHours)
+        user.PastOpps.append(Opp)
+        user.CurrentOpps = pickle.loads(user.CurrentOpps).remove(RightDict)
+        
         db.session.add(user)
         db.session.commit()
 
@@ -127,13 +120,11 @@ def Clock(user):
         })
 
     else:
-        CurrentOpps = pickle.loads(user.CurrentOpps)
-        CurrentOpps.append({
-            'JWT': Code,
-            'StartTime': datetime.datetime.utcnow() 
-        })
 
-        user.CurrentOpps = pickle.dumps(CurrentOpps)
+        user.CurrentOpps = pickle.loads(user.CurrentOpps).append({
+            'StartTime': datetime.datetime.utcnow(),
+            'JWT': Code
+        })
 
         db.session.add(user)
         db.session.commit()

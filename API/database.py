@@ -34,19 +34,11 @@ class User(db.Model):
         self.is_community = community
         self.is_student = student
         self.hours = 0
-        self.unconfHours = pickle.dumps([{
-            'id' : 0,
-            'hours' : 0,
-            'reason' : "Initialization"
-        }])
-        self.confHours = pickle.dumps([{
-            'id' : 0,
-            'hours' : 0,
-            'reason' : "Initialization"
-        }])
+        self.unconfHours = pickle.dumps([])
+        self.confHours = pickle.dumps([])
+        self.CurrentOpps = pickle.dumps([])
         self.pub_ID = ID
         self.HoursId = 1
-        self.CurrentOpps = pickle.dumps([])
 
 class Opportunity(db.Model):
     id = db.Column(db.Integer, primary_key=True)
