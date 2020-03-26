@@ -9,7 +9,7 @@ import pickle, datetime, jwt
 @app.route("/hours", methods=["POST"])
 @token_required
 def getHours(user):
-    return jsonify({'hours' : user.hours})
+    return jsonify({'hours' : str(user.hours)})
 
 @app.route('/addhours', methods=["POST"])
 @token_required
@@ -20,44 +20,25 @@ def add_hours(user):
         reason = request.form["reason"]
     except:
         return jsonify({'msg' : 'Hours and reason is required.'})
-    # Try to get confirmed
-    conf = request.form.get('confirmation')
     id = user.HoursId
-    if conf == 'True':
-        # Increment HoursId by 1
-        user.HoursId += 1
+    
+    # Increment HoursId by 1
+    user.HoursId += 1
 
-        # Add Hours to Confirmed List
-        ConfHrs = pickle.loads(user.confHours)
-        user.hours += int(hours)
-        ConfHrs.append({
-            'id' : id,
-            'hours' : int(hours),
-            'reason' : reason
-        })
+    # Add Hours to Unconfirmed List
+    UnConfHrs = pickle.loads(user.unconfHours)
+    # Add hous and reason to unconfirmed list
+    print(pickle.loads(user.unconfHours))
+    UnConfHrs.append({
+        'id' : id,
+        'hours' : int(hours),
+        'reason' : reason
+    })
 
-        # Add To DB
-        user.confHours = pickle.dumps(ConfHrs)
-        db.session.add(user)
-        db.session.commit()
-    else:
-        # Increment HoursId by 1
-        user.HoursId += 1
-
-        # Add Hours to Unconfirmed List
-        UnConfHrs = pickle.loads(user.unconfHours)
-        # Add hous and reason to unconfirmed list
-        print(pickle.loads(user.unconfHours))
-        UnConfHrs.append({
-            'id' : id,
-            'hours' : int(hours),
-            'reason' : reason
-        })
-
-        # Add To DB
-        user.unconfHours = pickle.dumps(UnConfHrs)
-        db.session.add(user)
-        db.session.commit()
+    # Add To DB
+    user.unconfHours = pickle.dumps(UnConfHrs)
+    db.session.add(user)
+    db.session.commit()
 
     return jsonify({
         'msg' : 'Hours added',
@@ -110,7 +91,9 @@ def Clock(user):
         Opp = Opportunity.query.get(OppId)
 
         user.PastOpps.append(Opp)
-        user.CurrentOpps = pickle.loads(user.CurrentOpps).remove(RightDict)
+        CurrentOpps = pickle.loads(user.CurrentOpps)
+        CurrentOpps.remove(RightDict)
+        user.CurrentOpps = pickle.dumps(CurrentOpps)
         
         db.session.add(user)
         db.session.commit()
@@ -120,11 +103,12 @@ def Clock(user):
         })
 
     else:
-
-        user.CurrentOpps = pickle.loads(user.CurrentOpps).append({
+        CurrentOpps = pickle.loads(user.CurrentOpps)
+        CurrentOpps.append({
             'StartTime': datetime.datetime.utcnow(),
             'JWT': Code
         })
+        user.CurrentOpps = pickle.dumps(CurrentOpps)
 
         db.session.add(user)
         db.session.commit()
@@ -170,12 +154,32 @@ def BookedOpps(user):
 @app.route('/PastOpps', methods=["Post"])
 @token_required
 def PastOpps(user):
-    Opps = user.PastOpps
-    CleanOpps = []
-    for opp in Opps:
-        CleanOpps.append({
-           "Name": opp.Name,
+    PastOpps = user.PastOpps
+    PastOppsClean = []
+    for opp in PastOpps:
+        PastOppsClean.append({
+            "Name": opp.Name,
             "Hours": opp.Hours,
             "Time": opp.Time.strftime("%m/%d/%Y, %H:%M")
         })
-    return jsonify(CleanOpps)
+    confHours = pickle.loads(user.confHours)
+    HoursClean = []
+    for opp in confHours:
+        HoursClean.append({
+            "Hours": opp["hours"],
+            "Reason": opp["reason"],
+            "Confirmed": "Confirmed"
+        })
+    unconfHours = pickle.loads(user.unconfHours)
+    for opp in unconfHours:
+        HoursClean.append({
+            "Hours": opp["hours"],
+            "Reason": opp["reason"],
+            "Confirmed": "Unconfirmed"
+        })
+    
+    FullClean = {
+        "PastOpps": PastOppsClean,
+        "Hours": HoursClean,
+    }
+    return jsonify(FullClean)
