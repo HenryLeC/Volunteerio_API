@@ -92,6 +92,7 @@ def MyOpps(user):
     for opp in Opps:
         CleanOpps.append({
             "ID": str(opp.id),
-            "Name": opp.Name
+            "Name": opp.Name,
+            "Time": opp.Time
         })
     return jsonify(CleanOpps)

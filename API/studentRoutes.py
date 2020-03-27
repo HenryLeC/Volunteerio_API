@@ -149,7 +149,7 @@ def BookedOpps(user):
             "Hours": opp.Hours,
             "Time": opp.Time.strftime("%m/%d/%Y, %H:%M")
         })
-    return jsonify(CleanOpps)\
+    return jsonify(CleanOpps)
 
 @app.route('/PastOpps', methods=["Post"])
 @token_required
