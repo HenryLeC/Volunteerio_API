@@ -17,19 +17,21 @@ def confirmHours(user):
             'msg': 'Must be Administrator to preform this task'
         })
     try:
-        Id = request.form['HoursId']
-        StuId = request.form['StudentId']
+        StuHrData = request.form['StuHrData']
     except:
         return jsonify({
             'msg': "Please provide an 'HoursId' and 'StudentId'"
         })
+    StuHrDataList = StuHrData.split(", ")
+    Id = StuHrDataList[0]
+    HrId = StuHrDataList[1]
     
     # Find The Student
-    Student = User.query.filter_by(pub_ID = StuId).first()
+    Student = User.query.get(Id)
     
     # Preform the move
     for Hours in pickle.loads(Student.unconfHours):
-        if Hours['id'] == int(Id):
+        if Hours['id'] == int(HrId):
             ConfHrs = pickle.loads(Student.confHours)
             UnconfHrs = pickle.loads(Student.unconfHours)
             ConfHrs.append(Hours)
@@ -94,41 +96,68 @@ def StudentsList(user):
             'msg': ""
         })
     ReturnList = []
-    Students = User.query.filter((User.name.like(Filter)) | (User.pub_ID.like(Filter)) & ((User.is_student == True))).all()
-    for user in Students:
-        PastOpps = user.PastOpps
-        PastOppsClean = []
-        for opp in PastOpps:
-            PastOppsClean.append({
-                "Name": opp.Name,
-                "Hours": opp.Hours,
-                "Time": opp.Time.strftime("%m/%d/%Y, %H:%M")
-            })
-        confHours = pickle.loads(user.confHours)
-        HoursClean = []
-        for opp in confHours:
-            HoursClean.append({
-                "Hours": opp["hours"],
-                "Reason": opp["reason"],
-                "Confirmed": "Confirmed"
-            })
-        unconfHours = pickle.loads(user.unconfHours)
-        for opp in unconfHours:
-            HoursClean.append({
-                "Hours": opp["hours"],
-                "Reason": opp["reason"],
-                "Confirmed": "Unconfirmed"
-            })
-        
-        FullClean = {
-            "PastOpps": PastOppsClean,
-            "Hours": HoursClean,
-        }
+    # Filter for students that Have a name or ID like like the Filter.
+    Students = User.query.filter(and_(
+        User.is_student == True,
+        or_(
+            User.name.like(Filter),
+            User.pub_ID.like(Filter),
+        )
+    )).all()
+    for student in Students:
         ReturnList.append({
-            "Name": user.name,
-            "StuId": user.pub_ID,
-            "Hours": user.hours,
-            "ID": user.id,
-            "Hours": FullClean
+            "Name": student.name,
+            "StuId": student.pub_ID,
+            "Hours": str(student.hours),
+            "ID": student.id
         })
     return jsonify(ReturnList)
+
+@app.route('/StudentHours', methods=["POST"])
+@token_required
+def StudentHours(user):
+    if user.is_admin != True:
+        return jsonify({
+            'msg': 'Must be Administrator to preform this task.'
+        })
+    try:
+        StudentId = request.form["id"]
+    except:
+        return jsonify({
+            'msg': "Please Supply a Student Id"
+        })
+    
+    student = User.query.get(int(StudentId))
+
+    PastOpps = student.PastOpps
+    PastOppsClean = []
+    for opp in PastOpps:
+        PastOppsClean.append({
+            "Name": opp.Name,
+            "Hours": opp.Hours,
+            "Time": opp.Time.strftime("%m/%d/%Y, %H:%M")
+        })
+    confHours = pickle.loads(student.confHours)
+    ConfHoursClean = []
+    for opp in confHours:
+        ConfHoursClean.append({
+            "Hours": opp["hours"],
+            "Reason": opp["reason"],
+            "Confirmed": "Confirmed"
+        })
+    unconfHours = pickle.loads(student.unconfHours)
+    UnConfHoursClean = []
+    for opp in unconfHours:
+        UnConfHoursClean.append({
+            "StuHrData": "{}, {}".format(student.id, opp["id"]),
+            "Hours": opp["hours"],
+            "Reason": opp["reason"],
+            "Confirmed": "Unconfirmed"
+        })
+    
+    FullClean = {
+        "PastOpps": PastOppsClean,
+        "ConfHours": ConfHoursClean,
+        "UnConfHours": UnConfHoursClean
+    }
+    return jsonify(FullClean)

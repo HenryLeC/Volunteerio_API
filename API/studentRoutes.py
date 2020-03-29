@@ -58,7 +58,7 @@ def list_opps(user):
             "Location": opp.Location,
             "Hours": opp.Hours,
             "Time": opp.Time.strftime("%m/%d/%Y, %H:%M"),
-            "Sponsor": User.query.get(int(opp.SponsorId)).name
+            "Sponsor": User.query.get(int(opp.SponsorID)).name
         })
     return jsonify(CleanOpps)
 
@@ -134,6 +134,8 @@ def BookAnOpp(user):
         })
     
     user.BookedOpps.append(Opp)
+    db.session.add(user)
+    db.session.commit()
     return jsonify({
         'msg': 'Opportunity Booked.'
     })

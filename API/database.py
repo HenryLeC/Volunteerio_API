@@ -17,9 +17,16 @@ class User(db.Model):
     unconfHours = db.Column(db.String())
     confHours = db.Column(db.String())
     pub_ID = db.Column(db.String(), nullable = False, unique=True)
-    PastOpps = db.relationship('Opportunity', lazy=True)
-    BookedOpps = db.relationship('Opportunity', lazy=True)
-    Opportunities = db.relationship('Opportunity', backref='Sponsor', lazy=True)
+
+    #PastOppsId = db.Column(db.Integer, db.ForeignKey("opportunity.id"))
+    PastOpps = db.relationship('Opportunity', secondary = "past")
+
+    #BookedOppsId = db.Column(db.Integer, db.ForeignKey("opportunity.id"))
+    BookedOpps = db.relationship('Opportunity', secondary = "booked")
+
+    #OpportunitiesId = db.Column(db.Integer, db.ForeignKey("opportunity.id"))
+    Opportunities = db.relationship('Opportunity', backref="Sponsor", lazy=True)
+
     CurrentOpps = db.Column(db.String())
 
 
@@ -46,7 +53,11 @@ class Opportunity(db.Model):
     Location = db.Column(db.String())
     Hours = db.Column(db.Integer)
     Name = db.Column(db.String())
-    SponsorId = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    SponsorID = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    BookedStudents = db.relationship("User", secondary = "booked")
+    PastStudents = db.relationship("User", secondary = "past")
 
     def __init__(self, Name, Location, Time, Hours, Sponsor):
         self.Name = Name
@@ -54,3 +65,20 @@ class Opportunity(db.Model):
         self.Location = Location
         self.Hours = Hours
         self.SponsorId = Sponsor.id
+
+
+class Booked(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    User_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    Opp_id = db.Column(db.Integer, db.ForeignKey('opportunity.id'))
+
+    user = db.relationship(User, backref=db.backref("Booked"))
+    opp = db.relationship(Opportunity, backref=db.backref("Booked"))
+
+class Past(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    User_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    Opp_id = db.Column(db.Integer, db.ForeignKey('opportunity.id'))
+
+    user = db.relationship(User, backref=db.backref("Past"))
+    opp = db.relationship(Opportunity, backref=db.backref("Past"))

@@ -1,6 +1,6 @@
 import API, os
 from API import app, db
-from API.database import User
+from API.database import User, Opportunity
 
 # CLI command to make DB
 @app.cli.command("StartDB")
