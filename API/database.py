@@ -5,29 +5,37 @@ import pickle
 
 # User table
 class User(db.Model):
+    #All
     id = db.Column(db.Integer, primary_key=True)
-    HoursId = db.Column(db.Integer)
     username = db.Column(db.String(), unique=True, nullable=False)
     password = db.Column(db.String(), unique=True, nullable=False)
     name = db.Column(db.String(), nullable = False)
-    is_admin = db.Column(db.Boolean)
-    is_community = db.Column(db.Boolean)
-    is_student = db.Column(db.Boolean)
-    hours = db.Column(db.Integer, nullable=True)
     pub_ID = db.Column(db.String(), nullable = False, unique=True)
-    
-    unconfHours = db.Column(db.String())
-    confHours = db.Column(db.String())
-    CurrentOpps = db.Column(db.String())
-
-    PastOpps = db.relationship('Opportunity', secondary = "past")
-    BookedOpps = db.relationship('Opportunity', secondary = "booked")
-    Opportunities = db.relationship('Opportunity', backref="Sponsor", lazy=True)
 
     District_Id = db.Column(db.Integer, db.ForeignKey('district.id'))
     District = db.relationship('District', backref="Members", lazy=True)
 
+    #Student
+    HoursId = db.Column(db.Integer)
+    is_student = db.Column(db.Boolean)
+    hours = db.Column(db.Integer, nullable=True)
+    unconfHours = db.Column(db.LargeBinary())
+    confHours = db.Column(db.LargeBinary())
+    CurrentOpps = db.Column(db.LargeBinary())
+    MyUnconfHoursMessages = db.relationship("NewUnconfHoursMessages", backref="Student")
 
+    PastOpps = db.relationship('Opportunity', secondary = "past")
+    BookedOpps = db.relationship('Opportunity', secondary = "booked")
+
+    #Admin
+    is_admin = db.Column(db.Boolean)
+
+    #Community
+    is_community = db.Column(db.Boolean)
+
+    #Admin / Community
+    Opportunities = db.relationship('Opportunity', backref="Sponsor", lazy=True)
+    
     def __init__(self, username, password, name, ID, district, admin = False, community = False, student = False):
         # If no role set default to student
         if admin == False and community == False and student == False:
@@ -67,7 +75,8 @@ class Opportunity(db.Model):
 
 class NewUnconfHoursMessages(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    
+    StudentId = db.Column(db.Integer, db.ForeignKey("user.id"))
+
 class District(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String())
