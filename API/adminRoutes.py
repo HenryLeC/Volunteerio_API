@@ -99,6 +99,7 @@ def StudentsList(user):
     # Filter for students that Have a name or ID like like the Filter.
     Students = User.query.filter(and_(
         User.is_student == True,
+        User.District == user.District,
         or_(
             User.name.like(Filter),
             User.pub_ID.like(Filter),

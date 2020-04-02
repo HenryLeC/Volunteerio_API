@@ -49,7 +49,7 @@ def add_hours(user):
 @app.route('/Opps', methods=["Post"])
 @token_required
 def list_opps(user):
-    Opps = Opportunity.query.all()
+    Opps = Opportunity.query.filter_by(Opportunity.Sponsor.District == user.District)
     CleanOpps = []
     for opp in Opps:
         CleanOpps.append({

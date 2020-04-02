@@ -14,23 +14,21 @@ class User(db.Model):
     is_community = db.Column(db.Boolean)
     is_student = db.Column(db.Boolean)
     hours = db.Column(db.Integer, nullable=True)
+    pub_ID = db.Column(db.String(), nullable = False, unique=True)
+    
     unconfHours = db.Column(db.String())
     confHours = db.Column(db.String())
-    pub_ID = db.Column(db.String(), nullable = False, unique=True)
-
-    #PastOppsId = db.Column(db.Integer, db.ForeignKey("opportunity.id"))
-    PastOpps = db.relationship('Opportunity', secondary = "past")
-
-    #BookedOppsId = db.Column(db.Integer, db.ForeignKey("opportunity.id"))
-    BookedOpps = db.relationship('Opportunity', secondary = "booked")
-
-    #OpportunitiesId = db.Column(db.Integer, db.ForeignKey("opportunity.id"))
-    Opportunities = db.relationship('Opportunity', backref="Sponsor", lazy=True)
-
     CurrentOpps = db.Column(db.String())
 
+    PastOpps = db.relationship('Opportunity', secondary = "past")
+    BookedOpps = db.relationship('Opportunity', secondary = "booked")
+    Opportunities = db.relationship('Opportunity', backref="Sponsor", lazy=True)
 
-    def __init__(self, username, password, name, ID, admin = False, community = False, student = False):
+    District_Id = db.Column(db.Integer, db.ForeignKey('district.id'))
+    District = db.relationship('District', backref="Members", lazy=True)
+
+
+    def __init__(self, username, password, name, ID, district, admin = False, community = False, student = False):
         # If no role set default to student
         if admin == False and community == False and student == False:
             student = True
@@ -46,6 +44,7 @@ class User(db.Model):
         self.CurrentOpps = pickle.dumps([])
         self.pub_ID = ID
         self.HoursId = 1
+        self.District = district
 
 class Opportunity(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -66,6 +65,15 @@ class Opportunity(db.Model):
         self.Hours = Hours
         self.SponsorId = Sponsor.id
 
+class NewUnconfHoursMessages(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    
+class District(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String())
+
+    def __init__(self, Name):
+        self.name = Name
 
 class Booked(db.Model):
     id = db.Column(db.Integer, primary_key=True)
