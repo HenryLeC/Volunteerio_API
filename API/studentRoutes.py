@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from API import app, db
-from API.database import User, Opportunity
+from API.database import User, Opportunity, NewUnconfHoursMessages
 from API.auth import verify_auth_token, generate_auth_token, token_required
 from werkzeug.security import generate_password_hash as hash, check_password_hash
 from json import loads
@@ -37,6 +37,8 @@ def add_hours(user):
 
     # Add To DB
     user.unconfHours = pickle.dumps(UnConfHrs)
+    if len(user.UnconfHoursMessages) == 0:
+        user.UnconfHoursMessages.append(NewUnconfHoursMessages())
     db.session.add(user)
     db.session.commit()
 
@@ -49,7 +51,7 @@ def add_hours(user):
 @app.route('/Opps', methods=["Post"])
 @token_required
 def list_opps(user):
-    Opps = Opportunity.query.filter_by(Opportunity.Sponsor.District == user.District)
+    Opps = Opportunity.query.join(User).filter(User.District == user.District)
     CleanOpps = []
     for opp in Opps:
         CleanOpps.append({

@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from sqlalchemy import or_, and_
 from API import app, db
-from API.database import User
+from API.database import User, NewUnconfHoursMessages
 from API.auth import verify_auth_token, generate_auth_token, token_required
 from werkzeug.security import generate_password_hash as hash, check_password_hash
 from json import loads
@@ -162,3 +162,23 @@ def StudentHours(user):
         "UnConfHours": UnConfHoursClean
     }
     return jsonify(FullClean)
+
+@app.route('/Notifications', methods=["POST"])
+@token_required
+def Notifications(user):
+    if user.is_admin != True:
+        return jsonify({
+            'msg': 'Must be Administrator to preform this task.'
+        })
+    Messages = NewUnconfHoursMessages.query.join(User).filter(User.District == user.District).all()
+    CleanMessages = []
+    for Message in Messages:
+        CleanMessages.append({
+            'ID': Message.Student.id,
+            'Name': Message.Student.name,
+            'StuId': Message.Student.pub_ID,
+            'Hours': Message.Student.hours,
+            'Message': f"{Message.Student.name} requested new hours."
+        })
+    return jsonify(CleanMessages)
+    
