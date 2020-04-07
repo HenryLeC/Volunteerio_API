@@ -36,6 +36,8 @@ def confirmHours(user):
             UnconfHrs = pickle.loads(Student.unconfHours)
             ConfHrs.append(Hours)
             UnconfHrs.remove(Hours)
+            if len(UnconfHrs) == 0:
+                Student.UnconfHoursMessages = []
             Student.hours += Hours['hours']
             Student.confHours = pickle.dumps(ConfHrs)
             Student.unconfHours = pickle.dumps(UnconfHrs)

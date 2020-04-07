@@ -38,7 +38,9 @@ def add_hours(user):
     # Add To DB
     user.unconfHours = pickle.dumps(UnConfHrs)
     if len(user.UnconfHoursMessages) == 0:
-        user.UnconfHoursMessages.append(NewUnconfHoursMessages())
+        Message = NewUnconfHoursMessages()
+        user.UnconfHoursMessages.append(Message)
+        db.session.add(Message)
     db.session.add(user)
     db.session.commit()
 

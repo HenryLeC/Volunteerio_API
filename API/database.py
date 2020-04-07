@@ -22,7 +22,7 @@ class User(db.Model):
     unconfHours = db.Column(db.LargeBinary())
     confHours = db.Column(db.LargeBinary())
     CurrentOpps = db.Column(db.LargeBinary())
-    UnconfHoursMessages = db.relationship("NewUnconfHoursMessages", backref="Student", lazy=True)
+    UnconfHoursMessages = db.relationship("NewUnconfHoursMessages", backref="Student", lazy=True, cascade="delete, delete-orphan")
 
     PastOpps = db.relationship('Opportunity', secondary = "past")
     BookedOpps = db.relationship('Opportunity', secondary = "booked")
