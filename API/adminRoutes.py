@@ -1,34 +1,33 @@
-from flask import Flask, request, jsonify
+from flask import request, jsonify
 from sqlalchemy import or_, and_
 from API import app, db
 from API.database import User, NewUnconfHoursMessages
-from API.auth import verify_auth_token, generate_auth_token, token_required
-from werkzeug.security import generate_password_hash as hash, check_password_hash
-from json import loads
+from API.auth import token_required
 import pickle
+
 
 @app.route('/confirmHours', methods=["POST"])
 @token_required
 def confirmHours(user):
     # Move an Unconfiremd Hours to Confirmed
 
-    if user.is_admin != True:
+    if not user.is_admin:
         return jsonify({
             'msg': 'Must be Administrator to preform this task'
         })
     try:
         StuHrData = request.form['StuHrData']
-    except:
+    except KeyError:
         return jsonify({
             'msg': "Please provide an 'HoursId' and 'StudentId'"
         })
     StuHrDataList = StuHrData.split(", ")
     Id = StuHrDataList[0]
     HrId = StuHrDataList[1]
-    
+
     # Find The Student
     Student = User.query.get(Id)
-    
+
     # Preform the move
     for Hours in pickle.loads(Student.unconfHours):
         if Hours['id'] == int(HrId):
@@ -45,15 +44,16 @@ def confirmHours(user):
             db.session.add(Student)
             db.session.commit()
     return jsonify({
-        'msg' : 'Hours Confirmed',
-        'unconfHours' : pickle.loads(Student.unconfHours),
-        'confHours' : pickle.loads(Student.confHours)
+        'msg': 'Hours Confirmed',
+        'unconfHours': pickle.loads(Student.unconfHours),
+        'confHours': pickle.loads(Student.confHours)
     })
+
 
 @app.route('/deleteHours', methods=["POST"])
 @token_required
 def deleteHours(user):
-    if user.is_admin != True:
+    if not user.is_admin:
         return jsonify({
             'msg': 'Must be Administrator to preform this task'
         })
@@ -62,47 +62,50 @@ def deleteHours(user):
         StuHrDataList = StuHrData.split(", ")
         Id = StuHrDataList[0]
         HrId = StuHrDataList[1]
-    except:
+    except KeyError:
         return jsonify({
             'msg': "Please provide an 'HoursId' and 'StudentId'"
         })
-    
+
     # Find The Student
     Student = User.query.get(Id)
-    
+
     # Preform the move
     for Hours in pickle.loads(Student.unconfHours):
         if Hours['id'] == int(HrId):
             UnconfHrs = pickle.loads(Student.unconfHours)
             UnconfHrs.remove(Hours)
+            if len(UnconfHrs) == 0:
+                Student.UnconfHoursMessages = []
             Student.unconfHours = pickle.dumps(UnconfHrs)
 
             db.session.add(Student)
             db.session.commit()
 
     return jsonify({
-        'msg' : 'Hours Removed',
-        'unconfHours' : pickle.loads(Student.unconfHours),
-        'confHours' : pickle.loads(Student.confHours)
+        'msg': 'Hours Removed',
+        'unconfHours': pickle.loads(Student.unconfHours),
+        'confHours': pickle.loads(Student.confHours)
     })
+
 
 @app.route('/StudentsList', methods=["POST"])
 @token_required
 def StudentsList(user):
-    if user.is_admin != True:
+    if not user.is_admin:
         return jsonify({
             'msg': 'Must be Administrator to preform this task.'
         })
     try:
         Filter = "%{}%".format(request.form["Filter"])
-    except:
+    except KeyError:
         return jsonify({
             'msg': ""
         })
     ReturnList = []
     # Filter for students that Have a name or ID like like the Filter.
     Students = User.query.filter(and_(
-        User.is_student == True,
+        User.is_student,
         User.District == user.District,
         or_(
             User.name.like(Filter),
@@ -118,20 +121,21 @@ def StudentsList(user):
         })
     return jsonify(ReturnList)
 
+
 @app.route('/StudentHours', methods=["POST"])
 @token_required
 def StudentHours(user):
-    if user.is_admin != True:
+    if not user.is_admin:
         return jsonify({
             'msg': 'Must be Administrator to preform this task.'
         })
     try:
         StudentId = request.form["id"]
-    except:
+    except KeyError:
         return jsonify({
             'msg': "Please Supply a Student Id"
         })
-    
+
     student = User.query.get(int(StudentId))
 
     PastOpps = student.PastOpps
@@ -159,7 +163,7 @@ def StudentHours(user):
             "Reason": opp["reason"],
             "Confirmed": "Unconfirmed"
         })
-    
+
     FullClean = {
         "PastOpps": PastOppsClean,
         "ConfHours": ConfHoursClean,
@@ -167,14 +171,16 @@ def StudentHours(user):
     }
     return jsonify(FullClean)
 
+
 @app.route('/Notifications', methods=["POST"])
 @token_required
 def Notifications(user):
-    if user.is_admin != True:
+    if not user.is_admin:
         return jsonify({
             'msg': 'Must be Administrator to preform this task.'
         })
-    Messages = NewUnconfHoursMessages.query.join(User).filter(User.District == user.District).all()
+    Messages = NewUnconfHoursMessages.query.join(User).filter(
+        User.District == user.District).all()
     CleanMessages = []
     for Message in Messages:
         CleanMessages.append({
@@ -185,4 +191,3 @@ def Notifications(user):
             'Message': f"{Message.Student.name} requested new hours."
         })
     return jsonify(CleanMessages)
-    

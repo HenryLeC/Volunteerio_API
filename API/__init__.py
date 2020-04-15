@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine
-import os, secrets
+import os
+import secrets
 
 app = Flask(__name__)
 # Set path for DB

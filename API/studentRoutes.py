@@ -1,15 +1,17 @@
-from flask import Flask, request, jsonify
+from flask import request, jsonify
 from API import app, db
 from API.database import User, Opportunity, NewUnconfHoursMessages
-from API.auth import verify_auth_token, generate_auth_token, token_required
-from werkzeug.security import generate_password_hash as hash, check_password_hash
-from json import loads
-import pickle, datetime, jwt
+from API.auth import token_required
+import pickle
+import datetime
+import jwt
+
 
 @app.route("/hours", methods=["POST"])
 @token_required
 def getHours(user):
-    return jsonify({'hours' : str(user.hours)})
+    return jsonify({'hours': str(user.hours)})
+
 
 @app.route('/addhours', methods=["POST"])
 @token_required
@@ -18,10 +20,10 @@ def add_hours(user):
     try:
         hours = request.form["hours"]
         reason = request.form["reason"]
-    except:
-        return jsonify({'msg' : 'Hours and reason is required.'})
+    except KeyError:
+        return jsonify({'msg': 'Hours and reason is required.'})
     id = user.HoursId
-    
+
     # Increment HoursId by 1
     user.HoursId += 1
 
@@ -30,9 +32,9 @@ def add_hours(user):
     # Add hous and reason to unconfirmed list
     print(pickle.loads(user.unconfHours))
     UnConfHrs.append({
-        'id' : id,
-        'hours' : int(hours),
-        'reason' : reason
+        'id': id,
+        'hours': int(hours),
+        'reason': reason
     })
 
     # Add To DB
@@ -45,15 +47,18 @@ def add_hours(user):
     db.session.commit()
 
     return jsonify({
-        'msg' : 'Hours added',
-        'unconfHours' : pickle.loads(user.unconfHours),
-        'confHours' : pickle.loads(user.confHours)
+        'msg': 'Hours added',
+        'unconfHours': pickle.loads(user.unconfHours),
+        'confHours': pickle.loads(user.confHours)
     })
+
 
 @app.route('/Opps', methods=["Post"])
 @token_required
 def list_opps(user):
-    Opps = Opportunity.query.join(User).filter(User.District == user.District)
+    Opps = Opportunity.query.join(User).filter(User.District == user.District,
+                                               Opportunity.Time >
+                                               datetime.datetime.utcnow())
     CleanOpps = []
     for opp in Opps:
         CleanOpps.append({
@@ -66,12 +71,13 @@ def list_opps(user):
         })
     return jsonify(CleanOpps)
 
+
 @app.route('/ClockInOut', methods=["POST"])
 @token_required
 def Clock(user):
     try:
         Code = request.form["QrCode"]
-    except:
+    except KeyError:
         return jsonify({
             'msg': 'Please Pass in The Correct Parameters'
         })
@@ -83,14 +89,14 @@ def Clock(user):
                 res = True
                 RightDict = Dict
                 break
-        except:
+        except KeyError:
             pass
-    
-    if res == True:
-        #STime = datetime.datetime.strptime(RightDict["StartTime"], "%Y-%m-%dT%H:%M:%S.%f%z")
-        Hours = int(round((datetime.datetime.utcnow() - RightDict["StartTime"]).seconds / 3600))
+
+    if res:
+        Hours = int(round((datetime.datetime.utcnow() -
+                    RightDict["StartTime"]).seconds / 3600))
         user.hours += Hours
-        
+
         OppId = jwt.decode(Code, 'VerySecret', algorithm="HS256")["ID"]
         Opp = Opportunity.query.get(OppId)
 
@@ -98,7 +104,7 @@ def Clock(user):
         CurrentOpps = pickle.loads(user.CurrentOpps)
         CurrentOpps.remove(RightDict)
         user.CurrentOpps = pickle.dumps(CurrentOpps)
-        
+
         db.session.add(user)
         db.session.commit()
 
@@ -118,31 +124,33 @@ def Clock(user):
         db.session.commit()
 
         return jsonify({
-            'msg': "Thank You for clocking in, don't forget to clock out later."
+            'msg': "Thank you for clocking in, don't forget to clock out later"
         })
+
 
 @app.route('/BookAnOpp', methods=["POST"])
 @token_required
 def BookAnOpp(user):
     try:
         Id = request.form["OppId"]
-    except:
+    except KeyError:
         return jsonify({
             'msg': 'Please Pass in The Correct Parameters'
         })
     try:
         Opp = Opportunity.query.get(Id)
-    except:
+    except KeyError:
         return jsonify({
             'msg': 'Inavalid Opportunity ID'
         })
-    
+
     user.BookedOpps.append(Opp)
     db.session.add(user)
     db.session.commit()
     return jsonify({
         'msg': 'Opportunity Booked.'
     })
+
 
 @app.route('/BookedOpps', methods=["Post"])
 @token_required
@@ -156,6 +164,7 @@ def BookedOpps(user):
             "Time": opp.Time.strftime("%m/%d/%Y, %H:%M")
         })
     return jsonify(CleanOpps)
+
 
 @app.route('/PastOpps', methods=["Post"])
 @token_required
@@ -183,7 +192,7 @@ def PastOpps(user):
             "Reason": opp["reason"],
             "Confirmed": "Unconfirmed"
         })
-    
+
     FullClean = {
         "PastOpps": PastOppsClean,
         "Hours": HoursClean,
