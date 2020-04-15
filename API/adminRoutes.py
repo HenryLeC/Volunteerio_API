@@ -58,19 +58,21 @@ def deleteHours(user):
             'msg': 'Must be Administrator to preform this task'
         })
     try:
-        Id = request.form['HoursId']
-        StuId = request.form['StudentId']
+        StuHrData = request.form['StuHrData']
+        StuHrDataList = StuHrData.split(", ")
+        Id = StuHrDataList[0]
+        HrId = StuHrDataList[1]
     except:
         return jsonify({
             'msg': "Please provide an 'HoursId' and 'StudentId'"
         })
     
     # Find The Student
-    Student = User.query.filter_by(pub_ID = StuId).first()
+    Student = User.query.get(Id)
     
     # Preform the move
     for Hours in pickle.loads(Student.unconfHours):
-        if Hours['id'] == int(Id):
+        if Hours['id'] == int(HrId):
             UnconfHrs = pickle.loads(Student.unconfHours)
             UnconfHrs.remove(Hours)
             Student.unconfHours = pickle.dumps(UnconfHrs)
