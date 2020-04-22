@@ -1,6 +1,4 @@
-# mVolunteerio
-
-
+# mVolunteerio Web API
 
 ## Table of Contents
 
@@ -17,7 +15,6 @@
   - [`POST` /MyOpps](#op-post-myopps) 
 * [Schemas](#schemas)
   - [Login](#schema-login)
-  - [Hours-401](#schema-hours-401)
   - [Hours](#schema-hours)
   - [AddHours](#schema-addhours)
   - [ConfHour](#schema-confhour)
@@ -57,12 +54,6 @@
 
 > Login
 
-
-
-
-
-
-
 #### Request body
 ###### application/x-www-form-urlencoded
 
@@ -74,7 +65,6 @@
       <th>Name</th>
       <th>Type</th>
       <th>Description</th>
-      <th>Accepted values</th>
     </tr>
   </thead>
   <tbody>
@@ -84,21 +74,19 @@
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>password <strong>(required)</strong></td>
         <td>
-          integer
+          string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
   </tbody>
 </table>
 
 
-##### Example _(generated)_
+##### Example
 
 ```json
 {
@@ -114,117 +102,6 @@
 
 
 ##### ▶ 200 
-
-###### Headers
-##### Server
-
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Server</td>
-        <td>
-          
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-
-##### Date
-
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Date</td>
-        <td>
-          
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-
-##### Content-Length
-
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Content-Length</td>
-        <td>
-          
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-
-##### Connection
-
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Connection</td>
-        <td>
-          
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-
-
 ###### application/json
 
 
@@ -235,25 +112,22 @@
       <th>Name</th>
       <th>Type</th>
       <th>Description</th>
-      <th>Accepted values</th>
     </tr>
   </thead>
   <tbody>
       <tr>
-        <td>key <strong>(required)</strong></td>
+        <td>key</td>
         <td>
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>role <strong>(required)</strong></td>
+        <td>role</td>
         <td>
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
   </tbody>
 </table>
@@ -267,12 +141,6 @@
 }
 ```
 
-#### Tags
-
-<div class="tags">
-  <div class="tags__tag"></div>
-</div>
-</div>
 
 ### `POST` /hours
 <a id="op-post-hours" />
@@ -296,7 +164,6 @@
       <th>Name</th>
       <th>Type</th>
       <th>Description</th>
-      <th>Accepted values</th>
     </tr>
   </thead>
   <tbody>
@@ -306,7 +173,6 @@
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
   </tbody>
 </table>
@@ -327,117 +193,6 @@
 
 
 ##### ▶ 200 
-
-###### Headers
-##### Server
-
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Server</td>
-        <td>
-          
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-
-##### Date
-
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Date</td>
-        <td>
-          
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-
-##### Content-Length
-
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Content-Length</td>
-        <td>
-          
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-
-##### Connection
-
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Connection</td>
-        <td>
-          
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-
-
 ###### application/json
 
 
@@ -448,17 +203,15 @@
       <th>Name</th>
       <th>Type</th>
       <th>Description</th>
-      <th>Accepted values</th>
     </tr>
   </thead>
   <tbody>
       <tr>
-        <td>hours <strong>(required)</strong></td>
+        <td>hours</td>
         <td>
-          string
+          integer
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
   </tbody>
 </table>
@@ -470,50 +223,9 @@
   "hours": "40"
 }
 ```
-##### ▶ 401 - UNAUTHORIZED
-
-###### Headers
-_No headers specified_
-
-###### application/json
 
 
 
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>message <strong>(required)</strong></td>
-        <td>
-          string
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-##### Example
-```json
-{
-  "message": "Token is invalid!"
-}
-```
-
-#### Tags
-
-<div class="tags">
-  <div class="tags__tag"></div>
-</div>
-</div>
 
 ### `POST` /addhours
 <a id="op-post-addhours" />
@@ -537,7 +249,6 @@ _No headers specified_
       <th>Name</th>
       <th>Type</th>
       <th>Description</th>
-      <th>Accepted values</th>
     </tr>
   </thead>
   <tbody>
@@ -547,7 +258,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>hours <strong>(required)</strong></td>
@@ -555,7 +265,6 @@ _No headers specified_
           integer
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>reason <strong>(required)</strong></td>
@@ -563,7 +272,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
   </tbody>
 </table>
@@ -587,112 +295,7 @@ _No headers specified_
 
 ##### ▶ 200 
 
-###### Headers
-##### Server
 
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Server</td>
-        <td>
-          
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-
-##### Date
-
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Date</td>
-        <td>
-          
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-
-##### Content-Length
-
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Content-Length</td>
-        <td>
-          
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-
-##### Connection
-
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Connection</td>
-        <td>
-          
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
 
 
 
@@ -707,81 +310,71 @@ _No headers specified_
       <th>Name</th>
       <th>Type</th>
       <th>Description</th>
-      <th>Accepted values</th>
     </tr>
   </thead>
   <tbody>
       <tr>
-        <td>confHours <strong>(required)</strong></td>
+        <td>confHours</td>
         <td>
           array(object)
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>confHours.hours <strong>(required)</strong></td>
+        <td>confHours.hours</td>
         <td>
           integer
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>confHours.id <strong>(required)</strong></td>
+        <td>confHours.id</td>
         <td>
           integer
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>confHours.reason <strong>(required)</strong></td>
+        <td>confHours.reason</td>
         <td>
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>msg <strong>(required)</strong></td>
+        <td>msg</td>
         <td>
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>unconfHours <strong>(required)</strong></td>
+        <td>unconfHours</td>
         <td>
           array(object)
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>unconfHours.hours <strong>(required)</strong></td>
+        <td>unconfHours.hours</td>
         <td>
           integer
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>unconfHours.id <strong>(required)</strong></td>
+        <td>unconfHours.id</td>
         <td>
           integer
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>unconfHours.reason <strong>(required)</strong></td>
+        <td>unconfHours.reason</td>
         <td>
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
   </tbody>
 </table>
@@ -823,15 +416,6 @@ _No headers specified_
 }
 ```
 
-#### Tags
-
-<div class="tags">
-  <div class="tags__tag"></div>
-</div>
-</div>
-
-### `POST` /confirmHours
-<a id="op-post-confirmhours" />
 
 > ConfirmHours
 
@@ -852,7 +436,6 @@ _No headers specified_
       <th>Name</th>
       <th>Type</th>
       <th>Description</th>
-      <th>Accepted values</th>
     </tr>
   </thead>
   <tbody>
@@ -862,7 +445,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>StuHrData <strong>(required)</strong></td>
@@ -870,7 +452,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
   </tbody>
 </table>
@@ -893,112 +474,7 @@ _No headers specified_
 
 ##### ▶ 200 
 
-###### Headers
-##### Server
 
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Server</td>
-        <td>
-          
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-
-##### Date
-
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Date</td>
-        <td>
-          
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-
-##### Content-Length
-
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Content-Length</td>
-        <td>
-          
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-
-##### Connection
-
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Connection</td>
-        <td>
-          
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
 
 
 
@@ -1013,81 +489,71 @@ _No headers specified_
       <th>Name</th>
       <th>Type</th>
       <th>Description</th>
-      <th>Accepted values</th>
     </tr>
   </thead>
   <tbody>
       <tr>
-        <td>confHours <strong>(required)</strong></td>
+        <td>confHours</td>
         <td>
           array(object)
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>confHours.hours <strong>(required)</strong></td>
+        <td>confHours.hours</td>
         <td>
           integer
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>confHours.id <strong>(required)</strong></td>
+        <td>confHours.id</td>
         <td>
           integer
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>confHours.reason <strong>(required)</strong></td>
+        <td>confHours.reason</td>
         <td>
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>msg <strong>(required)</strong></td>
+        <td>msg</td>
         <td>
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>unconfHours <strong>(required)</strong></td>
+        <td>unconfHours</td>
         <td>
           array(object)
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>unconfHours.hours <strong>(required)</strong></td>
+        <td>unconfHours.hours</td>
         <td>
           integer
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>unconfHours.id <strong>(required)</strong></td>
+        <td>unconfHours.id</td>
         <td>
           integer
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>unconfHours.reason <strong>(required)</strong></td>
+        <td>unconfHours.reason</td>
         <td>
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
   </tbody>
 </table>
@@ -1134,12 +600,7 @@ _No headers specified_
 }
 ```
 
-#### Tags
 
-<div class="tags">
-  <div class="tags__tag"></div>
-</div>
-</div>
 
 ### `POST` /Opps
 <a id="op-post-opps" />
@@ -1163,7 +624,6 @@ _No headers specified_
       <th>Name</th>
       <th>Type</th>
       <th>Description</th>
-      <th>Accepted values</th>
     </tr>
   </thead>
   <tbody>
@@ -1173,7 +633,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
   </tbody>
 </table>
@@ -1195,112 +654,7 @@ _No headers specified_
 
 ##### ▶ 200 
 
-###### Headers
-##### Server
 
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Server</td>
-        <td>
-          
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-
-##### Date
-
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Date</td>
-        <td>
-          
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-
-##### Content-Length
-
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Content-Length</td>
-        <td>
-          
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-
-##### Connection
-
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Connection</td>
-        <td>
-          
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
 
 
 
@@ -1315,7 +669,6 @@ _No headers specified_
       <th>Name</th>
       <th>Type</th>
       <th>Description</th>
-      <th>Accepted values</th>
     </tr>
   </thead>
   <tbody>
@@ -1325,55 +678,48 @@ _No headers specified_
           array(object)
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>Response.Hours <strong>(required)</strong></td>
+        <td>Response.Hours</td>
         <td>
           integer
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>Response.ID <strong>(required)</strong></td>
+        <td>Response.ID</td>
         <td>
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>Response.Location <strong>(required)</strong></td>
+        <td>Response.Location</td>
         <td>
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>Response.Name <strong>(required)</strong></td>
+        <td>Response.Name</td>
         <td>
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>Response.Sponsor <strong>(required)</strong></td>
+        <td>Response.Sponsor</td>
         <td>
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>Response.Time <strong>(required)</strong></td>
+        <td>Response.Time</td>
         <td>
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
   </tbody>
 </table>
@@ -1394,12 +740,7 @@ _No headers specified_
 ]
 ```
 
-#### Tags
 
-<div class="tags">
-  <div class="tags__tag"></div>
-</div>
-</div>
 
 ### `POST` /AddOpp
 <a id="op-post-addopp" />
@@ -1423,7 +764,6 @@ _No headers specified_
       <th>Name</th>
       <th>Type</th>
       <th>Description</th>
-      <th>Accepted values</th>
     </tr>
   </thead>
   <tbody>
@@ -1433,7 +773,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>Name <strong>(required)</strong></td>
@@ -1441,7 +780,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>Date <strong>(required)</strong></td>
@@ -1449,7 +787,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>Location <strong>(required)</strong></td>
@@ -1457,7 +794,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>Hours <strong>(required)</strong></td>
@@ -1465,7 +801,6 @@ _No headers specified_
           integer
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
   </tbody>
 </table>
@@ -1491,112 +826,7 @@ _No headers specified_
 
 ##### ▶ 200 
 
-###### Headers
-##### Server
 
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Server</td>
-        <td>
-          
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-
-##### Date
-
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Date</td>
-        <td>
-          
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-
-##### Content-Length
-
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Content-Length</td>
-        <td>
-          
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-
-##### Connection
-
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Connection</td>
-        <td>
-          
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
 
 
 
@@ -1611,17 +841,15 @@ _No headers specified_
       <th>Name</th>
       <th>Type</th>
       <th>Description</th>
-      <th>Accepted values</th>
     </tr>
   </thead>
   <tbody>
       <tr>
-        <td>msg <strong>(required)</strong></td>
+        <td>msg</td>
         <td>
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
   </tbody>
 </table>
@@ -1634,12 +862,7 @@ _No headers specified_
 }
 ```
 
-#### Tags
 
-<div class="tags">
-  <div class="tags__tag"></div>
-</div>
-</div>
 
 ### `POST` /deleteHours
 <a id="op-post-deletehours" />
@@ -1663,7 +886,6 @@ _No headers specified_
       <th>Name</th>
       <th>Type</th>
       <th>Description</th>
-      <th>Accepted values</th>
     </tr>
   </thead>
   <tbody>
@@ -1673,7 +895,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>StuHrData <strong>(required)</strong></td>
@@ -1681,7 +902,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
   </tbody>
 </table>
@@ -1703,117 +923,6 @@ _No headers specified_
 
 
 ##### ▶ 200 
-
-###### Headers
-##### Server
-
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Server</td>
-        <td>
-          
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-
-##### Date
-
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Date</td>
-        <td>
-          
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-
-##### Content-Length
-
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Content-Length</td>
-        <td>
-          
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-
-##### Connection
-
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Connection</td>
-        <td>
-          
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-
-
 ###### application/json
 
 
@@ -1824,57 +933,50 @@ _No headers specified_
       <th>Name</th>
       <th>Type</th>
       <th>Description</th>
-      <th>Accepted values</th>
     </tr>
   </thead>
   <tbody>
       <tr>
-        <td>confHours <strong>(required)</strong></td>
+        <td>confHours</td>
         <td>
           array(object)
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>confHours.hours <strong>(required)</strong></td>
+        <td>confHours.hours</td>
         <td>
           integer
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>confHours.id <strong>(required)</strong></td>
+        <td>confHours.id</td>
         <td>
           integer
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>confHours.reason <strong>(required)</strong></td>
+        <td>confHours.reason</td>
         <td>
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>msg <strong>(required)</strong></td>
+        <td>msg</td>
         <td>
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>unconfHours <strong>(required)</strong></td>
+        <td>unconfHours</td>
         <td>
           array(string)
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
   </tbody>
 </table>
@@ -1915,12 +1017,7 @@ _No headers specified_
 }
 ```
 
-#### Tags
 
-<div class="tags">
-  <div class="tags__tag"></div>
-</div>
-</div>
 
 ### `POST` /StudentsList
 <a id="op-post-studentslist" />
@@ -1944,7 +1041,6 @@ _No headers specified_
       <th>Name</th>
       <th>Type</th>
       <th>Description</th>
-      <th>Accepted values</th>
     </tr>
   </thead>
   <tbody>
@@ -1954,7 +1050,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>Filter <strong>(required)</strong></td>
@@ -1962,7 +1057,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
   </tbody>
 </table>
@@ -1984,117 +1078,6 @@ _No headers specified_
 
 
 ##### ▶ 200 
-
-###### Headers
-##### Server
-
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Server</td>
-        <td>
-          
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-
-##### Date
-
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Date</td>
-        <td>
-          
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-
-##### Content-Length
-
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Content-Length</td>
-        <td>
-          
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-
-##### Connection
-
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Connection</td>
-        <td>
-          
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-
-
 ###### application/json
 
 
@@ -2105,7 +1088,6 @@ _No headers specified_
       <th>Name</th>
       <th>Type</th>
       <th>Description</th>
-      <th>Accepted values</th>
     </tr>
   </thead>
   <tbody>
@@ -2115,39 +1097,34 @@ _No headers specified_
           array(object)
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>Response.Hours <strong>(required)</strong></td>
+        <td>Response.Hours</td>
         <td>
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>Response.ID <strong>(required)</strong></td>
+        <td>Response.ID</td>
         <td>
           integer
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>Response.Name <strong>(required)</strong></td>
+        <td>Response.Name</td>
         <td>
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>Response.StuId <strong>(required)</strong></td>
+        <td>Response.StuId</td>
         <td>
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
   </tbody>
 </table>
@@ -2166,12 +1143,7 @@ _No headers specified_
 ]
 ```
 
-#### Tags
 
-<div class="tags">
-  <div class="tags__tag"></div>
-</div>
-</div>
 
 ### `POST` /MyOpps
 <a id="op-post-myopps" />
@@ -2195,7 +1167,6 @@ _No headers specified_
       <th>Name</th>
       <th>Type</th>
       <th>Description</th>
-      <th>Accepted values</th>
     </tr>
   </thead>
   <tbody>
@@ -2205,7 +1176,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
   </tbody>
 </table>
@@ -2226,117 +1196,6 @@ _No headers specified_
 
 
 ##### ▶ 200 
-
-###### Headers
-##### Server
-
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Server</td>
-        <td>
-          
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-
-##### Date
-
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Date</td>
-        <td>
-          
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-
-##### Content-Length
-
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Content-Length</td>
-        <td>
-          
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-
-##### Connection
-
-
-
-<table>
-  <thead>
-    <tr>
-      <th>Name</th>
-      <th>Type</th>
-      <th>Description</th>
-      <th>Accepted values</th>
-    </tr>
-  </thead>
-  <tbody>
-      <tr>
-        <td>Connection</td>
-        <td>
-          
-        </td>
-        <td></td>
-        <td><em>Any</em></td>
-      </tr>
-  </tbody>
-</table>
-
-
-
-
 ###### application/json
 
 
@@ -2347,7 +1206,6 @@ _No headers specified_
       <th>Name</th>
       <th>Type</th>
       <th>Description</th>
-      <th>Accepted values</th>
     </tr>
   </thead>
   <tbody>
@@ -2357,31 +1215,27 @@ _No headers specified_
           array(object)
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>Response.ID <strong>(required)</strong></td>
+        <td>Response.ID</td>
         <td>
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>Response.Name <strong>(required)</strong></td>
+        <td>Response.Name</td>
         <td>
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
-        <td>Response.Time <strong>(required)</strong></td>
+        <td>Response.Time</td>
         <td>
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
   </tbody>
 </table>
@@ -2399,12 +1253,7 @@ _No headers specified_
 ]
 ```
 
-#### Tags
 
-<div class="tags">
-  <div class="tags__tag"></div>
-</div>
-</div>
 
 ## Schemas
 
@@ -2418,7 +1267,6 @@ _No headers specified_
       <th>Name</th>
       <th>Type</th>
       <th>Description</th>
-      <th>Accepted values</th>
     </tr>
   </thead>
   <tbody>
@@ -2428,7 +1276,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>role <strong>(required)</strong></td>
@@ -2436,7 +1283,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
   </tbody>
 </table>
@@ -2451,15 +1297,12 @@ _No headers specified_
 ```
 <a id="schema-hours-401" />
 
-#### Hours-401
-
 <table>
   <thead>
     <tr>
       <th>Name</th>
       <th>Type</th>
       <th>Description</th>
-      <th>Accepted values</th>
     </tr>
   </thead>
   <tbody>
@@ -2469,7 +1312,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
   </tbody>
 </table>
@@ -2491,7 +1333,6 @@ _No headers specified_
       <th>Name</th>
       <th>Type</th>
       <th>Description</th>
-      <th>Accepted values</th>
     </tr>
   </thead>
   <tbody>
@@ -2501,7 +1342,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
   </tbody>
 </table>
@@ -2523,7 +1363,6 @@ _No headers specified_
       <th>Name</th>
       <th>Type</th>
       <th>Description</th>
-      <th>Accepted values</th>
     </tr>
   </thead>
   <tbody>
@@ -2533,7 +1372,6 @@ _No headers specified_
           array(object)
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>confHours.hours <strong>(required)</strong></td>
@@ -2541,7 +1379,6 @@ _No headers specified_
           integer
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>confHours.id <strong>(required)</strong></td>
@@ -2549,7 +1386,6 @@ _No headers specified_
           integer
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>confHours.reason <strong>(required)</strong></td>
@@ -2557,7 +1393,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>msg <strong>(required)</strong></td>
@@ -2565,7 +1400,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>unconfHours <strong>(required)</strong></td>
@@ -2573,7 +1407,6 @@ _No headers specified_
           array(object)
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>unconfHours.hours <strong>(required)</strong></td>
@@ -2581,7 +1414,6 @@ _No headers specified_
           integer
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>unconfHours.id <strong>(required)</strong></td>
@@ -2589,7 +1421,6 @@ _No headers specified_
           integer
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>unconfHours.reason <strong>(required)</strong></td>
@@ -2597,7 +1428,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
   </tbody>
 </table>
@@ -2648,7 +1478,6 @@ _No headers specified_
       <th>Name</th>
       <th>Type</th>
       <th>Description</th>
-      <th>Accepted values</th>
     </tr>
   </thead>
   <tbody>
@@ -2658,7 +1487,6 @@ _No headers specified_
           integer
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>id <strong>(required)</strong></td>
@@ -2666,7 +1494,6 @@ _No headers specified_
           integer
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>reason <strong>(required)</strong></td>
@@ -2674,7 +1501,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
   </tbody>
 </table>
@@ -2698,7 +1524,6 @@ _No headers specified_
       <th>Name</th>
       <th>Type</th>
       <th>Description</th>
-      <th>Accepted values</th>
     </tr>
   </thead>
   <tbody>
@@ -2708,7 +1533,6 @@ _No headers specified_
           integer
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>id <strong>(required)</strong></td>
@@ -2716,7 +1540,6 @@ _No headers specified_
           integer
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>reason <strong>(required)</strong></td>
@@ -2724,7 +1547,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
   </tbody>
 </table>
@@ -2748,7 +1570,6 @@ _No headers specified_
       <th>Name</th>
       <th>Type</th>
       <th>Description</th>
-      <th>Accepted values</th>
     </tr>
   </thead>
   <tbody>
@@ -2758,7 +1579,6 @@ _No headers specified_
           array(object)
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>confHours.hours <strong>(required)</strong></td>
@@ -2766,7 +1586,6 @@ _No headers specified_
           integer
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>confHours.id <strong>(required)</strong></td>
@@ -2774,7 +1593,6 @@ _No headers specified_
           integer
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>confHours.reason <strong>(required)</strong></td>
@@ -2782,7 +1600,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>msg <strong>(required)</strong></td>
@@ -2790,7 +1607,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>unconfHours <strong>(required)</strong></td>
@@ -2798,7 +1614,6 @@ _No headers specified_
           array(object)
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>unconfHours.hours <strong>(required)</strong></td>
@@ -2806,7 +1621,6 @@ _No headers specified_
           integer
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>unconfHours.id <strong>(required)</strong></td>
@@ -2814,7 +1628,6 @@ _No headers specified_
           integer
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>unconfHours.reason <strong>(required)</strong></td>
@@ -2822,7 +1635,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
   </tbody>
 </table>
@@ -2878,7 +1690,6 @@ _No headers specified_
       <th>Name</th>
       <th>Type</th>
       <th>Description</th>
-      <th>Accepted values</th>
     </tr>
   </thead>
   <tbody>
@@ -2888,7 +1699,6 @@ _No headers specified_
           integer
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>ID <strong>(required)</strong></td>
@@ -2896,7 +1706,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>Location <strong>(required)</strong></td>
@@ -2904,7 +1713,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>Name <strong>(required)</strong></td>
@@ -2912,7 +1720,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>Sponsor <strong>(required)</strong></td>
@@ -2920,7 +1727,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>Time <strong>(required)</strong></td>
@@ -2928,7 +1734,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
   </tbody>
 </table>
@@ -2955,7 +1760,6 @@ _No headers specified_
       <th>Name</th>
       <th>Type</th>
       <th>Description</th>
-      <th>Accepted values</th>
     </tr>
   </thead>
   <tbody>
@@ -2965,7 +1769,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
   </tbody>
 </table>
@@ -2987,7 +1790,6 @@ _No headers specified_
       <th>Name</th>
       <th>Type</th>
       <th>Description</th>
-      <th>Accepted values</th>
     </tr>
   </thead>
   <tbody>
@@ -2997,7 +1799,6 @@ _No headers specified_
           array(object)
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>confHours.hours <strong>(required)</strong></td>
@@ -3005,7 +1806,6 @@ _No headers specified_
           integer
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>confHours.id <strong>(required)</strong></td>
@@ -3013,7 +1813,6 @@ _No headers specified_
           integer
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>confHours.reason <strong>(required)</strong></td>
@@ -3021,7 +1820,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>msg <strong>(required)</strong></td>
@@ -3029,7 +1827,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>unconfHours <strong>(required)</strong></td>
@@ -3037,7 +1834,6 @@ _No headers specified_
           array(string)
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
   </tbody>
 </table>
@@ -3087,7 +1883,6 @@ _No headers specified_
       <th>Name</th>
       <th>Type</th>
       <th>Description</th>
-      <th>Accepted values</th>
     </tr>
   </thead>
   <tbody>
@@ -3097,7 +1892,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>ID <strong>(required)</strong></td>
@@ -3105,7 +1899,6 @@ _No headers specified_
           integer
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>Name <strong>(required)</strong></td>
@@ -3113,7 +1906,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>StuId <strong>(required)</strong></td>
@@ -3121,7 +1913,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
   </tbody>
 </table>
@@ -3146,7 +1937,6 @@ _No headers specified_
       <th>Name</th>
       <th>Type</th>
       <th>Description</th>
-      <th>Accepted values</th>
     </tr>
   </thead>
   <tbody>
@@ -3156,7 +1946,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>Name <strong>(required)</strong></td>
@@ -3164,7 +1953,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
       <tr>
         <td>Time <strong>(required)</strong></td>
@@ -3172,7 +1960,6 @@ _No headers specified_
           string
         </td>
         <td></td>
-        <td><em>Any</em></td>
       </tr>
   </tbody>
 </table>
