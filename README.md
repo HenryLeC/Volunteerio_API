@@ -18,6 +18,7 @@
 * [Schemas](#schemas)
   - [Login](#schema-login)
   - [Hours](#schema-hours)
+  - [401 Error](#schema-401)
   - [AddHours](#schema-addhours)
   - [ConfHour](#schema-confhour)
   - [UnconfHour](#schema-unconfhour)
@@ -122,7 +123,7 @@
         <td>
           string
         </td>
-        <td></td>
+        <td>The ApiKey, refered to as x-access-token</td>
       </tr>
       <tr>
         <td>role</td>
@@ -1297,7 +1298,9 @@
   "role": "student"
 }
 ```
-<a id="schema-hours-401" />
+<a id="schema-401" />
+
+#### 401 Error
 
 <table>
   <thead>
