@@ -1,6 +1,8 @@
 # mVolunteerio Web API
 
-## Table of Contents
+## API Documentation
+
+### Table of Contents
 
 * [Servers](#servers)
 * [Paths](#paths)
