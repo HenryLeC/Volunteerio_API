@@ -98,6 +98,29 @@ def MyOpps(user):
         CleanOpps.append({
             "ID": str(opp.id),
             "Name": opp.Name,
-            "Time": opp.Time
+            "Time": opp.Time,
+            "Location": opp.Location
         })
     return jsonify(CleanOpps)
+
+
+@app.route('/BookedStudents', methods=["POST"])
+@token_required
+def BookedStudents(user):
+    if not user.is_admin and not user.is_community:
+        return jsonify({
+            'msg': 'Must not be a Student to preform this task'
+        })
+    try:
+        Id = request.form["OppId"]
+    except KeyError:
+        return jsonify({
+            'msg': 'Please attach the proper parameters'
+        })
+
+    opp = Opportunity.query.get(Id)
+    students = [student for student in opp.BookedStudents]
+    studentsLofD = []
+    for student in students:
+        studentsLofD.append({"name": student["name"]})
+    return jsonify(studentsLofD)
