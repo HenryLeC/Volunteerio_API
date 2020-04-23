@@ -16,25 +16,26 @@ def login():
     except KeyError:
         return jsonify({'msg': 'Login information required'}), 401
 
-    # Find user by Uname and check hashed password
-    user = User.query.filter_by(username=uname).first()
-    if check_password_hash(user.password, passw):
-        # Make role
-        role = ''
-        if user.is_student:
-            role = 'student'
-        elif user.is_admin:
-            role = 'admin'
-        else:
-            role = 'community'
+    try:
+        # Find user by Uname and check hashed password
+        user = User.query.filter_by(username=uname).first()
+        if check_password_hash(user.password, passw):
+            # Make role
+            role = ''
+            if user.is_student:
+                role = 'student'
+            elif user.is_admin:
+                role = 'admin'
+            else:
+                role = 'community'
 
-        # return auth token and role
-        return jsonify({
-            'key': generate_auth_token(user.id).decode("utf-8"),
-            'role': role
-        })
-    else:
-        return jsonify({'msg': 'Invalid Login information'})
+            # return auth token and role
+            return jsonify({
+                'key': generate_auth_token(user.id).decode("utf-8"),
+                'role': role
+            })
+    except Exception:
+        return jsonify({'msg': 'Invalid Login information'}), 401
 
 
 @app.route('/AddOpp', methods=["POST"])

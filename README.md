@@ -16,7 +16,7 @@
   - [`POST` /StudentsList](#op-post-studentslist)
   - [`POST` /MyOpps](#op-post-myopps)
   - [`POST` /confirmHours](#op-post-confirmhours) 
-* [Community Member and Admin Routes](#CommunityAdminRoutes)
+* [Community Member and Admin Routes](#Community-and-Admin-Routes)
   - [`POST` /AddOpp](#op-post-addopp)
 
 
@@ -136,7 +136,8 @@
 
 
 
-## Student Routes <a id="Student-Routes"/>
+## Student Routes 
+<a id="Student-Routes"/>
 
 
 ### `POST` /hours
@@ -1421,20 +1422,13 @@
 }
 ```
 
-## Community And Admin Routes 
-<a name="CommunityAdminRoutes" />
+## Community And Admin Routes
 
 
 ### `POST` /AddOpp
 <a id="op-post-addopp" />
 
 > Add Opp
-
-
-
-
-
-
 
 #### Request body
 ###### application/x-www-form-urlencoded
