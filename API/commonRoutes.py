@@ -123,5 +123,5 @@ def BookedStudents(user):
     students = [student for student in opp.BookedStudents]
     studentsLofD = []
     for student in students:
-        studentsLofD.append({"name": student["name"]})
+        studentsLofD.append({"name": student.name})
     return jsonify(studentsLofD)
