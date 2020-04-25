@@ -111,7 +111,7 @@ def StudentsList(user):
             User.name.like(Filter),
             User.pub_ID.like(Filter),
         )
-    )).all()
+    )).limit(5)
     for student in Students:
         ReturnList.append({
             "Name": student.name,

@@ -56,7 +56,6 @@ def AddOpp(user):
         })
 
     Parsed = datetime.datetime.strptime(Date, "%Y-%m-%dT%H:%M:%S")
-    print(Parsed)
 
     Opp = Opportunity(Name, Location, Parsed, Hours, user)
     user.Opportunities.append(Opp)
