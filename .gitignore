@@ -9,3 +9,5 @@ API/__pycache__
 
 .vscode/*
 .vscode/settings.json
+
+example.log

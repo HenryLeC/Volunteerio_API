@@ -5,6 +5,7 @@ from API.database import User, Opportunity
 from flask import jsonify, request
 import datetime
 import jwt
+import logging
 
 
 @app.route('/login', methods=["POST"])
@@ -41,86 +42,102 @@ def login():
 @app.route('/AddOpp', methods=["POST"])
 @token_required
 def AddOpp(user):
-    if not user.is_admin and not user.is_community:
-        return jsonify({
-            'msg': 'Must not be a Student to preform this task'
-        })
     try:
-        Name = request.form["Name"]
-        Date = request.form["Date"]
-        Location = request.form["Location"]
-        Hours = request.form["Hours"]
-    except KeyError:
+        if not user.is_admin and not user.is_community:
+            return jsonify({
+                'msg': 'Must not be a Student to preform this task'
+            })
+        try:
+            Name = request.form["Name"]
+            Date = request.form["Date"]
+            Location = request.form["Location"]
+            Hours = request.form["Hours"]
+        except KeyError:
+            return jsonify({
+                'msg': 'Please attach the proper parameters'
+            })
+
+        Parsed = datetime.datetime.strptime(Date, "%Y-%m-%dT%H:%M:%S")
+
+        Opp = Opportunity(Name, Location, Parsed, Hours, user)
+        user.Opportunities.append(Opp)
+
+        db.session.add(Opp)
+        db.session.add(user)
+        db.session.commit()
+
         return jsonify({
-            'msg': 'Please attach the proper parameters'
+            'msg': 'Opportunity Added'
         })
-
-    Parsed = datetime.datetime.strptime(Date, "%Y-%m-%dT%H:%M:%S")
-
-    Opp = Opportunity(Name, Location, Parsed, Hours, user)
-    user.Opportunities.append(Opp)
-
-    db.session.add(Opp)
-    db.session.add(user)
-    db.session.commit()
-
-    return jsonify({
-        'msg': 'Opportunity Added'
-    })
+    except Exception:
+        logging.exception('')
+        return "", 500
 
 
 @app.route('/SignInStudents', methods=["POST"])
 @token_required
 def SignInStudents(user):
-    if not user.is_admin and not user.is_community:
-        return jsonify({
-            'msg': 'Must not be a Student to preform this task'
-        })
     try:
-        OppId = request.form["OppId"]
-    except KeyError:
-        return jsonify({
-            'msg': 'Please attach the proper parameters'
-        })
-    return jwt.encode({'ID': OppId}, 'VerySecret', algorithm='HS256')
+        if not user.is_admin and not user.is_community:
+            return jsonify({
+                'msg': 'Must not be a Student to preform this task'
+            })
+        try:
+            OppId = request.form["OppId"]
+        except KeyError:
+            return jsonify({
+                'msg': 'Please attach the proper parameters'
+            })
+        return jwt.encode({'ID': OppId}, 'VerySecret', algorithm='HS256')
+    except Exception:
+        logging.exception('')
+        return "", 500
 
 
 @app.route('/MyOpps', methods=["POST"])
 @token_required
 def MyOpps(user):
-    if not user.is_admin and not user.is_community:
-        return jsonify({
-            'msg': 'Must not be a Student to preform this task'
-        })
-    Opps = user.Opportunities
-    CleanOpps = []
-    for opp in Opps:
-        CleanOpps.append({
-            "ID": str(opp.id),
-            "Name": opp.Name,
-            "Time": opp.Time,
-            "Location": opp.Location
-        })
-    return jsonify(CleanOpps)
+    try:
+        if not user.is_admin and not user.is_community:
+            return jsonify({
+                'msg': 'Must not be a Student to preform this task'
+            })
+        Opps = user.Opportunities
+        CleanOpps = []
+        for opp in Opps:
+            CleanOpps.append({
+                "ID": str(opp.id),
+                "Name": opp.Name,
+                "Time": opp.Time,
+                "Location": opp.Location
+            })
+        return jsonify(CleanOpps)
+    except Exception:
+        logging.exception('')
+        return "", 500
 
 
 @app.route('/BookedStudents', methods=["POST"])
 @token_required
 def BookedStudents(user):
-    if not user.is_admin and not user.is_community:
-        return jsonify({
-            'msg': 'Must not be a Student to preform this task'
-        })
     try:
-        Id = request.form["OppId"]
-    except KeyError:
-        return jsonify({
-            'msg': 'Please attach the proper parameters'
-        })
+        if not user.is_admin and not user.is_community:
+            return jsonify({
+                'msg': 'Must not be a Student to preform this task'
+            })
+        try:
+            Id = request.form["OppId"]
+        except KeyError:
+            return jsonify({
+                'msg': 'Please attach the proper parameters'
+            })
 
-    opp = Opportunity.query.get(Id)
-    students = [student for student in opp.BookedStudents]
-    studentsLofD = []
-    for student in students:
-        studentsLofD.append({"name": student.name})
-    return jsonify(studentsLofD)
+        opp = Opportunity.query.get(Id)
+        students = [student for student in opp.BookedStudents]
+        studentsLofD = []
+        for student in students:
+            studentsLofD.append({"name": student.name})
+        return jsonify(studentsLofD)
+    except Exception:
+        logging.exception('')
+        return "", 500

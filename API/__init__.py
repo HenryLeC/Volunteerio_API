@@ -2,6 +2,9 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 import os
 import secrets
+import logging
+
+logging.basicConfig(filename='example.log')
 
 app = Flask(__name__)
 # Set path for DB
