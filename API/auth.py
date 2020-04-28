@@ -1,4 +1,4 @@
-from itsdangerous import (TimedJSONWebSignatureSerializer,
+from itsdangerous import (JSONWebSignatureSerializer,
                           SignatureExpired, BadSignature)
 from API.database import User
 from API import app
@@ -7,17 +7,16 @@ from flask import request, jsonify
 
 
 # Generate Auth Token Func
-def generate_auth_token(u_id, expiration=3600):
-    s = TimedJSONWebSignatureSerializer(
-            app.config['SECRET_KEY'],
-            expires_in=expiration
+def generate_auth_token(u_id):
+    s = JSONWebSignatureSerializer(
+            app.config['SECRET_KEY']
             )
     return s.dumps({'id': u_id})
 
 
 # Check Auth Token Func
 def verify_auth_token(token):
-    s = TimedJSONWebSignatureSerializer(
+    s = JSONWebSignatureSerializer(
             app.config['SECRET_KEY']
             )
     try:

@@ -46,7 +46,7 @@ def AddOpp(user):
         if not user.is_admin and not user.is_community:
             return jsonify({
                 'msg': 'Must not be a Student to preform this task'
-            })
+            }), 500
         try:
             Name = request.form["Name"]
             Date = request.form["Date"]
@@ -55,7 +55,7 @@ def AddOpp(user):
         except KeyError:
             return jsonify({
                 'msg': 'Please attach the proper parameters'
-            })
+            }), 500
 
         Parsed = datetime.datetime.strptime(Date, "%Y-%m-%dT%H:%M:%S")
 
@@ -81,13 +81,13 @@ def SignInStudents(user):
         if not user.is_admin and not user.is_community:
             return jsonify({
                 'msg': 'Must not be a Student to preform this task'
-            })
+            }), 500
         try:
             OppId = request.form["OppId"]
         except KeyError:
             return jsonify({
                 'msg': 'Please attach the proper parameters'
-            })
+            }), 500
         return jwt.encode({'ID': OppId}, 'VerySecret', algorithm='HS256')
     except Exception:
         logging.exception('')
@@ -101,7 +101,7 @@ def MyOpps(user):
         if not user.is_admin and not user.is_community:
             return jsonify({
                 'msg': 'Must not be a Student to preform this task'
-            })
+            }), 500
         Opps = user.Opportunities
         CleanOpps = []
         for opp in Opps:
@@ -124,13 +124,13 @@ def BookedStudents(user):
         if not user.is_admin and not user.is_community:
             return jsonify({
                 'msg': 'Must not be a Student to preform this task'
-            })
+            }), 500
         try:
             Id = request.form["OppId"]
         except KeyError:
             return jsonify({
                 'msg': 'Please attach the proper parameters'
-            })
+            }), 500
 
         opp = Opportunity.query.get(Id)
         students = [student for student in opp.BookedStudents]

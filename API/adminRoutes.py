@@ -16,13 +16,13 @@ def confirmHours(user):
         if not user.is_admin:
             return jsonify({
                 'msg': 'Must be Administrator to preform this task'
-            })
+            }), 500
         try:
             StuHrData = request.form['StuHrData']
         except KeyError:
             return jsonify({
                 'msg': "Please provide an 'HoursId' and 'StudentId'"
-            })
+            }), 500
         StuHrDataList = StuHrData.split(", ")
         Id = StuHrDataList[0]
         HrId = StuHrDataList[1]
@@ -62,7 +62,7 @@ def deleteHours(user):
         if not user.is_admin:
             return jsonify({
                 'msg': 'Must be Administrator to preform this task'
-            })
+            }), 500
         try:
             StuHrData = request.form['StuHrData']
             StuHrDataList = StuHrData.split(", ")
@@ -71,7 +71,7 @@ def deleteHours(user):
         except KeyError:
             return jsonify({
                 'msg': "Please provide an 'HoursId' and 'StudentId'"
-            })
+            }), 500
 
         # Find The Student
         Student = User.query.get(Id)
@@ -105,13 +105,13 @@ def StudentsList(user):
         if not user.is_admin:
             return jsonify({
                 'msg': 'Must be Administrator to preform this task.'
-            })
+            }), 500
         try:
             Filter = "%{}%".format(request.form["Filter"])
         except KeyError:
             return jsonify({
                 'msg': ""
-            })
+            }), 500
         ReturnList = []
         # Filter for students that Have a name or ID like like the Filter.
         Students = User.query.filter(and_(
@@ -142,13 +142,13 @@ def StudentHours(user):
         if not user.is_admin:
             return jsonify({
                 'msg': 'Must be Administrator to preform this task.'
-            })
+            }), 500
         try:
             StudentId = request.form["id"]
         except KeyError:
             return jsonify({
                 'msg': "Please Supply a Student Id"
-            })
+            }), 500
 
         student = User.query.get(int(StudentId))
 
@@ -196,7 +196,7 @@ def Notifications(user):
         if not user.is_admin:
             return jsonify({
                 'msg': 'Must be Administrator to preform this task.'
-            })
+            }), 500
         Messages = NewUnconfHoursMessages.query.join(User).filter(
             User.District == user.District).all()
         CleanMessages = []

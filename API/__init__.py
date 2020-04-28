@@ -3,10 +3,12 @@ from flask_sqlalchemy import SQLAlchemy
 import os
 import secrets
 import logging
+from flask_cors import CORS
 
 logging.basicConfig(filename='example.log')
 
 app = Flask(__name__)
+CORS(app, supports_credentials=True)
 # Set path for DB
 dbpathl = os.path.join(os.path.abspath(os.path.dirname(__file__))).split("\\")
 dbpath = ""

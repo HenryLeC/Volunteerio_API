@@ -27,7 +27,7 @@ def add_hours(user):
             hours = request.form["hours"]
             reason = request.form["reason"]
         except KeyError:
-            return jsonify({'msg': 'Hours and reason is required.'})
+            return jsonify({'msg': 'Hours and reason is required.'}), 500
         id = user.HoursId
 
         # Increment HoursId by 1
@@ -67,8 +67,8 @@ def add_hours(user):
 def list_opps(user):
     try:
         Opps = Opportunity.query.join(User).filter(User.District == user.District,
-                                                Opportunity.Time >
-                                                datetime.datetime.utcnow())
+                                                   Opportunity.Time >
+                                                   datetime.datetime.utcnow())
         CleanOpps = []
         for opp in Opps:
             CleanOpps.append({
@@ -94,7 +94,7 @@ def Clock(user):
         except KeyError:
             return jsonify({
                 'msg': 'Please Pass in The Correct Parameters'
-            })
+            }), 500
         res = False
         RightDict = None
         for Dict in pickle.loads(user.CurrentOpps):
@@ -154,7 +154,7 @@ def BookAnOpp(user):
         except KeyError:
             return jsonify({
                 'msg': 'Please Pass in The Correct Parameters'
-            })
+            }), 500
         Opp = Opportunity.query.get(Id)
 
         user.BookedOpps.append(Opp)
@@ -172,7 +172,6 @@ def BookAnOpp(user):
 @token_required
 def BookedOpps(user):
     try:
-        10/0
         Opps = user.BookedOpps
         CleanOpps = []
         for opp in Opps:
