@@ -8,12 +8,12 @@ def makeDB():
 
     d = District("Miami Dade County")
 
-    u1 = User("U1", "12345", "User, User 1", "1111111", district=d,
-              student=True)
-    u2 = User("U2", "12345", "User, User 2", "2222222", district=d,
-              admin=True)
-    u3 = User("U3", "12345", "User, User 3", "3333333", district=d,
-              community=True)
+    u1 = User("U1", "12345", "User, User 1", "1111111", d,
+              "lecompteh18@gmail.com", student=True)
+    u2 = User("U2", "12345", "User, User 2", "2222222", d,
+              "2222222@volunteerio.us", admin=True)
+    u3 = User("U3", "12345", "User, User 3", "3333333", d,
+              "3333333@volunteerio.us", community=True)
 
     db.session.add(d)
     db.session.add(u1)

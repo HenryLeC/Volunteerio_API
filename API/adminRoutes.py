@@ -1,8 +1,8 @@
 from flask import request, jsonify
 from sqlalchemy import or_, and_
 from API import app, db
-from API.database import User, NewUnconfHoursMessages
-from API.auth import token_required
+from API.database import User, NewUnconfHoursMessages, District
+from API.auth import token_required, verify_auth_token
 import pickle
 import logging
 
@@ -209,6 +209,42 @@ def Notifications(user):
                 'Message': f"{Message.Student.name} requested new hours."
             })
         return jsonify(CleanMessages)
+    except Exception:
+        logging.exception('')
+        return "", 500
+
+# Implememted Auth Seperately for Json data
+@app.route('/NewStudent', methods=["POST"])
+def NewStudent():
+    try:
+        inputData = request.get_json()
+        InvalidUsers = []
+
+        if 'x-access-token' in inputData:
+            token = inputData['x-access-token']
+
+        if not token:
+            return jsonify({'message': 'Token is missing!'}), 401
+
+        current_user = verify_auth_token(token)
+        if not current_user:
+            return jsonify({'message': 'Token is invalid!'}), 401
+
+        if not current_user.is_admin:
+            return jsonify({
+                'msg': 'Must not be a Student to preform this task'
+            }), 500
+
+        for user in inputData["users"]:
+            try:
+                UserObj = User(user["username"], user["password"], user["name"], user["Id"], District.query.filter_by(id=user["District"]).first(), student=True)
+                db.session.add(UserObj)
+            except KeyError:
+                InvalidUsers.append(user)
+        db.session.commit()
+        return jsonify({
+            "Invalid Users": InvalidUsers
+        })
     except Exception:
         logging.exception('')
         return "", 500

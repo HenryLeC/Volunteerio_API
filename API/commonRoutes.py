@@ -35,6 +35,8 @@ def login():
                 'key': generate_auth_token(user.id).decode("utf-8"),
                 'role': role
             })
+        else:
+            return jsonify({'msg': 'Invalid Login information'}), 401
     except Exception:
         return jsonify({'msg': 'Invalid Login information'}), 401
 

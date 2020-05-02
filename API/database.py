@@ -11,6 +11,7 @@ class User(db.Model):
     password = db.Column(db.String(), unique=True, nullable=False)
     name = db.Column(db.String(), nullable=False)
     pub_ID = db.Column(db.String(), nullable=False, unique=True)
+    email = db.Column(db.String(), unique=True)
 
     District_Id = db.Column(db.Integer, db.ForeignKey('district.id'))
     District = db.relationship('District', backref="Members", lazy=True)
@@ -39,8 +40,8 @@ class User(db.Model):
     Opportunities = db.relationship('Opportunity', backref="Sponsor",
                                     lazy=True)
 
-    def __init__(self, username, password, name, ID, district, admin=False,
-                 community=False, student=False):
+    def __init__(self, username, password, name, ID, district, email,
+                 admin=False, community=False, student=False):
         # If no role set default to student
         if not admin and not community and not student:
             student = True
@@ -57,6 +58,7 @@ class User(db.Model):
         self.pub_ID = ID
         self.HoursId = 1
         self.District = district
+        self.email = email
 
 
 class Opportunity(db.Model):

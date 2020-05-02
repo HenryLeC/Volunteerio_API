@@ -2,10 +2,14 @@ from flask import request, jsonify
 from API import app, db
 from API.database import User, Opportunity, NewUnconfHoursMessages
 from API.auth import token_required
+from docx import Document
 import pickle
+import requests
 import datetime
 import jwt
 import logging
+import io
+import json
 
 
 @app.route("/hours", methods=["POST"])
@@ -219,6 +223,76 @@ def PastOpps(user):
             "Hours": HoursClean,
         }
         return jsonify(FullClean)
+    except Exception:
+        logging.exception('')
+        return "", 500
+
+
+@app.route('/GenerateDoc', methods=["POST"])
+@token_required
+def GenerateDoc(user: User):
+    try:
+        email = user.email
+
+        # Helper Function to make cell bold
+        def make_row_bold(row):
+            for cell in row.cells:
+                for paragraph in cell.paragraphs:
+                    for run in paragraph.runs:
+                        run.font.bold = True
+        # GenerateDoc
+        opps = user.PastOpps
+        ConfHours = pickle.loads(user.confHours)
+
+        Doc = Document("Header.docx")
+        Doc.add_heading(f'Total Hours: {user.hours}', level=1)
+        table = Doc.add_table(rows=1, cols=4)
+
+        hdr_cells = table.rows[0].cells
+        hdr_cells[0].text = 'Name'
+        hdr_cells[1].text = 'Date'
+        hdr_cells[2].text = 'Hours*'
+        hdr_cells[3].text = 'Sponsor'
+        make_row_bold(table.rows[0])
+
+        for opp in opps:
+            row_cells = table.add_row().cells
+            row_cells[0].text = opp.Name
+            row_cells[1].text = opp.Time
+            row_cells[2].text = opp.Hours
+            row_cells[3].text = opp.Sponsor
+        for Hour in ConfHours:
+            row_cells = table.add_row().cells
+            row_cells[0].text = Hour["reason"]
+            row_cells[1].text = "NA"
+            row_cells[2].text = str(Hour["hours"])
+            row_cells[3].text = "NA"
+
+        Doc.add_paragraph("* Hours may be incorrect in Sponsored Opps.")
+
+        # # Testing
+        # Doc.save("File.docx")
+
+        # Save To IO Stream
+        DocStream = io.BytesIO()
+        Doc.save(DocStream)
+        DocStream.seek(0)
+
+        # Send Email
+        requests.post(
+            "https://api.mailgun.net/v3/volunteerio.us/messages",
+            auth=("api", json.loads(open("APIKeys.json", "r").read())["MailGun"]),
+            files=[("attachment", ("Hours.Docx", DocStream))],
+            data={
+                "from": "Hours <Hours@volunteerio.us>",
+                "to": email,
+                "text": "Your Hours",
+                "subject": "Your Hours"
+            }
+        )
+        return jsonify({
+            'msg': f'Email sent from Hours@Volunteerio.us to {email}.'
+        })
     except Exception:
         logging.exception('')
         return "", 500
