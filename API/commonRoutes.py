@@ -1,11 +1,11 @@
 from API import app, db
 from API.auth import generate_auth_token, token_required
 from werkzeug.security import check_password_hash
-from API.database import User, Opportunity
+from API.database import User, Opportunity, Logs
 from flask import jsonify, request
 import datetime
 import jwt
-import logging
+import traceback
 
 
 @app.route('/login', methods=["POST"])
@@ -72,7 +72,8 @@ def AddOpp(user):
             'msg': 'Opportunity Added'
         })
     except Exception:
-        logging.exception('')
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
         return "", 500
 
 
@@ -92,7 +93,8 @@ def SignInStudents(user):
             }), 500
         return jwt.encode({'ID': OppId}, 'VerySecret', algorithm='HS256')
     except Exception:
-        logging.exception('')
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
         return "", 500
 
 
@@ -115,7 +117,8 @@ def MyOpps(user):
             })
         return jsonify(CleanOpps)
     except Exception:
-        logging.exception('')
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
         return "", 500
 
 
@@ -141,5 +144,6 @@ def BookedStudents(user):
             studentsLofD.append({"name": student.name})
         return jsonify(studentsLofD)
     except Exception:
-        logging.exception('')
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
         return "", 500

@@ -1,13 +1,13 @@
 from flask import request, jsonify
 from API import app, db
-from API.database import User, Opportunity, NewUnconfHoursMessages
+from API.database import User, Opportunity, NewUnconfHoursMessages, Logs
 from API.auth import token_required
 from docx import Document
 import pickle
 import requests
 import datetime
 import jwt
-import logging
+import traceback
 import io
 import json
 
@@ -18,7 +18,8 @@ def getHours(user):
     try:
         return jsonify({'hours': str(user.hours)})
     except Exception:
-        logging.exception('')
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
         return "", 500
 
 
@@ -62,7 +63,8 @@ def add_hours(user):
             'confHours': pickle.loads(user.confHours)
         })
     except Exception:
-        logging.exception('')
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
         return "", 500
 
 
@@ -85,7 +87,8 @@ def list_opps(user):
             })
         return jsonify(CleanOpps)
     except Exception:
-        logging.exception('')
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
         return "", 500
 
 
@@ -145,7 +148,8 @@ def Clock(user):
                 'msg': "Thank you for clocking in, don't forget to clock out later"
             })
     except Exception:
-        logging.exception('')
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
         return "", 500
 
 
@@ -168,7 +172,8 @@ def BookAnOpp(user):
             'msg': 'Opportunity Booked.'
         })
     except Exception:
-        logging.exception('')
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
         return "", 500
 
 
@@ -186,7 +191,8 @@ def BookedOpps(user):
             })
         return jsonify(CleanOpps)
     except Exception:
-        logging.exception('')
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
         return "", 500
 
 
@@ -224,7 +230,8 @@ def PastOpps(user):
         }
         return jsonify(FullClean)
     except Exception:
-        logging.exception('')
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
         return "", 500
 
 
@@ -294,5 +301,6 @@ def GenerateDoc(user: User):
             'msg': f'Email sent from Hours@Volunteerio.us to {email}.'
         })
     except Exception:
-        logging.exception('')
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
         return "", 500

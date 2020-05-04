@@ -1,10 +1,10 @@
 from flask import request, jsonify
 from sqlalchemy import or_, and_
 from API import app, db
-from API.database import User, NewUnconfHoursMessages, District
+from API.database import User, NewUnconfHoursMessages, District, Logs
 from API.auth import token_required, verify_auth_token
 import pickle
-import logging
+import traceback
 
 
 @app.route('/confirmHours', methods=["POST"])
@@ -51,7 +51,8 @@ def confirmHours(user):
             'confHours': pickle.loads(Student.confHours)
         })
     except Exception:
-        logging.exception('')
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
         return "", 500
 
 
@@ -94,7 +95,8 @@ def deleteHours(user):
             'confHours': pickle.loads(Student.confHours)
         })
     except Exception:
-        logging.exception('')
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
         return "", 500
 
 
@@ -131,7 +133,8 @@ def StudentsList(user):
             })
         return jsonify(ReturnList)
     except Exception:
-        logging.exception('')
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
         return "", 500
 
 
@@ -185,7 +188,8 @@ def StudentHours(user):
         }
         return jsonify(FullClean)
     except Exception:
-        logging.exception('')
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
         return "", 500
 
 
@@ -210,7 +214,8 @@ def Notifications(user):
             })
         return jsonify(CleanMessages)
     except Exception:
-        logging.exception('')
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
         return "", 500
 
 # Implememted Auth Seperately for Json data
@@ -246,5 +251,6 @@ def NewStudent():
             "Invalid Users": InvalidUsers
         })
     except Exception:
-        logging.exception('')
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
         return "", 500

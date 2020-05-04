@@ -1,6 +1,6 @@
 from itsdangerous import (JSONWebSignatureSerializer,
                           SignatureExpired, BadSignature)
-from API.database import User
+from API.database import User, Logs
 from API import app
 from functools import wraps
 from flask import request, jsonify

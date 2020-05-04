@@ -2,10 +2,8 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 import os
 import secrets
-import logging
+import traceback
 from flask_cors import CORS
-
-logging.basicConfig(filename='example.log')
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
@@ -26,3 +24,4 @@ import API.studentRoutes
 import API.adminRoutes
 import API.commonRoutes
 import API.database
+import API.webAdmin

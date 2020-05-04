@@ -1,10 +1,12 @@
 from API import db
 from werkzeug.security import generate_password_hash as hash
+from flask_login import UserMixin
 import pickle
+import datetime
 
 
 # User table
-class User(db.Model):
+class User(db.Model, UserMixin):
     # All
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(), unique=True, nullable=False)
@@ -40,8 +42,11 @@ class User(db.Model):
     Opportunities = db.relationship('Opportunity', backref="Sponsor",
                                     lazy=True)
 
+    # WebBackend
+    is_webmaster = db.Column(db.Boolean)
+
     def __init__(self, username, password, name, ID, district, email,
-                 admin=False, community=False, student=False):
+                 admin=False, community=False, student=False, webmaster=False):
         # If no role set default to student
         if not admin and not community and not student:
             student = True
@@ -59,6 +64,7 @@ class User(db.Model):
         self.HoursId = 1
         self.District = district
         self.email = email
+        self.is_webmaster = webmaster
 
 
 class Opportunity(db.Model):
@@ -110,3 +116,13 @@ class Past(db.Model):
 
     user = db.relationship(User, backref=db.backref("Past"))
     opp = db.relationship(Opportunity, backref=db.backref("Past"))
+
+
+class Logs(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    exc = db.Column(db.String())
+    time = db.Column(db.DateTime())
+
+    def __init__(self, exc: str):
+        self.exc = exc
+        self.time = datetime.datetime.now()

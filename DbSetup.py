@@ -14,11 +14,14 @@ def makeDB():
               "2222222@volunteerio.us", admin=True)
     u3 = User("U3", "12345", "User, User 3", "3333333", d,
               "3333333@volunteerio.us", community=True)
+    u4 = User("U4", "12345", "User, User 4", "4444444", None,
+              "4444444@volunteerio.us", admin=True, webmaster=True)
 
     db.session.add(d)
     db.session.add(u1)
     db.session.add(u2)
     db.session.add(u3)
+    db.session.add(u4)
     db.session.commit()
 
 
