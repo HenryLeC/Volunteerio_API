@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volunteerio Error Logs</title>
+    <style>
+        td {
+            white-space: pre-wrap;
+            margin-right: 10rem;
+        }
+    </style>
+</head>
+<body>
+    <table>
+        <tr>
+            <th>ID</th>
+            <th>Stack Trace</th>
+            <th>Date</th>
+        </tr>
+        {% for log in logs %}
+            <tr>
+                <td>{{ log.id }}</td>
+                <td>{{ log.exc }}</td>
+                <td>{{ log.time }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+</body>
+</html>

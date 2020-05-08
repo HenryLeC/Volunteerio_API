@@ -304,3 +304,25 @@ def GenerateDoc(user: User):
         db.session.add(Logs(traceback.format_exc()))
         db.session.commit()
         return "", 500
+
+
+@app.route('/Leaderboard', methods=["POST"])
+@token_required
+def Leaderboard(user):
+    try:
+        users = User.query.filter_by(District=user.District, is_student=True).with_entities(User.name, User.hours).order_by(User.hours).limit(50).all()
+
+        usersReturn = []
+        for i, user in enumerate(users):
+            usersReturn.append({
+                "name": user.name,
+                "hours": user.hours,
+                "rank": i+1
+            })
+
+        return jsonify(usersReturn)
+
+    except Exception:
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
+        return "", 500

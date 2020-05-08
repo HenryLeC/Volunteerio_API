@@ -40,11 +40,6 @@ def backLogin():
 @app.route('/back')
 @login_required
 def back():
-    logBreaks = ""
-    
     logs: list = Logs.query.all()
 
-    for log in logs:
-        logBreaks += f"<p>{log.exc}<p>"
-
-    return logBreaks
+    return render_template("back.html", logs=logs)

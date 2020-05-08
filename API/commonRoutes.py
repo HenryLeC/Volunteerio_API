@@ -2,11 +2,15 @@ from API import app, db
 from API.auth import generate_auth_token, token_required
 from werkzeug.security import check_password_hash
 from API.database import User, Opportunity, Logs
-from flask import jsonify, request
+from flask import jsonify, request, redirect
 import datetime
 import jwt
 import traceback
 
+
+@app.route('/')
+def index():
+    return redirect("https://volunteerio.us")
 
 @app.route('/login', methods=["POST"])
 def login():
