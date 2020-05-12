@@ -2,7 +2,6 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 import os
 import secrets
-import traceback
 from flask_cors import CORS
 
 app = Flask(__name__)

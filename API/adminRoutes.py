@@ -254,3 +254,33 @@ def NewStudent():
         db.session.add(Logs(traceback.format_exc()))
         db.session.commit()
         return "", 500
+
+
+@app.route('/addDistrict', methods=['POST'])
+@token_required
+def addDistrict(user):
+    try:
+        if not user.is_admin:
+            return jsonify({
+                'msg': 'Must be Administrator to preform this task.'
+            }), 500
+        try:
+            DistrictName = request.form["name"]
+        except KeyError:
+            return jsonify({
+                'msg': "Please Supply a District Name"
+            }), 500
+
+        district = District(DistrictName)
+        db.session.add(district)
+        db.session.commit()
+
+        return jsonify({
+            "msg": f"New District {DistrictName} added with id {district.id}",
+            "name": DistrictName,
+            "id": str(district.id)
+        })
+    except Exception:
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
+        return "", 500
