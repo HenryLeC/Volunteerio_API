@@ -1,7 +1,7 @@
 from flask import request, jsonify
 from sqlalchemy import or_, and_
 from API import app, db
-from API.database import User, NewUnconfHoursMessages, District, Logs
+from API.database import User, NewUnconfHoursMessages, District, Logs, School
 from API.auth import token_required, verify_auth_token
 import pickle
 import traceback
@@ -279,6 +279,39 @@ def addDistrict(user):
             "msg": f"New District {DistrictName} added with id {district.id}",
             "name": DistrictName,
             "id": str(district.id)
+        })
+    except Exception:
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
+        return "", 500
+
+@app.route('/addSchool', methods=['POST'])
+@token_required
+def addDistrict(user):
+    try:
+        if not user.is_admin:
+            return jsonify({
+                'msg': 'Must be Administrator to preform this task.'
+            }), 500
+        try:
+            SchoolName = request.form["name"]
+            DistrictId = request.form["districtId"]
+        except KeyError:
+            return jsonify({
+                'msg': "Please Supply a District Name"
+            }), 500
+
+        school = School(SchoolName)
+        district = District.query.get(DistrictId)
+        district.schools.append(school)
+        db.session.add(school)
+        db.session.add(district)
+        db.session.commit()
+
+        return jsonify({
+            "msg": f"New School {SchoolName} added with id {school.id}",
+            "name": SchoolName,
+            "id": str(school.id)
         })
     except Exception:
         db.session.add(Logs(traceback.format_exc()))

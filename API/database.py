@@ -17,6 +17,8 @@ class User(db.Model, UserMixin):
 
     District_Id = db.Column(db.Integer, db.ForeignKey('district.id'))
     District = db.relationship('District', backref="Members", lazy=True)
+    School_Id = db.Column(db.Integer, db.ForeignKey('school.id'))
+    School = db.relationship('School', backref="Members", lazy=True)
 
     # Student
     HoursId = db.Column(db.Integer)
@@ -45,10 +47,10 @@ class User(db.Model, UserMixin):
     # WebBackend
     is_webmaster = db.Column(db.Boolean)
 
-    def __init__(self, username, password, name, ID, district, email,
+    def __init__(self, username, password, name, ID, district, school, email,
                  admin=False, community=False, student=False, webmaster=False):
         # If no role set default to student
-        if not admin and not community and not student:
+        if not admin and not community and not student and not webmaster:
             student = True
         self.username = username
         self.password = hash(password)
@@ -63,6 +65,7 @@ class User(db.Model, UserMixin):
         self.pub_ID = ID
         self.HoursId = 1
         self.District = district
+        self.School = school
         self.email = email
         self.is_webmaster = webmaster
 
@@ -95,6 +98,17 @@ class NewUnconfHoursMessages(db.Model):
 class District(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String())
+    schools = db.relationship("School", back_populates="district")
+
+    def __init__(self, Name):
+        self.name = Name
+
+
+class School(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String())
+    district_id = db.Column(db.Integer, db.ForeignKey("district.id"))
+    district = db.relationship("District", back_populates="schools")
 
     def __init__(self, Name):
         self.name = Name

@@ -310,7 +310,17 @@ def GenerateDoc(user: User):
 @token_required
 def Leaderboard(user):
     try:
-        users = User.query.filter_by(District=user.District, is_student=True).with_entities(User.name, User.hours).order_by(User.hours.desc()).limit(50).all()
+        try:
+            filt = request.form["filter"]
+        except KeyError:
+            return jsonify({
+                'msg': 'Please Pass in The Correct Parameters'
+            }), 500
+
+        if filt == "school":
+            users = User.query.filter_by(District=user.District, is_student=True).with_entities(User.name, User.hours).order_by(User.hours.desc()).limit(50).all()
+        elif filt == "district":
+            users = User.query.filter_by(School=user.School, is_student=True).with_entities(User.name, User.hours).order_by(User.hours.desc()).limit(50).all()
 
         usersReturn = []
         for i, user in enumerate(users):

@@ -3,7 +3,8 @@ import random
 from API import db
 from string import digits
 from API.database import (User, Opportunity, Booked,
-                          Past, District, NewUnconfHoursMessages)
+                          Past, District, NewUnconfHoursMessages,
+                          School)
 import datetime
 import pickle
 
@@ -23,6 +24,7 @@ lastCId = 20000000
 
 # District
 d = District("Waterside School District")
+s = School("Waterside Public School")
 db.session.add(d)
 
 
@@ -32,7 +34,7 @@ for name in stuNames:
     username = name + str(random.randint(0, 20))
     stuId = str(lastSId).zfill(8)
     lastSId += 1
-    Stu = User(username, "password", name, stuId, d, f"{username}@emaple.com", student=True)
+    Stu = User(username, "password", name, stuId, d, s, f"{username}@emaple.com", student=True)
     students.append(Stu)
     db.session.add(Stu)
     user_data[name] = {
@@ -47,7 +49,7 @@ for name in adminNames:
     username = name + str(random.randint(0, 20))
     admId = str(lastAId).zfill(8)
     lastAId += 1
-    Adm = User(username, "password", name, admId, d, f"{username}@example.com", admin=True)
+    Adm = User(username, "password", name, admId, d, s, f"{username}@example.com", admin=True)
     db.session.add(Adm)
     admins.append(Adm)
     user_data[name] = {
@@ -62,7 +64,7 @@ for name in communityNames:
     username = name + str(random.randint(0, 20))
     comId = str(lastCId).zfill(8)
     lastCId += 1
-    Adm = User(username, "password", name, comId, d, f"{username}@example.com", community=True)
+    Adm = User(username, "password", name, comId, d, s, f"{username}@example.com", community=True)
     db.session.add(Adm)
     cmembers.append(Adm)
     user_data[name] = {
