@@ -1,9 +1,9 @@
-# mVolunteerio Web API Documentation
+# Volunteerio Web API Documentation
 
 ### Table of Contents
 
 * [Servers](#servers)
-  - [73.57.34.161](#servers)
+  - [api.volunteerio.us](#servers)
 * [Login Route](#Login-Route)
   - [`POST` /login](#op-post-login)
 * [Student Routes](#Student-Routes)
@@ -32,7 +32,7 @@
   </thead>
   <tbody>
     <tr>
-      <td><a href="http://73.57.34.161" target="_blank">http://73.57.34.161</a></td>
+      <td><a href="https://api.volunteerio.us" target="_blank">https://api.volunteerio.us</a></td>
       <td></td>
     </tr>
   </tbody>
