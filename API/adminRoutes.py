@@ -287,7 +287,7 @@ def addDistrict(user):
 
 @app.route('/addSchool', methods=['POST'])
 @token_required
-def addDistrict(user):
+def addSchool(user):
     try:
         if not user.is_admin:
             return jsonify({

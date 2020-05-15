@@ -15,3 +15,5 @@ example.log
 APIKeys.json
 
 Users.json
+
+migrations/*
