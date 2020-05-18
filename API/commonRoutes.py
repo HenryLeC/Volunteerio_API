@@ -12,6 +12,7 @@ import traceback
 def index():
     return redirect("https://volunteerio.us")
 
+
 @app.route('/login', methods=["POST"])
 def login():
     # Check for Username and Password
@@ -63,7 +64,10 @@ def AddOpp(user):
                 'msg': 'Please attach the proper parameters'
             }), 500
 
-        Parsed = datetime.datetime.strptime(Date, "%Y-%m-%dT%H:%M:%S")
+        # Take Colon Seperated UTC offset and make it non Colon Seperated
+        if ":" == Date[-3:-2]:
+            Date = Date[:-3] + Date[-2:]
+        Parsed = datetime.datetime.strptime(Date, "%Y-%m-%dT%H:%M:%S%z")
 
         Opp = Opportunity(Name, Location, Parsed, Hours, user)
         user.Opportunities.append(Opp)
@@ -116,7 +120,7 @@ def MyOpps(user):
             CleanOpps.append({
                 "ID": str(opp.id),
                 "Name": opp.Name,
-                "Time": opp.Time,
+                "Time": opp.getTime(),
                 "Location": opp.Location
             })
         return jsonify(CleanOpps)

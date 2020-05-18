@@ -72,9 +72,21 @@ def add_hours(user):
 @token_required
 def list_opps(user):
     try:
-        Opps = Opportunity.query.join(User).filter(User.District == user.District,
-                                                   Opportunity.Time >
-                                                   datetime.datetime.utcnow())
+        try:
+            dateFilter = request.form["filterDate"]
+            nameFilter = "%{}%".format(request.form["filterName"])
+        except KeyError:
+            return jsonify({'msg': "Please Supply all Paramaters"}), 500
+
+        dateFilter = datetime.datetime.strptime(dateFilter, "%Y-%m-%dT%H:%M:%S")
+
+        Opps = Opportunity.query.join(User).filter(
+                                                        User.District == user.District,
+                                                        Opportunity.Time > dateFilter,
+                                                        Opportunity.Name.like(nameFilter)
+                                                    ).order_by(
+                                                        Opportunity.Time.desc()
+                                                    ).all()
         CleanOpps = []
         for opp in Opps:
             CleanOpps.append({
@@ -82,7 +94,7 @@ def list_opps(user):
                 "Name": opp.Name,
                 "Location": opp.Location,
                 "Hours": opp.Hours,
-                "Time": opp.Time.strftime("%m/%d/%Y, %H:%M"),
+                "Time": opp.getTime(),
                 "Sponsor": User.query.get(int(opp.SponsorID)).name
             })
         return jsonify(CleanOpps)
