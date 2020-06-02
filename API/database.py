@@ -90,7 +90,7 @@ class Opportunity(db.Model):
         self.SponsorId = Sponsor.id
 
     def getTime(self):
-        return self.Time.strftime("%a %b $d, %I:%M %p")
+        return self.Time.strftime("%a %b %d, %I:%M %p")
 
 
 class NewUnconfHoursMessages(db.Model):
