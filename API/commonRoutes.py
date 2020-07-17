@@ -155,3 +155,33 @@ def BookedStudents(user):
         db.session.add(Logs(traceback.format_exc()))
         db.session.commit()
         return "", 500
+
+
+@app.route('/DeleteOpp', methods=["POST"])
+@token_required
+def DeleteOpp(user):
+    try:
+        if not user.is_admin and not user.is_community:
+            return jsonify({
+                'msg': 'Must not be a Student to preform this task'
+            }), 500
+
+        try:
+            OppId = request.form["OppId"]
+        except KeyError:
+            return jsonify({
+                'msg': 'Please attach the proper parameters'
+            }), 500
+
+        Opp = Opportunity.query.get(int(OppId))
+        db.session.delete(Opp)
+        db.session.commit()
+
+        return jsonify({
+            "msg": "Opportunity Deleted"
+        })
+
+    except Exception:
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
+        return "", 500
