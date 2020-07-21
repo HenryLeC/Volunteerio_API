@@ -146,19 +146,26 @@ def Clock(user):
             })
 
         else:
-            CurrentOpps = pickle.loads(user.CurrentOpps)
-            CurrentOpps.append({
-                'StartTime': datetime.datetime.utcnow(),
-                'JWT': Code
-            })
-            user.CurrentOpps = pickle.dumps(CurrentOpps)
+            OppId = jwt.decode(Code, 'VerySecret', algorithm="HS256")["ID"]
+            Opp = Opportunity.query.get(OppId)
+            if Opp:
+                CurrentOpps = pickle.loads(user.CurrentOpps)
+                CurrentOpps.append({
+                    'StartTime': datetime.datetime.utcnow(),
+                    'JWT': Code
+                })
+                user.CurrentOpps = pickle.dumps(CurrentOpps)
 
-            db.session.add(user)
-            db.session.commit()
+                db.session.add(user)
+                db.session.commit()
 
-            return jsonify({
-                'msg': "Thank you for clocking in, don't forget to clock out later"
-            })
+                return jsonify({
+                    'msg': "Thank you for clocking in, don't forget to clock out later"
+                })
+            else:
+                return jsonify({
+                    'msg': "Please scan an opportunity code."
+                })
     except Exception:
         db.session.add(Logs(traceback.format_exc()))
         db.session.commit()
