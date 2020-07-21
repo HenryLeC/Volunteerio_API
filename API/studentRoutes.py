@@ -142,6 +142,7 @@ def Clock(user):
             db.session.commit()
 
             return jsonify({
+                'header': "Scanned",
                 'msg': 'Thank You, Your Hours were added.'
             })
 
@@ -151,6 +152,7 @@ def Clock(user):
                 Opp = Opportunity.query.get(OppId)
             except(Exception):
                 return jsonify({
+                    'header': "Error",
                     'msg': "Please scan an opportunity code."
                 })
             if Opp:
@@ -165,6 +167,7 @@ def Clock(user):
                 db.session.commit()
 
                 return jsonify({
+                    'header': "Scanned",
                     'msg': "Thank you for clocking in, don't forget to clock out later"
                 })
     except Exception:
