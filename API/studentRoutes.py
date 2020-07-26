@@ -1,8 +1,13 @@
-from flask import request, jsonify
+from flask import request, jsonify, send_file
 from API import app, db
 from API.database import User, Opportunity, NewUnconfHoursMessages, Logs
 from API.auth import token_required
 from docx import Document
+from reportlab.lib.units import inch
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter
+from reportlab.platypus import Table, SimpleDocTemplate, TableStyle, Image
+from reportlab.platypus import Paragraph, Spacer
 import pickle
 import requests
 import datetime
@@ -262,67 +267,74 @@ def PastOpps(user):
 @token_required
 def GenerateDoc(user: User):
     try:
-        email = user.email
+        buffer = io.BytesIO()
 
-        # Helper Function to make cell bold
-        def make_row_bold(row):
-            for cell in row.cells:
-                for paragraph in cell.paragraphs:
-                    for run in paragraph.runs:
-                        run.font.bold = True
-        # GenerateDoc
+        # Make Doc
+        p = SimpleDocTemplate(buffer, pagesize=letter)
+        elems = []
+
+        # Make Image
+        im = Image("Logo.png", 6.5*inch, 1.04*inch)
+        elems.append(im)
+
+        # Add Space
+        elems.append(Spacer(0, 1*inch))
+
+        # Add Paragraph
+        elems.append(Paragraph("Total Volunteer Hours: " + str(user.hours)))
+
+        # Add Space
+        elems.append(Spacer(0, 1*inch))
+
+        # Make Table
+        data = [
+            ["Name", "Date", "Hours*", "Sponsor"]
+        ]
+
         opps = user.PastOpps
         ConfHours = pickle.loads(user.confHours)
 
-        Doc = Document("Header.docx")
-        Doc.add_heading(f'Total Hours: {user.hours}', level=1)
-        table = Doc.add_table(rows=1, cols=4)
-
-        hdr_cells = table.rows[0].cells
-        hdr_cells[0].text = 'Name'
-        hdr_cells[1].text = 'Date'
-        hdr_cells[2].text = 'Hours*'
-        hdr_cells[3].text = 'Sponsor'
-        make_row_bold(table.rows[0])
-
         for opp in opps:
-            row_cells = table.add_row().cells
-            row_cells[0].text = opp.Name
-            row_cells[1].text = opp.Time
-            row_cells[2].text = opp.Hours
-            row_cells[3].text = opp.Sponsor
-        for Hour in ConfHours:
-            row_cells = table.add_row().cells
-            row_cells[0].text = Hour["reason"]
-            row_cells[1].text = "NA"
-            row_cells[2].text = str(Hour["hours"])
-            row_cells[3].text = "NA"
+            data.append([opp.Name, opp.Time, opp.Hours, opp.Sponsor.name])
+        for hour in ConfHours:
+            data.append([hour["reason"], "NA", str(hour["hours"]), "NA"])
 
-        Doc.add_paragraph("* Hours may be incorrect in Sponsored Opps.")
+        t = Table(data)
+        styles = TableStyle([
+            ('TEXTCOLOR', (0, 0), (-1, -1), colors.Color(0.4, 0.4, 0.6)),
+            ('LINENBELOW', (0, 0), (-1, 0), 2, colors.Color(0.4, 0.4, 0.6)),
+            ('FONTSIZE', (0, 0), (-1, 0), 14),
 
-        # # Testing
-        # Doc.save("File.docx")
+            ('ALIGN', (0, 0), (-1, 0), "CENTER"),
+            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
 
-        # Save To IO Stream
-        DocStream = io.BytesIO()
-        Doc.save(DocStream)
-        DocStream.seek(0)
+            ('FONTNAME', (0, 0), (-1, 0), 'Helvetica'),
+            ('FONTSIZE', (0, 1), (0, -1), 12),
 
-        # Send Email
-        requests.post(
-            "https://api.mailgun.net/v3/volunteerio.us/messages",
-            auth=("api", json.loads(open("APIKeys.json", "r").read())["MailGun"]),
-            files=[("attachment", ("Hours.Docx", DocStream))],
-            data={
-                "from": "Hours <Hours@volunteerio.us>",
-                "to": email,
-                "text": "Your Hours",
-                "subject": "Your Hours"
-            }
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+        ])
+
+        t.setStyle(styles)
+        elems.append(t)
+
+        # Add Space
+        elems.append(Spacer(0, 1*inch))
+
+        # Add Paragraph
+        elems.append(Paragraph("* Hours may be incorrect on sponsored opportunities"))
+
+        # Save amd build PDF to buffer
+        p.build(elems)
+
+        # Seek on Buffer
+        buffer.seek(0)
+
+        return send_file(
+            buffer,
+            as_attachment=True,
+            mimetype="application/pdf",
+            attachment_filename="ExportedOpps.pdf"
         )
-        return jsonify({
-            'msg': f'Email sent from Hours@Volunteerio.us to {email}.'
-        })
     except Exception:
         db.session.add(Logs(traceback.format_exc()))
         db.session.commit()

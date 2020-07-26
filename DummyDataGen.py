@@ -34,7 +34,7 @@ for name in stuNames:
     username = name + str(random.randint(0, 20))
     stuId = str(lastSId).zfill(8)
     lastSId += 1
-    Stu = User(username, "password", name, stuId, d, s, f"{username}@emaple.com", student=True)
+    Stu = User(username, "password", name, stuId, d, s, student=True)
     students.append(Stu)
     db.session.add(Stu)
     user_data[name] = {
@@ -49,7 +49,7 @@ for name in adminNames:
     username = name + str(random.randint(0, 20))
     admId = str(lastAId).zfill(8)
     lastAId += 1
-    Adm = User(username, "password", name, admId, d, s, f"{username}@example.com", admin=True)
+    Adm = User(username, "password", name, admId, d, s, admin=True)
     db.session.add(Adm)
     admins.append(Adm)
     user_data[name] = {
@@ -64,7 +64,7 @@ for name in communityNames:
     username = name + str(random.randint(0, 20))
     comId = str(lastCId).zfill(8)
     lastCId += 1
-    Adm = User(username, "password", name, comId, d, s, f"{username}@example.com", community=True)
+    Adm = User(username, "password", name, comId, d, s, community=True)
     db.session.add(Adm)
     cmembers.append(Adm)
     user_data[name] = {
@@ -93,7 +93,7 @@ for usr in admins:
 for usr in cmembers:
     random_number_of_days = random.randrange(days_between_dates)
     random_date = start_date + datetime.timedelta(days=random_number_of_days)
-    opp = Opportunity(f"Opp{oppsI + 1}", "School", random_date, random.randint(0, 5), usr)
+    opp = Opportunity(f"Opp{oppsI + 1}", "School", random_date, random.randint(1, 5), usr)
     oppsI += 1
     opps.append(opp)
     usr.Opportunities.append(opp)
@@ -120,7 +120,7 @@ days_between_dates = time_between_dates.days
 for usr in admins:
     random_number_of_days = random.randrange(days_between_dates)
     random_date = start_date + datetime.timedelta(days=random_number_of_days)
-    opp = Opportunity(f"Opp{oppsI + 1}", "School", random_date, random.randint(0, 5), usr)
+    opp = Opportunity(f"Opp{oppsI + 1}", "School", random_date, random.randint(1, 5), usr)
     oppsI += 1
     opps.append(opp)
     usr.Opportunities.append(opp)
@@ -130,7 +130,7 @@ for usr in admins:
 for usr in cmembers:
     random_number_of_days = random.randrange(days_between_dates)
     random_date = start_date + datetime.timedelta(days=random_number_of_days)
-    opp = Opportunity(f"Opp{oppsI + 1}", "School", random_date, random.randint(0, 5), usr)
+    opp = Opportunity(f"Opp{oppsI + 1}", "School", random_date, random.randint(1, 5), usr)
     oppsI += 1
     opps.append(opp)
     usr.Opportunities.append(opp)

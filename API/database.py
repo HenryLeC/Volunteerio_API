@@ -13,7 +13,6 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(), unique=True, nullable=False)
     name = db.Column(db.String(), nullable=False)
     pub_ID = db.Column(db.String(), nullable=False, unique=True)
-    email = db.Column(db.String(), unique=True)
 
     District_Id = db.Column(db.Integer, db.ForeignKey('district.id'))
     District = db.relationship('District', backref="Members", lazy=True)
@@ -47,7 +46,7 @@ class User(db.Model, UserMixin):
     # WebBackend
     is_webmaster = db.Column(db.Boolean)
 
-    def __init__(self, username, password, name, ID, district, school, email,
+    def __init__(self, username, password, name, ID, district, school,
                  admin=False, community=False, student=False, webmaster=False):
         # If no role set default to student
         if not admin and not community and not student and not webmaster:
@@ -66,7 +65,6 @@ class User(db.Model, UserMixin):
         self.HoursId = 1
         self.District = district
         self.School = school
-        self.email = email
         self.is_webmaster = webmaster
 
 
