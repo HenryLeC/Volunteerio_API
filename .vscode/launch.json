@@ -6,27 +6,11 @@
     "configurations": [
         {"name":"Make Db","type":"python","request":"launch","program":"DbSetup.py","console":"integratedTerminal"},
         {
-            "name": "Setup.py",
+            "name": "Start",
             "type": "python",
             "request": "launch",
             "program": "setup.py",
             "console": "integratedTerminal"
-        },
-        {
-            "name": "Python: Flask",
-            "type": "python",
-            "request": "launch",
-            "module": "flask",
-            "env": {
-                "FLASK_APP": "setup.py",
-                "FLASK_ENV": "development",
-                "FLASK_DEBUG": "0"
-            },
-            "args": [
-                "run",
-                "--no-reload"
-            ],
-            "jinja": true
         }
     ]
 }

@@ -1,11 +1,13 @@
 from API import app, db
 from API.auth import generate_auth_token, token_required
 from werkzeug.security import check_password_hash
-from API.database import User, Opportunity, Logs
+from API.database import (User, Opportunity, Logs,
+                          NewUnconfHoursMessages, InCompleteOppMessages)
 from flask import jsonify, request, redirect
 import datetime
 import jwt
 import traceback
+import pickle
 
 
 @app.route('/')
@@ -48,7 +50,7 @@ def login():
 
 @app.route('/AddOpp', methods=["POST"])
 @token_required
-def AddOpp(user):
+def AddOpp(user: User):
     try:
         if not user.is_admin and not user.is_community:
             return jsonify({
@@ -59,6 +61,8 @@ def AddOpp(user):
             Date = request.form["Date"]
             Location = request.form["Location"]
             Hours = request.form["Hours"]
+            Class = request.form["Class"]
+            MaxVols = int(request.form["MaxVols"])
         except KeyError:
             return jsonify({
                 'msg': 'Please attach the proper parameters'
@@ -69,7 +73,8 @@ def AddOpp(user):
             Date = Date[:-3] + Date[-2:]
         Parsed = datetime.datetime.strptime(Date, "%Y-%m-%dT%H:%M:%S%z")
 
-        Opp = Opportunity(Name, Location, Parsed, Hours, user)
+        Opp = Opportunity(Name, Location, Parsed, Hours, Class,
+                          MaxVols, user, user.is_admin)
         user.Opportunities.append(Opp)
 
         db.session.add(Opp)
@@ -120,8 +125,13 @@ def MyOpps(user):
             CleanOpps.append({
                 "ID": str(opp.id),
                 "Name": opp.Name,
+                "Location": opp.Location,
+                "Hours": opp.Hours,
                 "Time": opp.getTime(),
-                "Location": opp.Location
+                "Sponsor": User.query.get(int(opp.SponsorID)).name,
+                "Class": opp.Class,
+                "CurrentVols": len(opp.BookedStudents),
+                "MaxVols": opp.MaxVols
             })
         return jsonify(CleanOpps)
     except Exception:
@@ -179,6 +189,111 @@ def DeleteOpp(user):
 
         return jsonify({
             "msg": "Opportunity Deleted"
+        })
+
+    except Exception:
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
+        return "", 500
+
+
+@app.route('/Notifications', methods=["POST"])
+@token_required
+def Notifications(user: User):
+    try:
+        CleanMessages = []
+
+        if user.is_admin:
+            HourMessages = NewUnconfHoursMessages.query.join(User).filter(
+                User.District == user.District).all()
+            OppMessages = Opportunity.query.join(User).filter(
+                User.District == user.District,
+                Opportunity.Confirmed.is_(False)
+            ).all()
+            for Message in HourMessages:
+                CleanMessages.append({
+                    'ID': Message.Student.id,
+                    'Name': Message.Student.name,
+                    'StuId': Message.Student.pub_ID,
+                    'Hours': Message.Student.hours,
+                    'Message': f"{Message.Student.name} requested new hours.",
+                    'Type': "Hour"
+                })
+            for Message in OppMessages:
+                CleanMessages.append({
+                    'ID': str(Message.id),
+                    'Name': Message.Name,
+                    'Location': Message.Location,
+                    'Hours': Message.Hours,
+                    'Time': Message.getTime(),
+                    'Sponsor': Message.Sponsor.name,
+                    'Class': Message.Class,
+                    'MaxVols': Message.MaxVols,
+                    'Message': f"{Message.Sponsor.name} posted a new Opportunity.",
+                    'Type': "Opportunity"
+                })
+        if user.is_community or user.is_admin:
+            IncompleteOpps = InCompleteOppMessages.query.join(Opportunity).filter(
+                Opportunity.Sponsor == user
+            ).all()
+
+            for Message in IncompleteOpps:
+                CleanMessages.append({
+                    'ID': str(Message.id),
+                    'Message': f"{Message.Student.name} only completed part of your opportunity.",
+                    'Student': Message.Student.name,
+                    'OppName': Message.Opportunity.Name,
+                    'OppHours': Message.Opportunity.Hours,
+                    "StuHours": Message.HoursCompleted,
+                    'Type': 'IncompleteOpp'
+                })
+
+        return jsonify(CleanMessages)
+    except Exception:
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
+        return "", 500
+
+
+@app.route('/ConfParticipation', methods=["POST"])
+@token_required
+def ConfParticipation(user: User):
+    try:
+        if user.is_student:
+            return jsonify({
+                'msg': "Must not be a student to preform this action"
+            })
+        try:
+            msgId = int(request.form["ID"])
+            hours = int(request.form["Hours"])
+        except KeyError:
+            return({
+                'msg': "Please pass correct parameters"
+            }), 500
+        msg = InCompleteOppMessages.query.get(msgId)
+        stu = msg.Student
+        opp = msg.Opportunity
+        stu.InCompleteOppMessages.remove(msg)
+
+        stu.hours += hours
+
+        RightDict = {}
+        
+        for Dict in pickle.loads(stu.CurrentOpps):
+            codeId = jwt.decode(Dict["JWT"], "VerySecret")
+            if codeId == {'ID': str(opp.id)}:
+                RightDict = Dict
+                break
+
+        stu.CurrentOpps = pickle.dumps(pickle.loads(stu.CurrentOpps).remove(RightDict))
+        stu.PastOpps.append(msg.Opportunity)
+
+        db.session.add(stu)
+        db.session.add(opp)
+        db.session.commit()
+
+        return jsonify({
+            'msg': "Success, Hours Awarded"
         })
 
     except Exception:

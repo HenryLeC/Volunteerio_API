@@ -1,27 +1,33 @@
 from flask import request, jsonify, send_file
 from API import app, db
-from API.database import User, Opportunity, NewUnconfHoursMessages, Logs
+from API.database import (User, Opportunity, NewUnconfHoursMessages, Logs,
+                          InCompleteOppMessages)
 from API.auth import token_required
-from docx import Document
 from reportlab.lib.units import inch
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import Table, SimpleDocTemplate, TableStyle, Image
 from reportlab.platypus import Paragraph, Spacer
 import pickle
-import requests
 import datetime
 import jwt
 import traceback
 import io
-import json
 
 
 @app.route("/hours", methods=["POST"])
 @token_required
-def getHours(user):
+def getHours(user: User):
     try:
-        return jsonify({'hours': str(user.hours)})
+        schoolGoal = user.School.hoursGoal
+        districtGoal = user.District.hoursGoal
+        goal = 0
+        if schoolGoal is not None:
+            goal = schoolGoal
+        elif districtGoal is not None:
+            goal = districtGoal
+
+        return jsonify({'hours': str(user.hours), 'goal': goal})
     except Exception:
         db.session.add(Logs(traceback.format_exc()))
         db.session.commit()
@@ -30,7 +36,7 @@ def getHours(user):
 
 @app.route('/addhours', methods=["POST"])
 @token_required
-def add_hours(user):
+def add_hours(user: User):
     try:
         # Check for hours and reason in request
         try:
@@ -46,7 +52,6 @@ def add_hours(user):
         # Add Hours to Unconfirmed List
         UnConfHrs = pickle.loads(user.unconfHours)
         # Add hous and reason to unconfirmed list
-        print(pickle.loads(user.unconfHours))
         UnConfHrs.append({
             'id': id,
             'hours': int(hours),
@@ -75,7 +80,7 @@ def add_hours(user):
 
 @app.route('/Opps', methods=["Post"])
 @token_required
-def list_opps(user):
+def list_opps(user: User):
     try:
         try:
             dateFilter = request.form["filterDate"]
@@ -83,25 +88,32 @@ def list_opps(user):
         except KeyError:
             return jsonify({'msg': "Please Supply all Paramaters"}), 500
 
-        dateFilter = datetime.datetime.strptime(dateFilter, "%Y-%m-%dT%H:%M:%S")
+        dateFilter = datetime.datetime.strptime(
+            dateFilter, "%Y-%m-%dT%H:%M:%S"
+        )
 
-        Opps = Opportunity.query.join(User).filter(
-                                                        User.District == user.District,
-                                                        Opportunity.Time > dateFilter,
-                                                        Opportunity.Name.like(nameFilter)
-                                                    ).order_by(
-                                                        Opportunity.Time.desc()
-                                                    ).all()
+        Opps = Opportunity.query\
+            .join(User).filter(
+                                    User.District == user.District,
+                                    Opportunity.Time > dateFilter,
+                                    Opportunity.Name.like(nameFilter)
+                                ).order_by(
+                                    Opportunity.Time.asc()
+                                ).all()
         CleanOpps = []
         for opp in Opps:
-            CleanOpps.append({
-                "ID": str(opp.id),
-                "Name": opp.Name,
-                "Location": opp.Location,
-                "Hours": opp.Hours,
-                "Time": opp.getTime(),
-                "Sponsor": User.query.get(int(opp.SponsorID)).name
-            })
+            if user not in opp.BookedStudents:
+                CleanOpps.append({
+                    "ID": str(opp.id),
+                    "Name": opp.Name,
+                    "Location": opp.Location,
+                    "Hours": opp.Hours,
+                    "Time": opp.getTime(),
+                    "Sponsor": User.query.get(int(opp.SponsorID)).name,
+                    "Class": opp.Class,
+                    "CurrentVols": len(opp.BookedStudents),
+                    "MaxVols": opp.MaxVols
+                })
         return jsonify(CleanOpps)
     except Exception:
         db.session.add(Logs(traceback.format_exc()))
@@ -111,7 +123,7 @@ def list_opps(user):
 
 @app.route('/ClockInOut', methods=["POST"])
 @token_required
-def Clock(user):
+def Clock(user: User):
     try:
         try:
             Code = request.form["QrCode"]
@@ -131,25 +143,47 @@ def Clock(user):
                 pass
 
         if res:
-            Hours = int(round((datetime.datetime.utcnow() -
-                        RightDict["StartTime"]).seconds / 3600))
-            user.hours += Hours
+            Hours = float((datetime.datetime.utcnow() -
+                          RightDict["StartTime"]).seconds / 3600)
 
             OppId = jwt.decode(Code, 'VerySecret', algorithm="HS256")["ID"]
             Opp = Opportunity.query.get(OppId)
 
-            user.PastOpps.append(Opp)
-            CurrentOpps = pickle.loads(user.CurrentOpps)
-            CurrentOpps.remove(RightDict)
-            user.CurrentOpps = pickle.dumps(CurrentOpps)
+            if Hours <= 0.15 * Opp.Hours:
+                message = {
+                    'header': "Scanner",
+                    'msg': "You have not completed enough of the opportunity, please either continue the opportunity or you will not get any hours."
+                }
+                pass
+            elif Hours < 0.8 * Opp.Hours:
+                OppMessage = InCompleteOppMessages(Hours)
+                db.session.add(OppMessage)
+
+                user.InCompleteOppMessages.append(OppMessage)
+                Opp.InCompleteOppMessages.append(OppMessage)
+
+                message = {
+                    'header': "Scanned",
+                    'msg': "You have only completed part of the opportunty, the sponsor will either give you partial credit or no credit."
+                }
+            elif Hours >= 0.8 * Opp.Hours:
+                user.hours += Opp.Hours
+
+                user.PastOpps.append(Opp)
+                CurrentOpps = pickle.loads(user.CurrentOpps)
+                CurrentOpps.remove(RightDict)
+                user.CurrentOpps = pickle.dumps(CurrentOpps)
+
+                message = {
+                    'header': "Scanned",
+                    'msg': 'Thank You, Your Hours were added.'
+                }
 
             db.session.add(user)
+            db.session.add(Opp)
             db.session.commit()
 
-            return jsonify({
-                'header': "Scanned",
-                'msg': 'Thank You, Your Hours were added.'
-            })
+            return jsonify(message)
 
         else:
             try:
@@ -276,6 +310,10 @@ def GenerateDoc(user: User):
         # Make Image
         im = Image("Logo.png", 6.5*inch, 1.04*inch)
         elems.append(im)
+
+        # Add Student Name
+        nm = Paragraph("Student Name: " + user.name)
+        elems.append(nm)
 
         # Add Space
         elems.append(Spacer(0, 1*inch))

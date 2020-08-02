@@ -29,6 +29,9 @@ class User(db.Model, UserMixin):
     UnconfHoursMessages = db.relationship("NewUnconfHoursMessages",
                                           backref="Student", lazy=True,
                                           cascade="delete, delete-orphan")
+    InCompleteOppMessages = db.relationship("InCompleteOppMessages",
+                                            backref="Student", lazy=True,
+                                            cascade="delete, delete-orphan")
 
     PastOpps = db.relationship('Opportunity', secondary="past")
     BookedOpps = db.relationship('Opportunity', secondary="booked")
@@ -74,18 +77,29 @@ class Opportunity(db.Model):
     Location = db.Column(db.String())
     Hours = db.Column(db.Integer)
     Name = db.Column(db.String())
+    Class = db.Column(db.String())
+    MaxVols = db.Column(db.Integer)
+    Confirmed = db.Column(db.Boolean)
 
     SponsorID = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     BookedStudents = db.relationship("User", secondary="booked")
     PastStudents = db.relationship("User", secondary="past")
 
-    def __init__(self, Name, Location, Time, Hours, Sponsor):
+    InCompleteOppMessages = db.relationship("InCompleteOppMessages",
+                                            backref="Opportunity", lazy=True,
+                                            cascade="delete, delete-orphan")
+
+    def __init__(self, Name, Location, Time, Hours, Class, MaxVols,
+                 Sponsor, Confirmed):
         self.Name = Name
         self.Time = Time
         self.Location = Location
         self.Hours = Hours
         self.SponsorId = Sponsor.id
+        self.Class = Class
+        self.MaxVols = MaxVols
+        self.Confirmed = Confirmed
 
     def getTime(self):
         return self.Time.strftime("%a %b %d, %I:%M %p")
@@ -96,23 +110,37 @@ class NewUnconfHoursMessages(db.Model):
     StudentId = db.Column(db.Integer, db.ForeignKey("user.id"))
 
 
+class InCompleteOppMessages(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    StudentId = db.Column(db.Integer, db.ForeignKey("user.id"))
+    HoursCompleted = db.Column(db.Float)
+    OpportunityId = db.Column(db.Integer, db.ForeignKey("opportunity.id"))
+
+    def __init__(self, HoursCompleted):
+        self.HoursCompleted = HoursCompleted
+
+
 class District(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String())
+    hoursGoal = db.Column(db.Integer, nullable=True)
     schools = db.relationship("School", back_populates="district")
 
-    def __init__(self, Name):
+    def __init__(self, Name, hoursGoal=None):
         self.name = Name
+        self.hoursGoal = hoursGoal
 
 
 class School(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String())
+    hoursGoal = db.Column(db.Integer, nullable=True)
     district_id = db.Column(db.Integer, db.ForeignKey("district.id"))
     district = db.relationship("District", back_populates="schools")
 
-    def __init__(self, Name):
+    def __init__(self, Name, hoursGoal=None):
         self.name = Name
+        self.hoursGoal = hoursGoal
 
 
 class Booked(db.Model):

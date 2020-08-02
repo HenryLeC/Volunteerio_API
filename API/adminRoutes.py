@@ -1,7 +1,8 @@
 from flask import request, jsonify
 from sqlalchemy import or_, and_
 from API import app, db
-from API.database import User, NewUnconfHoursMessages, District, Logs, School
+from API.database import (User, NewUnconfHoursMessages, District, Logs,
+                          School, Opportunity)
 from API.auth import token_required, verify_auth_token
 import pickle
 import traceback
@@ -169,7 +170,8 @@ def StudentHours(user):
             ConfHoursClean.append({
                 "Hours": opp["hours"],
                 "Reason": opp["reason"],
-                "Confirmed": "Confirmed"
+                "Confirmed": "Confirmed",
+                "Unconfirmed": "False"
             })
         unconfHours = pickle.loads(student.unconfHours)
         UnConfHoursClean = []
@@ -178,13 +180,13 @@ def StudentHours(user):
                 "StuHrData": "{}, {}".format(student.id, opp["id"]),
                 "Hours": opp["hours"],
                 "Reason": opp["reason"],
-                "Confirmed": "Unconfirmed"
+                "Confirmed": "Unconfirmed",
+                "Unconfirmed": "True"
             })
 
         FullClean = {
             "PastOpps": PastOppsClean,
-            "ConfHours": ConfHoursClean,
-            "UnConfHours": UnConfHoursClean
+            "Hours": ConfHoursClean + UnConfHoursClean
         }
         return jsonify(FullClean)
     except Exception:
@@ -192,31 +194,6 @@ def StudentHours(user):
         db.session.commit()
         return "", 500
 
-
-@app.route('/Notifications', methods=["POST"])
-@token_required
-def Notifications(user):
-    try:
-        if not user.is_admin:
-            return jsonify({
-                'msg': 'Must be Administrator to preform this task.'
-            }), 500
-        Messages = NewUnconfHoursMessages.query.join(User).filter(
-            User.District == user.District).all()
-        CleanMessages = []
-        for Message in Messages:
-            CleanMessages.append({
-                'ID': Message.Student.id,
-                'Name': Message.Student.name,
-                'StuId': Message.Student.pub_ID,
-                'Hours': Message.Student.hours,
-                'Message': f"{Message.Student.name} requested new hours."
-            })
-        return jsonify(CleanMessages)
-    except Exception:
-        db.session.add(Logs(traceback.format_exc()))
-        db.session.commit()
-        return "", 500
 
 # Implememted Auth Seperately for Json data
 @app.route('/NewStudent', methods=["POST"])
@@ -242,7 +219,11 @@ def NewStudent():
 
         for user in inputData["users"]:
             try:
-                UserObj = User(user["username"], user["password"], user["name"], user["Id"], District.query.filter_by(id=user["District"]).first(), student=True)
+                UserObj = User(user["username"], user["password"],
+                               user["name"], user["Id"],
+                               District.query.filter_by(
+                                   id=user["District"]
+                               ).first(), student=True)
                 db.session.add(UserObj)
             except KeyError:
                 InvalidUsers.append(user)
@@ -285,6 +266,7 @@ def addDistrict(user):
         db.session.commit()
         return "", 500
 
+
 @app.route('/addSchool', methods=['POST'])
 @token_required
 def addSchool(user):
@@ -313,6 +295,40 @@ def addSchool(user):
             "name": SchoolName,
             "id": str(school.id)
         })
+    except Exception:
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
+        return "", 500
+
+
+@app.route('/ConfDelOpp', methods=["POST"])
+@token_required
+def ConfDelOpp(user: User):
+    try:
+        if not user.is_admin:
+            return jsonify({
+                'msg': 'Must be Administrator to preform this task.'
+            }), 500
+        try:
+            mode = request.form["Mode"]
+            oppId = request.form["ID"]
+        except KeyError:
+            return jsonify({
+                'msg': "Plese Send Proper Parameters"
+            })
+
+        opp = Opportunity.query.get(oppId)
+
+        if mode == "Delete":
+            db.session.delete(opp)
+        elif mode == "Confirm":
+            opp.Confirmed = True
+
+        db.session.commit()
+        return jsonify({
+            'msg': 'Sucsess'
+        })
+
     except Exception:
         db.session.add(Logs(traceback.format_exc()))
         db.session.commit()

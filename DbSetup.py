@@ -7,7 +7,7 @@ def makeDB():
     db.create_all()
 
     d = District("Miami Dade County")
-    s = School("Highland Oaks Middle")
+    s = School("Highland Oaks Middle", 20)
 
     u1 = User("U1", "12345", "User, User 1", "1111111", d,
               s, student=True)
