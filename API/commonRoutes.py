@@ -280,8 +280,7 @@ def ConfParticipation(user: User):
         RightDict = {}
         
         for Dict in pickle.loads(stu.CurrentOpps):
-            codeId = jwt.decode(Dict["JWT"], "VerySecret")
-            if codeId == {'ID': str(opp.id)}:
+            if Dict["ID"] == str(opp.id):
                 RightDict = Dict
                 break
 

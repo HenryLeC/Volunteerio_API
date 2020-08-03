@@ -131,11 +131,19 @@ def Clock(user: User):
             return jsonify({
                 'msg': 'Please Pass in The Correct Parameters'
             }), 500
+        try:
+            OppId = jwt.decode(Code, 'VerySecret', algorithm="HS256")["ID"]
+            Opp = Opportunity.query.get(OppId)
+        except(Exception):
+            return jsonify({
+                'header': "Error",
+                'msg': "Please scan an opportunity code."
+            })
         res = False
         RightDict = None
         for Dict in pickle.loads(user.CurrentOpps):
             try:
-                if Dict["JWT"] == Code:
+                if Dict["ID"] == OppId:
                     res = True
                     RightDict = Dict
                     break
@@ -145,9 +153,6 @@ def Clock(user: User):
         if res:
             Hours = float((datetime.datetime.utcnow() -
                           RightDict["StartTime"]).seconds / 3600)
-
-            OppId = jwt.decode(Code, 'VerySecret', algorithm="HS256")["ID"]
-            Opp = Opportunity.query.get(OppId)
 
             if Hours <= 0.15 * Opp.Hours:
                 message = {
@@ -186,19 +191,11 @@ def Clock(user: User):
             return jsonify(message)
 
         else:
-            try:
-                OppId = jwt.decode(Code, 'VerySecret', algorithm="HS256")["ID"]
-                Opp = Opportunity.query.get(OppId)
-            except(Exception):
-                return jsonify({
-                    'header': "Error",
-                    'msg': "Please scan an opportunity code."
-                })
             if Opp:
                 CurrentOpps = pickle.loads(user.CurrentOpps)
                 CurrentOpps.append({
                     'StartTime': datetime.datetime.utcnow(),
-                    'JWT': Code
+                    'ID': str(OppId)
                 })
                 user.CurrentOpps = pickle.dumps(CurrentOpps)
 
