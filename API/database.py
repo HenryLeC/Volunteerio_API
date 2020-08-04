@@ -13,6 +13,7 @@ class User(db.Model, UserMixin):
     password = db.Column(db.String(), unique=True, nullable=False)
     name = db.Column(db.String(), nullable=False)
     pub_ID = db.Column(db.String(), nullable=False, unique=True)
+    email = db.Column(db.String(), nullable=True)
 
     District_Id = db.Column(db.Integer, db.ForeignKey('district.id'))
     District = db.relationship('District', backref="Members", lazy=True)
@@ -50,7 +51,7 @@ class User(db.Model, UserMixin):
     is_webmaster = db.Column(db.Boolean)
 
     def __init__(self, username, password, name, ID, district, school,
-                 admin=False, community=False, student=False, webmaster=False):
+                 email=None, admin=False, community=False, student=False, webmaster=False):
         # If no role set default to student
         if not admin and not community and not student and not webmaster:
             student = True
@@ -69,6 +70,7 @@ class User(db.Model, UserMixin):
         self.District = district
         self.School = school
         self.is_webmaster = webmaster
+        self.email = email
 
 
 class Opportunity(db.Model):
@@ -80,6 +82,7 @@ class Opportunity(db.Model):
     Class = db.Column(db.String())
     MaxVols = db.Column(db.Integer)
     Confirmed = db.Column(db.Boolean)
+    Description = db.Column(db.String(500))
 
     SponsorID = db.Column(db.Integer, db.ForeignKey('user.id'))
 
@@ -91,7 +94,7 @@ class Opportunity(db.Model):
                                             cascade="delete, delete-orphan")
 
     def __init__(self, Name, Location, Time, Hours, Class, MaxVols,
-                 Sponsor, Confirmed):
+                 Sponsor, Description, Confirmed):
         self.Name = Name
         self.Time = Time
         self.Location = Location
@@ -100,6 +103,7 @@ class Opportunity(db.Model):
         self.Class = Class
         self.MaxVols = MaxVols
         self.Confirmed = Confirmed
+        self.Description = Description
 
     def getTime(self):
         return self.Time.strftime("%a %b %d, %I:%M %p")

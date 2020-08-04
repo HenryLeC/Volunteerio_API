@@ -63,6 +63,7 @@ def AddOpp(user: User):
             Hours = request.form["Hours"]
             Class = request.form["Class"]
             MaxVols = int(request.form["MaxVols"])
+            Description = request.form["Description"]
         except KeyError:
             return jsonify({
                 'msg': 'Please attach the proper parameters'
@@ -74,7 +75,7 @@ def AddOpp(user: User):
         Parsed = datetime.datetime.strptime(Date, "%Y-%m-%dT%H:%M:%S%z")
 
         Opp = Opportunity(Name, Location, Parsed, Hours, Class,
-                          MaxVols, user, user.is_admin)
+                          MaxVols, user, Description, user.is_admin)
         user.Opportunities.append(Opp)
 
         db.session.add(Opp)
@@ -104,7 +105,7 @@ def SignInStudents(user):
             return jsonify({
                 'msg': 'Please attach the proper parameters'
             }), 500
-        return jwt.encode({'ID': OppId}, 'VerySecret', algorithm='HS256')
+        return jwt.encode({'ID': str(OppId)}, 'VerySecret', algorithm='HS256')
     except Exception:
         db.session.add(Logs(traceback.format_exc()))
         db.session.commit()
@@ -206,32 +207,41 @@ def Notifications(user: User):
         if user.is_admin:
             HourMessages = NewUnconfHoursMessages.query.join(User).filter(
                 User.District == user.District).all()
-            OppMessages = Opportunity.query.join(User).filter(
-                User.District == user.District,
-                Opportunity.Confirmed.is_(False)
-            ).all()
+            # OppMessages = Opportunity.query.join(User).filter(
+            #     User.District == user.District,
+            #     Opportunity.Confirmed.is_(False)
+            # ).all()
             for Message in HourMessages:
+                schoolGoal = user.School.hoursGoal
+                districtGoal = user.District.hoursGoal
+                goal = 0
+                if schoolGoal is not None:
+                    goal = schoolGoal
+                elif districtGoal is not None:
+                    goal = districtGoal
+
                 CleanMessages.append({
                     'ID': Message.Student.id,
                     'Name': Message.Student.name,
                     'StuId': Message.Student.pub_ID,
                     'Hours': Message.Student.hours,
                     'Message': f"{Message.Student.name} requested new hours.",
-                    'Type': "Hour"
+                    'Type': "Hour",
+                    'HoursGoal': str(goal)
                 })
-            for Message in OppMessages:
-                CleanMessages.append({
-                    'ID': str(Message.id),
-                    'Name': Message.Name,
-                    'Location': Message.Location,
-                    'Hours': Message.Hours,
-                    'Time': Message.getTime(),
-                    'Sponsor': Message.Sponsor.name,
-                    'Class': Message.Class,
-                    'MaxVols': Message.MaxVols,
-                    'Message': f"{Message.Sponsor.name} posted a new Opportunity.",
-                    'Type': "Opportunity"
-                })
+            # for Message in OppMessages:
+            #     CleanMessages.append({
+            #         'ID': str(Message.id),
+            #         'Name': Message.Name,
+            #         'Location': Message.Location,
+            #         'Hours': Message.Hours,
+            #         'Time': Message.getTime(),
+            #         'Sponsor': Message.Sponsor.name,
+            #         'Class': Message.Class,
+            #         'MaxVols': Message.MaxVols,
+            #         'Message': f"{Message.Sponsor.name} posted a new Opportunity.",
+            #         'Type': "Opportunity"
+            #     })
         if user.is_community or user.is_admin:
             IncompleteOpps = InCompleteOppMessages.query.join(Opportunity).filter(
                 Opportunity.Sponsor == user
@@ -273,16 +283,21 @@ def ConfParticipation(user: User):
         msg = InCompleteOppMessages.query.get(msgId)
         stu = msg.Student
         opp = msg.Opportunity
-        stu.InCompleteOppMessages.remove(msg)
+        db.session.delete(msg)
 
         stu.hours += hours
 
-        RightDict = {}
-        
+        RightDict = None
+
         for Dict in pickle.loads(stu.CurrentOpps):
             if Dict["ID"] == str(opp.id):
                 RightDict = Dict
                 break
+
+        if RightDict is None:
+            return jsonify({
+                'msg': "Server Error"
+            }), 500
 
         stu.CurrentOpps = pickle.dumps(pickle.loads(stu.CurrentOpps).remove(RightDict))
         stu.PastOpps.append(msg.Opportunity)

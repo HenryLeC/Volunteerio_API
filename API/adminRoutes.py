@@ -6,6 +6,8 @@ from API.database import (User, NewUnconfHoursMessages, District, Logs,
 from API.auth import token_required, verify_auth_token
 import pickle
 import traceback
+import requests
+import json
 
 
 @app.route('/confirmHours', methods=["POST"])
@@ -125,12 +127,21 @@ def StudentsList(user):
                 User.pub_ID.like(Filter),
             )
         )).limit(5)
+
         for student in Students:
+            schoolGoal = user.School.hoursGoal
+            districtGoal = user.District.hoursGoal
+            goal = 0
+            if schoolGoal is not None:
+                goal = schoolGoal
+            elif districtGoal is not None:
+                goal = districtGoal
             ReturnList.append({
                 "Name": student.name,
                 "StuId": student.pub_ID,
                 "Hours": str(student.hours),
-                "ID": student.id
+                "ID": student.id,
+                "HoursGoal": str(goal)
             })
         return jsonify(ReturnList)
     except Exception:
@@ -170,8 +181,9 @@ def StudentHours(user):
             ConfHoursClean.append({
                 "Hours": opp["hours"],
                 "Reason": opp["reason"],
+                "Desc": opp["desc"],
                 "Confirmed": "Confirmed",
-                "Unconfirmed": "False"
+                "UnconfirmedBool": "False"
             })
         unconfHours = pickle.loads(student.unconfHours)
         UnConfHoursClean = []
@@ -180,8 +192,9 @@ def StudentHours(user):
                 "StuHrData": "{}, {}".format(student.id, opp["id"]),
                 "Hours": opp["hours"],
                 "Reason": opp["reason"],
+                "Desc": opp["desc"],
                 "Confirmed": "Unconfirmed",
-                "Unconfirmed": "True"
+                "UnconfirmedBool": "True"
             })
 
         FullClean = {
@@ -318,17 +331,71 @@ def ConfDelOpp(user: User):
             })
 
         opp = Opportunity.query.get(oppId)
+        spons = opp.Sponsor
+
+        APIKey = json.loads(open("APIKeys.json", "r").read())["MailGun"]
 
         if mode == "Delete":
             db.session.delete(opp)
+            if spons.email:
+                requests.post(
+                    "https://api.mailgun.net/v3/volunteerio.us/messages",
+                    auth=("api", APIKey),
+                    data={"from": "Volunteerio <noreply@volunteerio.us>",
+                          "to": [spons.email],
+                          "subject": "Your Opportunity",
+                          "text": "Your Opportunity has been deleted"})
         elif mode == "Confirm":
             opp.Confirmed = True
+            if spons.email:
+                requests.post(
+                    "https://api.mailgun.net/v3/volunteerio.us/messages",
+                    auth=("api", APIKey),
+                    data={"from": "Volunteerio <noreply@volunteerio.us>",
+                          "to": [spons.email],
+                          "subject": "Your Opportunity",
+                          "text": "Your Opportunity has been confirmed"})
 
         db.session.commit()
         return jsonify({
             'msg': 'Sucsess'
         })
 
+    except Exception:
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
+        return "", 500
+
+
+@app.route('/UnconfOpps', methods=["POST"])
+@token_required
+def UnconfOpps(user: User):
+    try:
+        if not user.is_admin:
+            return jsonify({
+                'msg': 'Must be Administrator to preform this task.'
+            }), 500
+
+        OppMessages = Opportunity.query.join(User).filter(
+            User.District == user.District,
+            Opportunity.Confirmed.is_(False)
+        ).all()
+
+        CleanMessages = []
+
+        for Message in OppMessages:
+            CleanMessages.append({
+                'ID': str(Message.id),
+                'Name': Message.Name,
+                'Location': Message.Location,
+                'Hours': Message.Hours,
+                'Time': Message.getTime(),
+                'Sponsor': Message.Sponsor.name,
+                'Class': Message.Class,
+                'MaxVols': Message.MaxVols
+            })
+
+        return jsonify(CleanMessages)
     except Exception:
         db.session.add(Logs(traceback.format_exc()))
         db.session.commit()

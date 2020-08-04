@@ -8,8 +8,11 @@ from API.database import (User, Opportunity, Booked,
 import datetime
 import pickle
 
-# Full names list
 NAMES = json.load(open("Names.json", "r"))
+NAMES = random.choices(NAMES, k=110)
+StuNAMES = NAMES[:100]
+CommNAMES = NAMES[100:105]
+AdmNAMES = NAMES[105:110]
 
 user_data = {}
 students = []
@@ -21,17 +24,14 @@ lastSId = 00000000
 lastAId = 10000000
 lastCId = 20000000
 
-
-# District
+# District School
 d = District("Waterside School District")
 s = School("Waterside Public School", 20)
 db.session.add(d)
 db.session.add(s)
 
-
 # Student Gen
-stuNames = random.choices(NAMES, k=100)
-for name in stuNames:
+for name in StuNAMES:
     username = name + str(random.randint(0, 20))
     stuId = str(lastSId).zfill(8)
     lastSId += 1
@@ -43,14 +43,12 @@ for name in stuNames:
         "role": "student"
     }
 
-
 # Admin Gen
-adminNames = random.choices(NAMES, k=5)
-for name in adminNames:
+for name in AdmNAMES:
     username = name + str(random.randint(0, 20))
     admId = str(lastAId).zfill(8)
     lastAId += 1
-    Adm = User(username, "password", name, admId, d, s, admin=True)
+    Adm = User(username, "password", name, admId, d, s, admin=True, email="test.email@volunteerio.us")
     db.session.add(Adm)
     admins.append(Adm)
     user_data[name] = {
@@ -60,8 +58,7 @@ for name in adminNames:
 
 
 # Community Gen
-communityNames = random.choices(NAMES, k=5)
-for name in communityNames:
+for name in CommNAMES:
     username = name + str(random.randint(0, 20))
     comId = str(lastCId).zfill(8)
     lastCId += 1
@@ -73,8 +70,7 @@ for name in communityNames:
         "role": "community"
     }
 
-
-# Past Opportunities
+# Past Opportunities Gen
 end_date = datetime.date.today() - datetime.timedelta(days=1)
 start_date = end_date - datetime.timedelta(weeks=10)
 
@@ -84,7 +80,7 @@ days_between_dates = time_between_dates.days
 for usr in admins:
     random_number_of_days = random.randrange(days_between_dates)
     random_date = start_date + datetime.timedelta(days=random_number_of_days)
-    opp = Opportunity(f"Opp{oppsI + 1}", "School", random_date, random.randint(0, 5), "Environment", 20, usr, True)
+    opp = Opportunity(f"Opp{oppsI + 1}", "School", random_date, random.randint(0, 5), "Environment", 20, usr, "Example Opportunity Description", True)
     oppsI += 1
     opps.append(opp)
     usr.Opportunities.append(opp)
@@ -94,41 +90,36 @@ for usr in admins:
 for usr in cmembers:
     random_number_of_days = random.randrange(days_between_dates)
     random_date = start_date + datetime.timedelta(days=random_number_of_days)
-    opp = Opportunity(f"Opp{oppsI + 1}", "School", random_date, random.randint(1, 5), "Animals", 20, usr, True)
+    opp = Opportunity(f"Opp{oppsI + 1}", "School", random_date, random.randint(1, 5), "Animals", 20, usr, "Example Opportunity Description", True)
     oppsI += 1
-    opps.append(opp)
     usr.Opportunities.append(opp)
     db.session.add(usr)
     db.session.add(opp)
+    opps.append(opp)
 
+# IDs dont get gened until commit
+db.session.commit()
 
 # Make an Opp Past
 for usr in students:
     bOpps = random.choices(opps, k=2)
     for opp in bOpps:
-        inComp = random.randint(0, 20)
+        inComp = random.randint(0, 10)
         if inComp == 3:
-            msg = InCompleteOppMessages(random.randint(int(opp.Hours * 0.15), int(opp.Hours * 0.8)))
+            msg = InCompleteOppMessages(random.uniform(opp.Hours * 0.15, opp.Hours * 0.8))
             db.session.add(msg)
             usr.InCompleteOppMessages.append(msg)
             opp.InCompleteOppMessages.append(msg)
-            usr.CurrentOpps = pickle.dumps(pickle.loads(usr.CurrentOpps).append({"ID": str(opp.id), "StartTime": opp.Time}))
+            currentOpps = pickle.loads(usr.CurrentOpps)
+            currentOpps.append({"ID": str(opp.id), "StartTime": opp.Time})
+            usr.CurrentOpps = pickle.dumps(currentOpps)
+            db.session.add(usr)
         else:
             usr.PastOpps.append(opp)
             usr.hours += opp.Hours
             db.session.add(usr)
-            db.session.commit()
 
-# Make Unconf Opps
-commus = random.choices(cmembers, k=5)
-for cmem in commus:
-    random_number_of_days = random.randrange(days_between_dates)
-    random_date = start_date + datetime.timedelta(days=random_number_of_days)
-    opp = Opportunity(f"Opp{oppsI + 1}", "School", random_date, random.randint(0, 5), "Animals", 20, cmem, False)
-    oppsI += 1
-    db.session.add(opp)
-
-# Future Opportunities
+# Future Opportunities Gen
 start_date = datetime.date.today() + datetime.timedelta(days=1)
 end_date = start_date + datetime.timedelta(weeks=10)
 
@@ -138,7 +129,7 @@ days_between_dates = time_between_dates.days
 for usr in admins:
     random_number_of_days = random.randrange(days_between_dates)
     random_date = start_date + datetime.timedelta(days=random_number_of_days)
-    opp = Opportunity(f"Opp{oppsI + 1}", "School", random_date, random.randint(1, 5), "Environment", 20, usr, True)
+    opp = Opportunity(f"Opp{oppsI + 1}", "School", random_date, random.randint(1, 5), "Environment", 20, usr, "Example Opportunity Description", True)
     oppsI += 1
     opps.append(opp)
     usr.Opportunities.append(opp)
@@ -148,21 +139,23 @@ for usr in admins:
 for usr in cmembers:
     random_number_of_days = random.randrange(days_between_dates)
     random_date = start_date + datetime.timedelta(days=random_number_of_days)
-    opp = Opportunity(f"Opp{oppsI + 1}", "School", random_date, random.randint(1, 5), "Animals", 20, usr, True)
+    verified = True
+    if random.randint(0, 3) == 2:
+        verified = False
+    opp = Opportunity(f"Opp{oppsI + 1}", "School", random_date, random.randint(1, 5), "Animals", 20, usr, "Example Opportunity Description", verified)
     oppsI += 1
-    opps.append(opp)
+    if verified:
+        opps.append(opp)
     usr.Opportunities.append(opp)
     db.session.add(usr)
     db.session.add(opp)
 
-
-# Booke Opp
+# Book Opp
 for usr in students:
-    bOpps = random.choices(opps, k=2)
+    bOpps = random.choices(opps, k=random.randint(1, 4))
     for opp in bOpps:
         usr.BookedOpps.append(opp)
         db.session.add(usr)
-        db.session.commit()
 
 # Unconf and Conf Hours:
 for user in students:
@@ -173,7 +166,8 @@ for user in students:
     ConfHours.append({
         'id': id,
         'hours': hours,
-        'reason': "Example Reason"
+        'reason': "Example Reason",
+        "desc": "Example Description"
     })
     user.confHours = pickle.dumps(ConfHours)
     user.hours += hours
@@ -187,7 +181,8 @@ for user in students:
         UnConfHours.append({
             'id': id,
             'hours': random.randint(1, 10),
-            'reason': "Example Reason"
+            'reason': "Example Reason",
+            'desc': "Example Description"
         })
         user.unconfHours = pickle.dumps(UnConfHours)
 
@@ -201,5 +196,5 @@ for user in students:
 with open("Users.json", "w") as f:
     json.dump(user_data, f)
 
-# Commit all users and opps
+# Commit To Database
 db.session.commit()

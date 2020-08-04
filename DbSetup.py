@@ -14,7 +14,7 @@ def makeDB():
     u2 = User("U2", "12345", "User, User 2", "2222222", d,
               s, admin=True)
     u3 = User("U3", "12345", "User, User 3", "3333333", d,
-              s, community=True)
+              s, community=True, email="henry@volunteerio.us")
     u4 = User("U4", "12345", "User, User 4", "4444444", None,
               None,  webmaster=True)
 

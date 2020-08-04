@@ -42,6 +42,7 @@ def add_hours(user: User):
         try:
             hours = request.form["hours"]
             reason = request.form["reason"]
+            desc = request.form["desc"]
         except KeyError:
             return jsonify({'msg': 'Hours and reason is required.'}), 500
         id = user.HoursId
@@ -55,6 +56,7 @@ def add_hours(user: User):
         UnConfHrs.append({
             'id': id,
             'hours': int(hours),
+            'desc': desc,
             'reason': reason
         })
 
@@ -121,6 +123,26 @@ def list_opps(user: User):
         return "", 500
 
 
+@app.route('/OppInfo', methods=["POST"])
+@token_required
+def oppInfo(user: User):
+    try:
+        try:
+            id = request.form["ID"]
+        except KeyError:
+            return jsonify({'msg': "Please Supply all Paramaters"}), 500
+
+        opp = Opportunity.query.get(int(id))
+        return jsonify({
+            "Location": opp.Location,
+            "Description": opp.Description
+        })
+    except Exception:
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
+        return "", 500
+
+
 @app.route('/ClockInOut', methods=["POST"])
 @token_required
 def Clock(user: User):
@@ -143,7 +165,7 @@ def Clock(user: User):
         RightDict = None
         for Dict in pickle.loads(user.CurrentOpps):
             try:
-                if Dict["ID"] == OppId:
+                if Dict["ID"] == str(OppId):
                     res = True
                     RightDict = Dict
                     break
