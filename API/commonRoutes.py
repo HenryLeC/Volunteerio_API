@@ -254,7 +254,7 @@ def Notifications(user: User):
                     'Student': Message.Student.name,
                     'OppName': Message.Opportunity.Name,
                     'OppHours': Message.Opportunity.Hours,
-                    "StuHours": Message.HoursCompleted,
+                    "StuCompleted": f"{Message.HoursCompleted} Hours, {Message.MinutesCompleted} Minutes",
                     'Type': 'IncompleteOpp'
                 })
 

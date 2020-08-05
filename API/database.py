@@ -117,11 +117,13 @@ class NewUnconfHoursMessages(db.Model):
 class InCompleteOppMessages(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     StudentId = db.Column(db.Integer, db.ForeignKey("user.id"))
-    HoursCompleted = db.Column(db.Float)
+    HoursCompleted = db.Column(db.Integer)
+    MinutesCompleted = db.Column(db.Integer)
     OpportunityId = db.Column(db.Integer, db.ForeignKey("opportunity.id"))
 
-    def __init__(self, HoursCompleted):
+    def __init__(self, HoursCompleted, MinutesCompleted):
         self.HoursCompleted = HoursCompleted
+        self.MinutesCompleted = MinutesCompleted
 
 
 class District(db.Model):

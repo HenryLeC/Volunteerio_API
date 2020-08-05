@@ -173,8 +173,8 @@ def Clock(user: User):
                 pass
 
         if res:
-            Hours = float((datetime.datetime.utcnow() -
-                          RightDict["StartTime"]).seconds / 3600)
+            td = datetime.datetime.utcnow() - RightDict["StartTime"]
+            Hours = float(td / 3600)
 
             if Hours <= 0.15 * Opp.Hours:
                 message = {
@@ -183,7 +183,9 @@ def Clock(user: User):
                 }
                 pass
             elif Hours < 0.8 * Opp.Hours:
-                OppMessage = InCompleteOppMessages(Hours)
+                hours, remainder = divmod(td.seconds, 3600)
+                minutes, seconds = divmod(remainder, 60)
+                OppMessage = InCompleteOppMessages(hours, minutes)
                 db.session.add(OppMessage)
 
                 user.InCompleteOppMessages.append(OppMessage)
