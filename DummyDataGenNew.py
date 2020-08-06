@@ -1,9 +1,8 @@
 import json
 import random
 from API import db
-from string import digits
-from API.database import (User, Opportunity, Booked,
-                          Past, District, NewUnconfHoursMessages,
+from API.database import (User, Opportunity, District,
+                          NewUnconfHoursMessages,
                           School, InCompleteOppMessages)
 import datetime
 import pickle
