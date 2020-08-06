@@ -106,7 +106,7 @@ for usr in students:
     for opp in bOpps:
         inComp = random.randint(0, 10)
         if inComp == 3:
-            msg = InCompleteOppMessages(random.uniform(opp.Hours * 0.15, opp.Hours * 0.8))
+            msg = InCompleteOppMessages(random.randint(int(opp.Hours * 0.15), int(opp.Hours * 0.8)), random.randint(0, 59))
             db.session.add(msg)
             usr.InCompleteOppMessages.append(msg)
             opp.InCompleteOppMessages.append(msg)
