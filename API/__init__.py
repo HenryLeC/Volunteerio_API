@@ -16,9 +16,6 @@ for sect in dbpathl[:-1]:
 
 # Set Flask Config
 app.config["DEBUG"] = True
-
-# Set Application Root
-app.config["APPLICATION_ROOT"] = "/api"
 # app.config['SECRET_KEY'] = secrets.token_urlsafe(32)
 app.config['SECRET_KEY'] = "VerySecret"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + dbpath + '\\app.db'
