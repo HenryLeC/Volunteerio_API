@@ -1,7 +1,7 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 import os
-import secrets
+from PrefixMiddleware import PrefixMiddleware
 from flask_cors import CORS
 from flask_migrate import Migrate
 
@@ -15,10 +15,9 @@ for sect in dbpathl[:-1]:
     dbpath += sect + "\\"
 
 # Set Flask Config
-app.config["DEBUG"] = True
-# app.config['SECRET_KEY'] = secrets.token_urlsafe(32)
 app.config['SECRET_KEY'] = "VerySecret"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + dbpath + '\\app.db'
+app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix='/api')
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)

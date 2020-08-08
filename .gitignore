@@ -17,3 +17,5 @@ APIKeys.json
 Users.json
 
 migrations/*
+
+app.db
