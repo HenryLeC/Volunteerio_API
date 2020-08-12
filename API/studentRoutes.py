@@ -174,7 +174,7 @@ def Clock(user: User):
 
         if res:
             td = datetime.datetime.utcnow() - RightDict["StartTime"]
-            Hours = float(td.second / 3600)
+            Hours = float(td.seconds / 3600)
 
             if Hours <= 0.15 * Opp.Hours:
                 message = {
