@@ -1,5 +1,5 @@
 from flask import request, jsonify, send_file
-from API import app, db
+from API import api, app, db
 from API.database import (User, Opportunity, NewUnconfHoursMessages, Logs,
                           InCompleteOppMessages)
 from API.auth import token_required
@@ -15,7 +15,7 @@ import traceback
 import io
 
 
-@app.route("/hours", methods=["POST"])
+@api.route("/hours", methods=["POST"])
 @token_required
 def getHours(user: User):
     try:
@@ -34,7 +34,7 @@ def getHours(user: User):
         return "", 500
 
 
-@app.route('/addhours', methods=["POST"])
+@api.route('/addhours', methods=["POST"])
 @token_required
 def add_hours(user: User):
     try:
@@ -80,7 +80,7 @@ def add_hours(user: User):
         return "", 500
 
 
-@app.route('/Opps', methods=["Post"])
+@api.route('/Opps', methods=["Post"])
 @token_required
 def list_opps(user: User):
     try:
@@ -123,7 +123,7 @@ def list_opps(user: User):
         return "", 500
 
 
-@app.route('/OppInfo', methods=["POST"])
+@api.route('/OppInfo', methods=["POST"])
 @token_required
 def oppInfo(user: User):
     try:
@@ -143,7 +143,7 @@ def oppInfo(user: User):
         return "", 500
 
 
-@app.route('/ClockInOut', methods=["POST"])
+@api.route('/ClockInOut', methods=["POST"])
 @token_required
 def Clock(user: User):
     try:
@@ -154,7 +154,8 @@ def Clock(user: User):
                 'msg': 'Please Pass in The Correct Parameters'
             }), 500
         try:
-            OppId = jwt.decode(Code, 'VerySecret', algorithm="HS256")["ID"]
+            OppId = jwt.decode(Code, app.config['SECRET_KEY'],
+                               algorithm="HS256")["ID"]
             Opp = Opportunity.query.get(OppId)
         except(Exception):
             return jsonify({
@@ -236,7 +237,7 @@ def Clock(user: User):
         return "", 500
 
 
-@app.route('/BookAnOpp', methods=["POST"])
+@api.route('/BookAnOpp', methods=["POST"])
 @token_required
 def BookAnOpp(user):
     try:
@@ -260,7 +261,7 @@ def BookAnOpp(user):
         return "", 500
 
 
-@app.route('/BookedOpps', methods=["Post"])
+@api.route('/BookedOpps', methods=["Post"])
 @token_required
 def BookedOpps(user):
     try:
@@ -279,7 +280,7 @@ def BookedOpps(user):
         return "", 500
 
 
-@app.route('/PastOpps', methods=["Post"])
+@api.route('/PastOpps', methods=["Post"])
 @token_required
 def PastOpps(user):
     try:
@@ -318,7 +319,7 @@ def PastOpps(user):
         return "", 500
 
 
-@app.route('/GenerateDoc', methods=["POST"])
+@api.route('/GenerateDoc', methods=["POST"])
 @token_required
 def GenerateDoc(user: User):
     try:
@@ -400,7 +401,7 @@ def GenerateDoc(user: User):
         return "", 500
 
 
-@app.route('/Leaderboard', methods=["POST"])
+@api.route('/Leaderboard', methods=["POST"])
 @token_required
 def Leaderboard(user):
     try:

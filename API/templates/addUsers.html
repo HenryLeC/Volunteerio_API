@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        input, p {
+            display: inline;
+        }
+    </style>
+    <script>
+        var stuCount = 1
+        function addInputs(divName){
+            var newdiv = document.createElement('div');
+            newdiv.innerHTML = "<p>UserName:  </p><input type='text' name='user" + "UN' required/><p>    </p>";
+            newdiv.innerHTML += "<p>Password:  </p><input type='text' name='user" + "P' required/><p>    </p>";
+            newdiv.innerHTML += "<p>Name:  </p><input type='text' name='user" + "N' required/><p>    </p>";
+            newdiv.innerHTML += "<p>StudentId:  </p><input type='text' name='user" + "I' required/><p>    </p>";
+            document.getElementById(divName).appendChild(newdiv);
+            document.getElementById("StudentsCount").value = (stuCount + 1).toString();
+            stuCount++;
+        }
+    </script>
+    <title>Add Students</title>
+</head>
+<body>
+    <form method="POST" action="/addUsers">
+        Students<br><br>
+        <div id="dynamic-form">
+            <p>UserName:  </p><input type="text" name="user0UN" required/><p>    </p>
+            <p>Password:  </p><input type="text" name="user0P" required/><p>    </p>
+            <p>Name:  </p><input type="text" name="user0N" required/><p>    </p>
+            <p>StudentId:  </p><input type="text" name="user0I" required/><p>    </p>
+        </div>
+        <input type="hidden" id="StudentsCount" name="users" value="1">
+        <input type="button" value="Add another" onclick="addInputs('dynamic-form')">
+        <br>
+        <input type="submit" value="Submit">
+    </form>
+</body>
+</html>

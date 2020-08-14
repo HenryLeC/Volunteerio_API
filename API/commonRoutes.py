@@ -1,4 +1,4 @@
-from API import app, db
+from API import api, app, db
 from API.auth import generate_auth_token, token_required
 from werkzeug.security import check_password_hash
 from API.database import (User, Opportunity, Logs,
@@ -10,12 +10,12 @@ import traceback
 import pickle
 
 
-@app.route('/')
+@api.route('/')
 def index():
     return redirect("https://volunteerio.us")
 
 
-@app.route('/login', methods=["POST"])
+@api.route('/login', methods=["POST"])
 def login():
     # Check for Username and Password
     try:
@@ -48,7 +48,7 @@ def login():
         return jsonify({'msg': 'Invalid Login information'}), 401
 
 
-@app.route('/AddOpp', methods=["POST"])
+@api.route('/AddOpp', methods=["POST"])
 @token_required
 def AddOpp(user: User):
     try:
@@ -91,7 +91,7 @@ def AddOpp(user: User):
         return "", 500
 
 
-@app.route('/SignInStudents', methods=["POST"])
+@api.route('/SignInStudents', methods=["POST"])
 @token_required
 def SignInStudents(user):
     try:
@@ -105,14 +105,15 @@ def SignInStudents(user):
             return jsonify({
                 'msg': 'Please attach the proper parameters'
             }), 500
-        return jwt.encode({'ID': str(OppId)}, 'VerySecret', algorithm='HS256')
+        return jwt.encode({'ID': str(OppId)}, app.config['SECRET_KEY'],
+                          algorithm='HS256')
     except Exception:
         db.session.add(Logs(traceback.format_exc()))
         db.session.commit()
         return "", 500
 
 
-@app.route('/MyOpps', methods=["POST"])
+@api.route('/MyOpps', methods=["POST"])
 @token_required
 def MyOpps(user):
     try:
@@ -141,7 +142,7 @@ def MyOpps(user):
         return "", 500
 
 
-@app.route('/BookedStudents', methods=["POST"])
+@api.route('/BookedStudents', methods=["POST"])
 @token_required
 def BookedStudents(user):
     try:
@@ -168,7 +169,7 @@ def BookedStudents(user):
         return "", 500
 
 
-@app.route('/DeleteOpp', methods=["POST"])
+@api.route('/DeleteOpp', methods=["POST"])
 @token_required
 def DeleteOpp(user):
     try:
@@ -198,7 +199,7 @@ def DeleteOpp(user):
         return "", 500
 
 
-@app.route('/Notifications', methods=["POST"])
+@api.route('/Notifications', methods=["POST"])
 @token_required
 def Notifications(user: User):
     try:
@@ -265,7 +266,7 @@ def Notifications(user: User):
         return "", 500
 
 
-@app.route('/ConfParticipation', methods=["POST"])
+@api.route('/ConfParticipation', methods=["POST"])
 @token_required
 def ConfParticipation(user: User):
     try:

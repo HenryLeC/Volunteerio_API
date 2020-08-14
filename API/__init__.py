@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, Blueprint
 from flask_sqlalchemy import SQLAlchemy
 import os
 from PrefixMiddleware import PrefixMiddleware
@@ -6,6 +6,8 @@ from flask_cors import CORS
 from flask_migrate import Migrate
 
 app = Flask(__name__)
+api = Blueprint('api', __name__)
+webapp = Blueprint('webapp', __name__)
 CORS(app, supports_credentials=True)
 
 # Set path for DB
@@ -17,7 +19,6 @@ for sect in dbpathl[:-1]:
 # Set Flask Config
 app.config['SECRET_KEY'] = "VerySecret"
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + dbpath + '\\app.db'
-app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix='/api')
 
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
@@ -27,3 +28,6 @@ import API.adminRoutes
 import API.commonRoutes
 import API.database
 import API.webAdmin
+
+app.register_blueprint(api, url_prefix="/api")
+app.register_blueprint(webapp)

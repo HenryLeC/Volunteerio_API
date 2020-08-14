@@ -1,6 +1,6 @@
 from flask import request, jsonify
 from sqlalchemy import or_, and_
-from API import app, db
+from API import api, db
 from API.database import (User, NewUnconfHoursMessages, District, Logs,
                           School, Opportunity)
 from API.auth import token_required, verify_auth_token
@@ -10,7 +10,7 @@ import requests
 import json
 
 
-@app.route('/confirmHours', methods=["POST"])
+@api.route('/confirmHours', methods=["POST"])
 @token_required
 def confirmHours(user):
     try:
@@ -59,7 +59,7 @@ def confirmHours(user):
         return "", 500
 
 
-@app.route('/deleteHours', methods=["POST"])
+@api.route('/deleteHours', methods=["POST"])
 @token_required
 def deleteHours(user):
     try:
@@ -103,7 +103,7 @@ def deleteHours(user):
         return "", 500
 
 
-@app.route('/StudentsList', methods=["POST"])
+@api.route('/StudentsList', methods=["POST"])
 @token_required
 def StudentsList(user):
     try:
@@ -150,7 +150,7 @@ def StudentsList(user):
         return "", 500
 
 
-@app.route('/StudentHours', methods=["POST"])
+@api.route('/StudentHours', methods=["POST"])
 @token_required
 def StudentHours(user):
     try:
@@ -209,7 +209,7 @@ def StudentHours(user):
 
 
 # Implememted Auth Seperately for Json data
-@app.route('/NewStudent', methods=["POST"])
+@api.route('/NewStudent', methods=["POST"])
 def NewStudent():
     try:
         inputData = request.get_json()
@@ -250,7 +250,7 @@ def NewStudent():
         return "", 500
 
 
-@app.route('/addDistrict', methods=['POST'])
+@api.route('/addDistrict', methods=['POST'])
 @token_required
 def addDistrict(user):
     try:
@@ -280,7 +280,7 @@ def addDistrict(user):
         return "", 500
 
 
-@app.route('/addSchool', methods=['POST'])
+@api.route('/addSchool', methods=['POST'])
 @token_required
 def addSchool(user):
     try:
@@ -314,7 +314,7 @@ def addSchool(user):
         return "", 500
 
 
-@app.route('/ConfDelOpp', methods=["POST"])
+@api.route('/ConfDelOpp', methods=["POST"])
 @token_required
 def ConfDelOpp(user: User):
     try:
@@ -367,7 +367,7 @@ def ConfDelOpp(user: User):
         return "", 500
 
 
-@app.route('/UnconfOpps', methods=["POST"])
+@api.route('/UnconfOpps', methods=["POST"])
 @token_required
 def UnconfOpps(user: User):
     try:
