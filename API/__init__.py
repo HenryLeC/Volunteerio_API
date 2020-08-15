@@ -6,7 +6,7 @@ from flask_migrate import Migrate
 
 app = Flask(__name__)
 api = Blueprint('api', __name__)
-webapp = Blueprint('webapp', __name__)
+webapp = Blueprint('webapp', __name__, static_folder='static', static_url_path='/webapp/static')
 CORS(app, supports_credentials=True)
 
 # Set path for DB

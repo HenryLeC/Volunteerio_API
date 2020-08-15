@@ -6,13 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- awesone fonts css-->
-    <link href="{{ url_for('static', filename='css/font-awesome.css') }}" rel="stylesheet" type="text/css">
+    <link href="{{ url_for('webapp.static', filename='css/font-awesome.css') }}" rel="stylesheet" type="text/css">
     <!-- owl carousel css-->
-    <link rel="stylesheet" href="{{ url_for('static', filename='owl-carousel/assets/owl.carousel.min.css') }}" type="text/css">
+    <link rel="stylesheet" href="{{ url_for('webapp.static', filename='owl-carousel/assets/owl.carousel.min.css') }}" type="text/css">
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/bootstrap.min.css') }}">
+    <link rel="stylesheet" href="{{ url_for('webapp.static', filename='css/bootstrap.min.css') }}">
     <!-- custom CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('webapp.static', filename='css/style.css') }}">
     <title>Volunteerio</title>
     <style>
 
@@ -41,7 +41,7 @@
                     marketplace for your school. </h1>
                 <a href="#contact">Contact Us <i class="fa fa-angle-right" aria-hidden="true"></i></a></div>
             <div class="col-md-6">
-                <div class="card"><img class="card-img-top img-fluid" src="{{ url_for('static', filename='images/banner-img.png') }}" alt=""></div>
+                <div class="card"><img class="card-img-top img-fluid" src="{{ url_for('webapp.static', filename='images/banner-img.png') }}" alt=""></div>
             </div>
         </div>
     </div>
@@ -70,14 +70,14 @@
                 <div class="row">
                     <div class="col">
                         <div class="card text-center">
-                            <div class="oval"><img class="card-img-top" src="{{ url_for('static', filename='images/marketplace.png') }}" alt=""></div>
+                            <div class="oval"><img class="card-img-top" src="{{ url_for('webapp.static', filename='images/marketplace.png') }}" alt=""></div>
                             <div class="card-body">
                                 <h3 class="card-title">Volunteer Opportunity Finder</h3>
                                 <p class="card-text">We provide an easy to use marketplace for volunteer opportunities.</p>
                             </div>
                         </div>
                         <div class="card text-center">
-                            <div class="oval"><img class="card-img-top" src="{{ url_for('static', filename='images/tracking.png') }}" alt=""></div>
+                            <div class="oval"><img class="card-img-top" src="{{ url_for('webapp.static', filename='images/tracking.png') }}" alt=""></div>
                             <div class="card-body">
                                 <h3 class="card-title">Tracking</h3>
                                 <p class="card-text">It is easy to track volunteer hours for students and administrators with Volunteerio.</p>
@@ -86,14 +86,14 @@
                     </div>
                     <div class="col">
                         <div class="card text-center">
-                            <div class="oval"><img class="card-img-top" src="{{ url_for('static', filename='images/add-opp.png') }}" alt=""></div>
+                            <div class="oval"><img class="card-img-top" src="{{ url_for('webapp.static', filename='images/add-opp.png') }}" alt=""></div>
                             <div class="card-body">
                                 <h3 class="card-title">Volunteer Opportunity Listing</h3>
                                 <p class="card-text">We provide an easy way for administrators and community partners to list their opportunities.</p>
                             </div>
                         </div>
                         <div class="card text-center">
-                            <div class="oval"><img class="card-img-top" src="{{ url_for('static', filename='images/double-tick.png') }}" alt=""></div>
+                            <div class="oval"><img class="card-img-top" src="{{ url_for('webapp.static', filename='images/double-tick.png') }}" alt=""></div>
                             <div class="card-body">
                                 <h3 class="card-title">Vetted Opportunities</h3>
                                 <p class="card-text">All opportunities from community partners need to be vetted by administrators before being shown to students</p>
@@ -110,7 +110,7 @@
         <h2>Our team.</h2>
         <div class="owl-carousel owl-carousel1 owl-theme">
             <div>
-                <div class="card text-center"><img class="card-img-top" src="{{ url_for('static', filename='images/Henry.jpg') }}" alt="">
+                <div class="card text-center"><img class="card-img-top" src="{{ url_for('webapp.static', filename='images/Henry.jpg') }}" alt="">
                     <div class="card-body">
                         <h5>Henry LeCompte<br/>
                             <span> Lead Software Engineer </span></h5>
@@ -119,7 +119,7 @@
                 </div>
             </div>
             <div>
-                <div class="card text-center"><img class="card-img-top" src="{{ url_for('static', filename='images/Adam.jpg') }}" alt="">
+                <div class="card text-center"><img class="card-img-top" src="{{ url_for('webapp.static', filename='images/Adam.jpg') }}" alt="">
                     <div class="card-body">
                         <h5>Adam Scheck<br/>
                             <span> Project Manager and Software Engineer </span></h5>
@@ -134,7 +134,7 @@
     <div class="container" id="features">
         <div class="row">
             <div class="media col-md-6 col-lg-4">
-                <div class="oval mr-4"><img class="align-self-start" src="{{ url_for('static', filename='images/analytics.png') }}" alt=""></div>
+                <div class="oval mr-4"><img class="align-self-start" src="{{ url_for('webapp.static', filename='images/analytics.png') }}" alt=""></div>
                 <div class="media-body">
                     <h5 class="mb-0">Easier Tracking</h5>
                     Volunteerio makes tracking your current volunteer hours a breeze. 
@@ -142,21 +142,21 @@
                 </div>
             </div>
             <div class="media col-md-6 col-lg-4">
-                <div class="oval mr-4"><img class="align-self-start" src="{{ url_for('static', filename='images/marketplace.png') }}" alt=""></div>
+                <div class="oval mr-4"><img class="align-self-start" src="{{ url_for('webapp.static', filename='images/marketplace.png') }}" alt=""></div>
                 <div class="media-body">
                     <h5 class="mb-0">Opportunity Marketplace</h5>
                     Volunteerio makes it easy to list and book opportunities for Students, Community Partners, and Administrators
                 </div>
             </div>
             <div class="media col-md-6 col-lg-4">
-                <div class="oval mr-4"><img class="align-self-start" src="{{ url_for('static', filename='images/affordable-pricing.png') }}" alt=""></div>
+                <div class="oval mr-4"><img class="align-self-start" src="{{ url_for('webapp.static', filename='images/affordable-pricing.png') }}" alt=""></div>
                 <div class="media-body">
                     <h5 class="mb-0">Easy Administration</h5>
                     Volunteerio makes it a breeze to make sure students are on-track to complete their volunteer hour requirements and to make sure they are actually particiapting
                 </div>
             </div>
             <!-- <div class="media col-md-6 col-lg-4">
-                <div class="oval mr-4"><img class="align-self-start" src="{{ url_for('static', filename='images/easy-to-use.png') }}" alt=""></div>
+                <div class="oval mr-4"><img class="align-self-start" src="{{ url_for('webapp.static', filename='images/easy-to-use.png') }}" alt=""></div>
                 <div class="media-body">
                     <h5 class="mb-0">Easy To Use</h5>
                     Aliquam a nisl pulvinar, hendrerit arcu sed, dapibus velit. Duis ac quam id sapien vestibulum
@@ -164,7 +164,7 @@
                 </div>
             </div>
             <div class="media col-md-6 col-lg-4">
-                <div class="oval mr-4"><img class="align-self-start" src="{{ url_for('static', filename='images/free-support.png') }}" alt=""></div>
+                <div class="oval mr-4"><img class="align-self-start" src="{{ url_for('webapp.static', filename='images/free-support.png') }}" alt=""></div>
                 <div class="media-body">
                     <h5 class="mb-0">Free Support</h5>
                     Aliquam a nisl pulvinar, hendrerit arcu sed, dapibus velit. Duis ac quam id sapien vestibulum
@@ -172,7 +172,7 @@
                 </div>
             </div>
             <div class="media col-md-6 col-lg-4">
-                <div class="oval mr-4"><img class="align-self-start" src="{{ url_for('static', filename='images/effectively-increase.png') }}" alt=""></div>
+                <div class="oval mr-4"><img class="align-self-start" src="{{ url_for('webapp.static', filename='images/effectively-increase.png') }}" alt=""></div>
                 <div class="media-body">
                     <h5 class="mb-0">Effectively Increase</h5>
                     Aliquam a nisl pulvinar, hendrerit arcu sed, dapibus velit. Duis ac quam id sapien vestibulum
@@ -187,9 +187,9 @@
 <div class="container-fluid gtco-logo-area">
     <div class="container">
         <div class="row">
-            <div class="col-md-4" style="text-align: center;"><a class="col-md-4" href='https://apps.apple.com/us/app/volunteerio-app/id1527355916'><img alt='Get it on App Store' src="{{ url_for('static', filename='images/AppStore.svg') }}" height="50"/></a></div>
-            <div class="col-md-4" style="text-align: center;"><a class="col-md-4" href='https://play.google.com/store/apps/details?id=us.Volunteerio.Volunteerio&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src="{{ url_for('static', filename='images/PlayStore.png') }}" height="50"/></a></div>
-            <div class="col-md-4" style="text-align: center;"><a class="col-md-4" href='https://www.microsoft.com/store/apps/9PM7MCHNFQCL?cid=storebadge&ocid=badge'><img src="{{ url_for('static', filename='images/MS.svg') }}" alt='Get it on Microsoft Store' style='height: 50px;'/></a></div>
+            <div class="col-md-4" style="text-align: center;"><a class="col-md-4" href='https://apps.apple.com/us/app/volunteerio-app/id1527355916'><img alt='Get it on App Store' src="{{ url_for('webapp.static', filename='images/AppStore.svg') }}" height="50"/></a></div>
+            <div class="col-md-4" style="text-align: center;"><a class="col-md-4" href='https://play.google.com/store/apps/details?id=us.Volunteerio.Volunteerio&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='Get it on Google Play' src="{{ url_for('webapp.static', filename='images/PlayStore.png') }}" height="50"/></a></div>
+            <div class="col-md-4" style="text-align: center;"><a class="col-md-4" href='https://www.microsoft.com/store/apps/9PM7MCHNFQCL?cid=storebadge&ocid=badge'><img src="{{ url_for('webapp.static', filename='images/MS.svg') }}" alt='Get it on Microsoft Store' style='height: 50px;'/></a></div>
         </div>
     </div>
 </div>
@@ -213,11 +213,11 @@
 
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="{{ url_for('static', filename='js/jquery-3.3.1.slim.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/popper.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+<script src="{{ url_for('webapp.static', filename='js/jquery-3.3.1.slim.min.js') }}"></script>
+<script src="{{ url_for('webapp.static', filename='js/popper.min.js') }}"></script>
+<script src="{{ url_for('webapp.static', filename='js/bootstrap.min.js') }}"></script>
 <!-- owl carousel js-->
-<script src="{{ url_for('static', filename='owl-carousel/owl.carousel.min.js') }}"></script>
-<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script src="{{ url_for('webapp.static', filename='owl-carousel/owl.carousel.min.js') }}"></script>
+<script src="{{ url_for('webapp.static', filename='js/main.js') }}"></script>
 </body>
 </html>
