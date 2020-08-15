@@ -51,7 +51,8 @@ class User(db.Model, UserMixin):
     is_webmaster = db.Column(db.Boolean)
 
     def __init__(self, username, password, name, ID, district, school,
-                 email=None, admin=False, community=False, student=False, webmaster=False):
+                 email=None, admin=False, community=False, student=False,
+                 webmaster=False):
         # If no role set default to student
         if not admin and not community and not student and not webmaster:
             student = True

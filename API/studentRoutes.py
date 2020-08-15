@@ -96,12 +96,12 @@ def list_opps(user: User):
 
         Opps = Opportunity.query\
             .join(User).filter(
-                                    User.District == user.District,
-                                    Opportunity.Time > dateFilter,
-                                    Opportunity.Name.like(nameFilter)
-                                ).order_by(
-                                    Opportunity.Time.asc()
-                                ).all()
+                User.District == user.District,
+                Opportunity.Time > dateFilter,
+                Opportunity.Name.like(nameFilter)
+            ).order_by(
+                Opportunity.Time.asc()
+            ).all()
         CleanOpps = []
         for opp in Opps:
             if user not in opp.BookedStudents:
@@ -154,7 +154,8 @@ def Clock(user: User):
                 'msg': 'Please Pass in The Correct Parameters'
             }), 500
         try:
-            OppId = jwt.decode(Code, 'VerySecret', algorithm="HS256")["ID"]
+            OppId = jwt.decode(Code, app.config['SECRET_KEY'],
+                               algorithm="HS256")["ID"]
             Opp = Opportunity.query.get(OppId)
         except(Exception):
             return jsonify({
@@ -329,7 +330,7 @@ def GenerateDoc(user: User):
         elems = []
 
         # Make Image
-        im = Image("Logo.png", 6.5*inch, 1.04*inch)
+        im = Image("Logo.png", 6.5 * inch, 1.04 * inch)
         elems.append(im)
 
         # Add Student Name
@@ -337,13 +338,13 @@ def GenerateDoc(user: User):
         elems.append(nm)
 
         # Add Space
-        elems.append(Spacer(0, 1*inch))
+        elems.append(Spacer(0, 1 * inch))
 
         # Add Paragraph
         elems.append(Paragraph("Total Volunteer Hours: " + str(user.hours)))
 
         # Add Space
-        elems.append(Spacer(0, 1*inch))
+        elems.append(Spacer(0, 1 * inch))
 
         # Make Table
         data = [
@@ -377,7 +378,7 @@ def GenerateDoc(user: User):
         elems.append(t)
 
         # Add Space
-        elems.append(Spacer(0, 1*inch))
+        elems.append(Spacer(0, 1 * inch))
 
         # Add Paragraph
         elems.append(Paragraph("* Hours may be incorrect on sponsored opportunities"))
@@ -421,7 +422,7 @@ def Leaderboard(user):
             usersReturn.append({
                 "name": user.name,
                 "hours": user.hours,
-                "rank": i+1
+                "rank": i + 1
             })
 
         return jsonify(usersReturn)

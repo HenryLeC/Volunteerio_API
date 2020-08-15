@@ -400,3 +400,33 @@ def UnconfOpps(user: User):
         db.session.add(Logs(traceback.format_exc()))
         db.session.commit()
         return "", 500
+
+
+@app.route('/addUsers', methods=["POST"])
+@token_required
+def addUsers(user: User):
+    try:
+        try:
+            usersC = int(request.form["users"])
+        except Exception:
+            return "", 500
+
+        for i in range(usersC):
+            us = User(
+                request.form["user" + str(i) + "UN"],
+                request.form["user" + str(i) + "P"],
+                request.form["user" + str(i) + "N"],
+                request.form["user" + str(i) + "I"],
+                user.District,
+                user.School,
+                student=True
+            )
+            db.session.add(us)
+
+        db.session.commit()
+
+        return "", 200
+    except Exception:
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
+        return "", 500

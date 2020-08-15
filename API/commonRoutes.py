@@ -105,7 +105,8 @@ def SignInStudents(user):
             return jsonify({
                 'msg': 'Please attach the proper parameters'
             }), 500
-        return jwt.encode({'ID': str(OppId)}, 'VerySecret', algorithm='HS256')
+        return jwt.encode({'ID': str(OppId)}, app.config['SECRET_KEY'],
+                          algorithm='HS256')
     except Exception:
         db.session.add(Logs(traceback.format_exc()))
         db.session.commit()
@@ -185,6 +186,14 @@ def DeleteOpp(user):
             }), 500
 
         Opp = Opportunity.query.get(int(OppId))
+        Opp: Opportunity
+
+        # Fun issues (Wont Delete Opp with Booked or Past Students)
+        Opp.BookedStudents = []
+        Opp.Booked = []
+        Opp.Past = []
+        Opp.PastStudents = []
+
         db.session.delete(Opp)
         db.session.commit()
 
