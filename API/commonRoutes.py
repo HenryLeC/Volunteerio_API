@@ -186,6 +186,14 @@ def DeleteOpp(user):
             }), 500
 
         Opp = Opportunity.query.get(int(OppId))
+        Opp: Opportunity
+
+        # Fun issues (Wont Delete Opp with Booked or Past Students)
+        Opp.BookedStudents = []
+        Opp.Booked = []
+        Opp.Past = []
+        Opp.PastStudents = []
+
         db.session.delete(Opp)
         db.session.commit()
 

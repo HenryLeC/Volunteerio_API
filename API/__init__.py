@@ -1,7 +1,6 @@
 from flask import Flask, Blueprint
 from flask_sqlalchemy import SQLAlchemy
 import os
-from PrefixMiddleware import PrefixMiddleware
 from flask_cors import CORS
 from flask_migrate import Migrate
 
