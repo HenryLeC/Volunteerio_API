@@ -8,6 +8,6 @@
   "python.linting.pylintEnabled": false,
   "editor.formatOnSave": false,
   "python.linting.flake8Args": [
-    "--ignore", "E501,E402,F401"
+    "--ignore", "E501,E402"
   ]
 }

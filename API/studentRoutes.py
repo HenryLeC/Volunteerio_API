@@ -268,10 +268,17 @@ def BookedOpps(user):
         Opps = user.BookedOpps
         CleanOpps = []
         for opp in Opps:
+            opp: Opportunity
             CleanOpps.append({
+                "ID": str(opp.id),
                 "Name": opp.Name,
+                "Location": opp.Location,
                 "Hours": opp.Hours,
-                "Time": opp.Time.strftime("%m/%d/%Y, %H:%M")
+                "Time": opp.getTime(),
+                "Sponsor": User.query.get(int(opp.SponsorID)).name,
+                "Class": opp.Class,
+                "CurrentVols": len(opp.BookedStudents),
+                "MaxVols": opp.MaxVols
             })
         return jsonify(CleanOpps)
     except Exception:
