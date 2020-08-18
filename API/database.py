@@ -40,6 +40,9 @@ class User(db.Model, UserMixin):
     # Admin
     is_admin = db.Column(db.Boolean)
 
+    # Teacher
+    is_teacher = db.Column(db.Boolean)
+
     # Community
     is_community = db.Column(db.Boolean)
 
@@ -52,9 +55,9 @@ class User(db.Model, UserMixin):
 
     def __init__(self, username, password, name, ID, district, school,
                  email=None, admin=False, community=False, student=False,
-                 webmaster=False):
+                 teacher=False, webmaster=False):
         # If no role set default to student
-        if not admin and not community and not student and not webmaster:
+        if not admin and not community and not student and not teacher and not webmaster:
             student = True
         self.username = username
         self.password = hash(password)
@@ -62,6 +65,7 @@ class User(db.Model, UserMixin):
         self.is_admin = admin
         self.is_community = community
         self.is_student = student
+        self.is_teacher = teacher
         self.hours = 0
         self.unconfHours = pickle.dumps([])
         self.confHours = pickle.dumps([])

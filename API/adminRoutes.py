@@ -430,3 +430,53 @@ def addUsers(user: User):
         db.session.add(Logs(traceback.format_exc()))
         db.session.commit()
         return "", 500
+
+
+@app.route('/schoolSettings', methods=["POST"])
+@token_required
+def districtSettings(user: User):
+    try:
+        if not user.is_admin:
+            return jsonify({
+                'msg': 'Must be Administrator to preform this task.'
+            }), 500
+
+        return jsonify({
+            "SGoal": user.School.hoursGoal
+        })
+    except Exception:
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
+        return "", 500
+
+
+@app.route("/schoolGoal", methods=["POST"])
+@token_required
+def districtGoal(user: User):
+    try:
+        if not user.is_admin:
+            return jsonify({
+                'msg': 'Must be Administrator to preform this task.'
+            }), 500
+
+        try:
+            hours = int(request.form["Goal"])
+        except KeyError:
+            return jsonify({
+                'msg': "Plese Send Proper Parameters"
+            })
+
+        s = user.School
+        s: School
+        s.hoursGoal = hours
+
+        db.session.add(s)
+        db.session.commit()
+
+        return jsonify({
+            "msg": "Updated Succsesfully"
+        })
+    except Exception:
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
+        return "", 500

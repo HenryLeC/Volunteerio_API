@@ -34,6 +34,8 @@ def login():
                 role = 'student'
             elif user.is_admin:
                 role = 'admin'
+            elif user.is_teacher:
+                role = 'teacher'
             else:
                 role = 'community'
 
