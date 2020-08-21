@@ -36,6 +36,8 @@ def backLogin():
             login_user(user, remember=True)
             if user.is_webmaster:
                 return redirect(url_for("backLogs"))
+            else:
+                return "No?"
         else:
             return redirect(url_for("backLogin"))
 
@@ -47,3 +49,5 @@ def backLogs():
         logs: list = Logs.query.all()
 
         return render_template("logs.html", logs=logs)
+    else:
+        return "Nope"
