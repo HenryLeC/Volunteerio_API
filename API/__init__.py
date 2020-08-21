@@ -9,12 +9,6 @@ from API.Secrets import SecretKey, DatabaseURI
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
 
-# Set path for DB
-dbpathl = os.path.join(os.path.abspath(os.path.dirname(__file__))).split("\\")
-dbpath = ""
-for sect in dbpathl[:-1]:
-    dbpath += sect + "\\"
-
 # Set Flask Config
 app.config['SECRET_KEY'] = SecretKey
 app.config['SQLALCHEMY_DATABASE_URI'] = DatabaseURI
