@@ -4,6 +4,7 @@ import os
 from PrefixMiddleware import PrefixMiddleware
 from flask_cors import CORS
 from flask_migrate import Migrate
+from API.Secrets import SecretKey, DatabaseURI
 
 app = Flask(__name__)
 CORS(app, supports_credentials=True)
@@ -15,8 +16,8 @@ for sect in dbpathl[:-1]:
     dbpath += sect + "\\"
 
 # Set Flask Config
-app.config['SECRET_KEY'] = "VerySecret"
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + dbpath + '\\app.db'
+app.config['SECRET_KEY'] = SecretKey
+app.config['SQLALCHEMY_DATABASE_URI'] = DatabaseURI
 app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix='/api')
 
 db = SQLAlchemy(app)
