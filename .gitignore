@@ -1,14 +1,11 @@
 env/
 
 
-
 *.pyc
 
 __pycache__
 API/__pycache__
 
-.vscode/*
-.vscode/settings.json
 
 example.log
 
