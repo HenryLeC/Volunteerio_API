@@ -16,3 +16,5 @@ Users.json
 migrations/*
 
 app.db
+
+API/Secrets.py
