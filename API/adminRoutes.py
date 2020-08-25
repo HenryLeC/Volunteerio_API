@@ -412,6 +412,19 @@ def addUsers(user: User):
             return "", 500
 
         for i in range(usersC):
+            st = False
+            t = False
+            ad = False
+            co = False
+            role = request.form["user" + str(i) + "R"]
+            if role == "Student":
+                st = True
+            elif role == "Teacher":
+                t = True
+            elif role == "Admin":
+                ad = True
+            elif role == "Community Member":
+                co = True
             us = User(
                 request.form["user" + str(i) + "UN"],
                 request.form["user" + str(i) + "P"],
@@ -419,7 +432,8 @@ def addUsers(user: User):
                 request.form["user" + str(i) + "I"],
                 user.District,
                 user.School,
-                student=True
+                student=st, admin=ad,
+                teacher=t, community=co
             )
             db.session.add(us)
 
