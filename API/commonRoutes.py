@@ -1,6 +1,6 @@
 from API import app, db
 from API.auth import generate_auth_token, token_required
-from werkzeug.security import check_password_hash
+from werkzeug.security import check_password_hash, generate_password_hash
 from API.database import (User, Opportunity, Logs,
                           NewUnconfHoursMessages, InCompleteOppMessages)
 from flask import jsonify, request, redirect
@@ -27,6 +27,7 @@ def login():
     try:
         # Find user by Uname and check hashed password
         user = User.query.filter_by(username=uname).first()
+        user: User
         if check_password_hash(user.password, passw):
             # Make role
             role = ''
@@ -42,7 +43,8 @@ def login():
             # return auth token and role
             return jsonify({
                 'key': generate_auth_token(user.id).decode("utf-8"),
-                'role': role
+                'role': role,
+                'firstTime': user.firstTime
             })
         else:
             return jsonify({'msg': 'Invalid Login information'}), 401
@@ -320,6 +322,35 @@ def ConfParticipation(user: User):
         return jsonify({
             'msg': "Success, Hours Awarded"
         })
+
+    except Exception:
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
+        return "", 500
+
+
+@app.route("/FirstSetup", methods=["POST"])
+@token_required
+def FirstSetup(user: User):
+    try:
+        try:
+            Pass = request.form["password"]
+            Email = request.form["email"]
+        except KeyError:
+            return({
+                'msg': "Please pass correct parameters"
+            }), 500
+
+        user.firstTime = False
+        user.password = generate_password_hash(Pass)
+        user.email = Email
+
+        db.session.add(user)
+        db.session.commit()
+
+        return jsonify({
+            "msg": "Updated Sucsessfully"
+        }), 200
 
     except Exception:
         db.session.add(Logs(traceback.format_exc()))

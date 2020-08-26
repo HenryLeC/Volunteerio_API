@@ -14,6 +14,7 @@ class User(db.Model, UserMixin):
     name = db.Column(db.String(), nullable=False)
     pub_ID = db.Column(db.String(), nullable=False, unique=True)
     email = db.Column(db.String(), nullable=True)
+    firstTime = db.Column(db.Boolean, nullable=False)
 
     District_Id = db.Column(db.Integer, db.ForeignKey('district.id'))
     District = db.relationship('District', backref="Members", lazy=True)
@@ -76,6 +77,7 @@ class User(db.Model, UserMixin):
         self.School = school
         self.is_webmaster = webmaster
         self.email = email
+        self.firstTime = True
 
 
 class Opportunity(db.Model):

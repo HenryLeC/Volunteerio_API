@@ -9,17 +9,17 @@ from flask import request, jsonify
 # Generate Auth Token Func
 def generate_auth_token(u_id):
     s = TimedJSONWebSignatureSerializer(
-            app.config['SECRET_KEY'],
-            expires_in=3600
-            )
+        app.config['SECRET_KEY'],
+        expires_in=3600
+    )
     return s.dumps({'id': u_id})
 
 
 # Check Auth Token Func
 def verify_auth_token(token):
     s = TimedJSONWebSignatureSerializer(
-            app.config['SECRET_KEY']
-            )
+        app.config['SECRET_KEY']
+    )
     try:
         data = s.loads(token)
     except SignatureExpired:
@@ -30,7 +30,7 @@ def verify_auth_token(token):
     return user
 
 
-# Decorator to check if thre is a vilid token in a request
+# Decorator to check if thre is a valid token in a request
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
