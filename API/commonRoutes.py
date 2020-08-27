@@ -1,13 +1,16 @@
 from API import app, db
-from API.auth import generate_auth_token, token_required
+from API.auth import (generate_auth_token, token_required,
+                      confirm_token, generate_confirmation_token)
 from werkzeug.security import check_password_hash, generate_password_hash
 from API.database import (User, Opportunity, Logs,
                           NewUnconfHoursMessages, InCompleteOppMessages)
-from flask import jsonify, request, redirect
+from flask import jsonify, request, redirect, render_template
 import datetime
 import jwt
 import traceback
 import pickle
+import requests
+import json
 
 
 @app.route('/')
@@ -348,9 +351,120 @@ def FirstSetup(user: User):
         db.session.add(user)
         db.session.commit()
 
+        APIKey = json.loads(open("APIKeys.json", "r").read())["MailGun"]
+
+        requests.post(
+            "https://api.mailgun.net/v3/volunteerio.us/messages",
+            auth=("api", APIKey),
+            data={"from": "Volunteerio <noreply@volunteerio.us>",
+                  "to": [Email],
+                  "subject": "Email Confirmation",
+                  "text": "Please Confirm Your Email.\n Click {} to confirm. This link will expire in 1 hour.".format("https://volunteerio.us/api/confirm/" + generate_confirmation_token(user))})
+
         return jsonify({
             "msg": "Updated Sucsessfully"
         }), 200
+
+    except Exception:
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
+        return "", 500
+
+
+@app.route("/confirm/<userT>", methods=["GET"])
+def confirmEmail(userT):
+    try:
+        user = confirm_token(userT)
+    except Exception:
+        return "Invalid Token"
+
+    user = User.query.get(user)
+    user: User
+
+    if user.emailConfirmed:
+        return "Email Already Confirmed"
+    else:
+        user.emailConfirmed = True
+        db.session.add(user)
+        db.session.commit()
+
+        return "Email Confirmed"
+
+
+@app.route("/resetPassword", methods=["POST"])
+def resetPasswordRequest():
+    try:
+        try:
+            uname = request.form["uname"]
+        except KeyError:
+            return({
+                'msg': "Please pass correct parameters"
+            }), 500
+
+        user = User.query.filter(
+            User.username == uname
+        ).first()
+        user: User
+
+        if user is None:
+            return jsonify({
+                "title": "Error",
+                "msg": "User does not exist"
+            })
+
+        if user.emailConfirmed:
+            token = generate_confirmation_token(user.id)
+
+            APIKey = json.loads(open("APIKeys.json", "r").read())["MailGun"]
+
+            requests.post(
+                "https://api.mailgun.net/v3/volunteerio.us/messages",
+                auth=("api", APIKey),
+                data={
+                    "from": "Volunteerio <noreply@volunteerio.us>",
+                    "to": [user.email],
+                    "subject": "Email Confirmation",
+                    "text": "Please Confirm Your Email.\n Click {} to confirm. This link will expire in 1 hour.".format("https://volunteerio.us/api/resetPassword/" + token)
+                }
+            )
+
+            return jsonify({
+                "title": "Success",
+                "msg": "Password reset link sent to your email."
+            })
+        else:
+            return jsonify({
+                "title": "Error",
+                "msg": "No confirmed email."
+            })
+
+    except Exception:
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
+        return "", 500
+
+
+@app.route("/resetPassword/<Token>", methods=["GET", "POST"])
+def resetPasswordWeb(Token):
+    try:
+        if request.method == "GET":
+            return render_template("passwordReset.html")
+        elif request.method == "POST":
+            try:
+                passw = request.form["password1"]
+            except KeyError:
+                return({
+                    'msg': "Please pass correct parameters"
+                }), 500
+
+            user = User.query.get(confirm_token(Token))
+            user: User
+
+            user.password = generate_password_hash(passw)
+            db.session.add(user)
+            db.session.commit()
+
+            return "Password Changed", 200
 
     except Exception:
         db.session.add(Logs(traceback.format_exc()))

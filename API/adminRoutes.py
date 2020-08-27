@@ -1,7 +1,7 @@
 from flask import request, jsonify
 from sqlalchemy import or_, and_
 from API import app, db
-from API.database import (User, NewUnconfHoursMessages, District, Logs,
+from API.database import (User, District, Logs,
                           School, Opportunity)
 from API.auth import token_required, verify_auth_token
 import pickle
@@ -235,7 +235,7 @@ def NewStudent():
                 UserObj = User(user["username"], user["password"],
                                user["name"], user["Id"],
                                District.query.filter_by(
-                                   id=user["District"]
+                               id=user["District"]
                                ).first(), student=True)
                 db.session.add(UserObj)
             except KeyError:

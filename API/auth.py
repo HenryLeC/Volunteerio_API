@@ -1,5 +1,6 @@
 from itsdangerous import (TimedJSONWebSignatureSerializer,
-                          SignatureExpired, BadSignature)
+                          SignatureExpired, BadSignature,
+                          URLSafeTimedSerializer)
 from API.database import User
 from API import app
 from functools import wraps
@@ -49,3 +50,22 @@ def token_required(f):
         return f(current_user, *args, **kwargs)
 
     return decorated
+
+
+# Email Tokens
+def generate_confirmation_token(data):
+    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    return serializer.dumps(data, salt=app.config['SECURITY_PASSWORD_SALT'])
+
+
+def confirm_token(token, expiration=3600):
+    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    try:
+        id = serializer.loads(
+            token,
+            salt=app.config['SECURITY_PASSWORD_SALT'],
+            max_age=expiration
+        )
+    except Exception:
+        return False
+    return id
