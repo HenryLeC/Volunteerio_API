@@ -1,5 +1,6 @@
 from itsdangerous import (TimedJSONWebSignatureSerializer,
-                          SignatureExpired, BadSignature)
+                          SignatureExpired, BadSignature,
+                          URLSafeTimedSerializer)
 from API.database import User
 from API import app
 from functools import wraps
@@ -9,17 +10,17 @@ from flask import request, jsonify
 # Generate Auth Token Func
 def generate_auth_token(u_id):
     s = TimedJSONWebSignatureSerializer(
-            app.config['SECRET_KEY'],
-            expires_in=3600
-            )
+        app.config['SECRET_KEY'],
+        expires_in=3600
+    )
     return s.dumps({'id': u_id})
 
 
 # Check Auth Token Func
 def verify_auth_token(token):
     s = TimedJSONWebSignatureSerializer(
-            app.config['SECRET_KEY']
-            )
+        app.config['SECRET_KEY']
+    )
     try:
         data = s.loads(token)
     except SignatureExpired:
@@ -30,7 +31,7 @@ def verify_auth_token(token):
     return user
 
 
-# Decorator to check if thre is a vilid token in a request
+# Decorator to check if thre is a valid token in a request
 def token_required(f):
     @wraps(f)
     def decorated(*args, **kwargs):
@@ -49,3 +50,22 @@ def token_required(f):
         return f(current_user, *args, **kwargs)
 
     return decorated
+
+
+# Email Tokens
+def generate_confirmation_token(data):
+    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    return serializer.dumps(data, salt=app.config['SECURITY_PASSWORD_SALT'])
+
+
+def confirm_token(token, expiration=3600):
+    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    try:
+        id = serializer.loads(
+            token,
+            salt=app.config['SECURITY_PASSWORD_SALT'],
+            max_age=expiration
+        )
+    except Exception:
+        return False
+    return id

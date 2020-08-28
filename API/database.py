@@ -14,6 +14,8 @@ class User(db.Model, UserMixin):
     name = db.Column(db.String(), nullable=False)
     pub_ID = db.Column(db.String(), nullable=False, unique=True)
     email = db.Column(db.String(), nullable=True)
+    emailConfirmed = db.Column(db.Boolean, nullable=False)
+    firstTime = db.Column(db.Boolean, nullable=False)
 
     District_Id = db.Column(db.Integer, db.ForeignKey('district.id'))
     District = db.relationship('District', backref="Members", lazy=True)
@@ -40,6 +42,9 @@ class User(db.Model, UserMixin):
     # Admin
     is_admin = db.Column(db.Boolean)
 
+    # Teacher
+    is_teacher = db.Column(db.Boolean)
+
     # Community
     is_community = db.Column(db.Boolean)
 
@@ -52,9 +57,9 @@ class User(db.Model, UserMixin):
 
     def __init__(self, username, password, name, ID, district, school,
                  email=None, admin=False, community=False, student=False,
-                 webmaster=False):
+                 teacher=False, webmaster=False):
         # If no role set default to student
-        if not admin and not community and not student and not webmaster:
+        if not admin and not community and not student and not teacher and not webmaster:
             student = True
         self.username = username
         self.password = hash(password)
@@ -62,6 +67,7 @@ class User(db.Model, UserMixin):
         self.is_admin = admin
         self.is_community = community
         self.is_student = student
+        self.is_teacher = teacher
         self.hours = 0
         self.unconfHours = pickle.dumps([])
         self.confHours = pickle.dumps([])
@@ -72,6 +78,8 @@ class User(db.Model, UserMixin):
         self.School = school
         self.is_webmaster = webmaster
         self.email = email
+        self.firstTime = True
+        self.emailConfirmed = False
 
 
 class Opportunity(db.Model):

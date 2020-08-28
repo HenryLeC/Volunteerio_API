@@ -1,14 +1,11 @@
 env/
 
 
-
 *.pyc
 
 __pycache__
 API/__pycache__
 
-.vscode/*
-.vscode/settings.json
 
 example.log
 
@@ -19,3 +16,5 @@ Users.json
 migrations/*
 
 app.db
+
+API/Secrets.py

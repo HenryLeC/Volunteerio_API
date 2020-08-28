@@ -1,10 +1,9 @@
-from API import app, db
+from API import app
 from flask_login import (login_user, login_required, LoginManager,
                          logout_user, current_user)
 from werkzeug.security import check_password_hash
 from flask import request, redirect, render_template, url_for
 from API.database import User, Logs
-import traceback
 
 login_manager = LoginManager()
 login_manager.init_app(app)
@@ -36,6 +35,8 @@ def backLogin():
             login_user(user, remember=True)
             if user.is_webmaster:
                 return redirect(url_for("backLogs"))
+            else:
+                return "No?"
         else:
             return redirect(url_for("backLogin"))
 
@@ -47,3 +48,5 @@ def backLogs():
         logs: list = Logs.query.all()
 
         return render_template("logs.html", logs=logs)
+    else:
+        return "Nope"

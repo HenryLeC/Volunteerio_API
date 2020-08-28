@@ -1,7 +1,7 @@
 from flask import request, jsonify
 from sqlalchemy import or_, and_
 from API import app, db
-from API.database import (User, NewUnconfHoursMessages, District, Logs,
+from API.database import (User, District, Logs,
                           School, Opportunity)
 from API.auth import token_required, verify_auth_token
 import pickle
@@ -235,7 +235,7 @@ def NewStudent():
                 UserObj = User(user["username"], user["password"],
                                user["name"], user["Id"],
                                District.query.filter_by(
-                                   id=user["District"]
+                               id=user["District"]
                                ).first(), student=True)
                 db.session.add(UserObj)
             except KeyError:
@@ -412,6 +412,19 @@ def addUsers(user: User):
             return "", 500
 
         for i in range(usersC):
+            st = False
+            t = False
+            ad = False
+            co = False
+            role = request.form["user" + str(i) + "R"]
+            if role == "Student":
+                st = True
+            elif role == "Teacher":
+                t = True
+            elif role == "Admin":
+                ad = True
+            elif role == "Community Member":
+                co = True
             us = User(
                 request.form["user" + str(i) + "UN"],
                 request.form["user" + str(i) + "P"],
@@ -419,13 +432,64 @@ def addUsers(user: User):
                 request.form["user" + str(i) + "I"],
                 user.District,
                 user.School,
-                student=True
+                student=st, admin=ad,
+                teacher=t, community=co
             )
             db.session.add(us)
 
         db.session.commit()
 
         return "", 200
+    except Exception:
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
+        return "", 500
+
+
+@app.route('/schoolSettings', methods=["POST"])
+@token_required
+def districtSettings(user: User):
+    try:
+        if not user.is_admin:
+            return jsonify({
+                'msg': 'Must be Administrator to preform this task.'
+            }), 500
+
+        return jsonify({
+            "SGoal": user.School.hoursGoal
+        })
+    except Exception:
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
+        return "", 500
+
+
+@app.route("/schoolGoal", methods=["POST"])
+@token_required
+def districtGoal(user: User):
+    try:
+        if not user.is_admin:
+            return jsonify({
+                'msg': 'Must be Administrator to preform this task.'
+            }), 500
+
+        try:
+            hours = int(request.form["Goal"])
+        except KeyError:
+            return jsonify({
+                'msg': "Plese Send Proper Parameters"
+            })
+
+        s = user.School
+        s: School
+        s.hoursGoal = hours
+
+        db.session.add(s)
+        db.session.commit()
+
+        return jsonify({
+            "msg": "Updated Succsesfully"
+        })
     except Exception:
         db.session.add(Logs(traceback.format_exc()))
         db.session.commit()
