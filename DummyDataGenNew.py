@@ -25,7 +25,7 @@ lastCId = 20000000
 
 # District School
 d = District("Waterside School District")
-s = School("Waterside Public School", 20)
+s = School("Waterside Public Schools", 20)
 db.session.add(d)
 db.session.add(s)
 

@@ -12,7 +12,7 @@ class User(db.Model, UserMixin):
     username = db.Column(db.String(), unique=True, nullable=False)
     password = db.Column(db.String(), unique=True, nullable=False)
     name = db.Column(db.String(), nullable=False)
-    pub_ID = db.Column(db.String(), nullable=False, unique=True)
+    pub_ID = db.Column(db.String(), nullable=False)
     email = db.Column(db.String(), nullable=True)
     emailConfirmed = db.Column(db.Boolean, nullable=False)
     firstTime = db.Column(db.Boolean, nullable=False)
@@ -108,7 +108,7 @@ class Opportunity(db.Model):
         self.Time = Time
         self.Location = Location
         self.Hours = Hours
-        self.SponsorId = Sponsor.id
+        self.SponsorID = Sponsor.id
         self.Class = Class
         self.MaxVols = MaxVols
         self.Confirmed = Confirmed
