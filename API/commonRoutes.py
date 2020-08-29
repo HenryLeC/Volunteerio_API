@@ -359,7 +359,7 @@ def FirstSetup(user: User):
             data={"from": "Volunteerio <noreply@volunteerio.us>",
                   "to": [Email],
                   "subject": "Email Confirmation",
-                  "text": "Please Confirm Your Email.\n Click {} to confirm. This link will expire in 1 hour.".format("https://volunteerio.us/api/confirm/" + generate_confirmation_token(user))})
+                  "text": "Please Confirm Your Email.\n Click {} to confirm. This link will expire in 1 hour.".format("https://volunteerio.us/api/confirm/" + generate_confirmation_token(user.id))})
 
         return jsonify({
             "msg": "Updated Sucsessfully"
@@ -433,10 +433,16 @@ def resetPasswordRequest():
                 "msg": "Password reset link sent to your email."
             })
         else:
-            return jsonify({
-                "title": "Error",
-                "msg": "No confirmed email."
-            })
+            if user.is_student:
+                return jsonify({
+                    "title": "Error",
+                    "msg": "No confirmed email, ask an administrator for help"
+                })
+            else:
+                return jsonify({
+                    "title": "Error",
+                    "msg": "No confirmed email."
+                })
 
     except Exception:
         db.session.add(Logs(traceback.format_exc()))
