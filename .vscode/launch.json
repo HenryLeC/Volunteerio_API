@@ -6,6 +6,7 @@
     "configurations": [
         {"name":"Python: Current File","type":"python","request":"launch","program":"${file}","console":"integratedTerminal"},
         {"name":"Make Db","type":"python","request":"launch","program":"DbSetup.py","console":"integratedTerminal"},
+        {"name":"Data.py","type":"python","request":"launch","program":"Data.py","console":"integratedTerminal"},
         {
             "name": "Start",
             "type": "python",

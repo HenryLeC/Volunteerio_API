@@ -1,7 +1,6 @@
 import json
 import random
 from API import db
-from string import digits
 from API.database import (User, Opportunity, Booked,
                           Past, District, NewUnconfHoursMessages,
                           School, InCompleteOppMessages)
