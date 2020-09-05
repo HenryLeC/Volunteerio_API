@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, send_file
 from sqlalchemy import or_, and_
 from API import app, db
 from API.database import (User, District, Logs,
@@ -8,6 +8,8 @@ import pickle
 import traceback
 import requests
 import json
+import csv
+import io
 
 
 @app.route('/confirmHours', methods=["POST"])
@@ -490,6 +492,47 @@ def districtGoal(user: User):
         return jsonify({
             "msg": "Updated Succsesfully"
         })
+    except Exception:
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
+        return "", 500
+
+
+@app.route("/StudentReport", methods=["POST"])
+@token_required
+def StudentReport(user: User):
+    try:
+        if not user.is_admin:
+            return jsonify({
+                'msg': 'Must be Administrator to preform this task.'
+            }), 500
+
+        users = User.query.filter(
+            and_(
+                User.is_student,
+                User.School == user.School,
+            )
+        ).all()
+
+        csvf = io.StringIO()
+        writer = csv.writer(csvf, delimiter=",")
+        writer.writerow(["Name", "ID", "Hours", "HoursGoal"])
+
+        for stu in users:
+            stu: User
+            writer.writerow([stu.name, stu.pub_ID, stu.hours, stu.School.hoursGoal])
+
+        csvf.seek(0)
+        mem = io.BytesIO(csvf.getvalue().encode('utf-8'))
+        mem.seek(0)
+        csvf.close()
+        return send_file(
+            mem,
+            as_attachment=True,
+            mimetype="text/csv",
+            attachment_filename="StudentReport.csv"
+        )
+
     except Exception:
         db.session.add(Logs(traceback.format_exc()))
         db.session.commit()
