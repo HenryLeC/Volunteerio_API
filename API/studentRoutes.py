@@ -98,6 +98,7 @@ def list_opps(user: User):
             .join(User).filter(
                 User.District == user.District,
                 Opportunity.Time > dateFilter,
+                Opportunity.Confirmed,
                 Opportunity.Name.like(nameFilter)
             ).order_by(
                 Opportunity.Time.asc()
@@ -175,39 +176,39 @@ def Clock(user: User):
 
         if res:
             td = datetime.datetime.utcnow() - RightDict["StartTime"]
-            Hours = float(td.seconds / 3600)
+            # Hours = float(td.seconds / 3600)
 
-            if Hours <= 0.15 * Opp.Hours:
-                message = {
-                    'header': "Scanner",
-                    'msg': "You have not completed enough of the opportunity, please either continue the opportunity or you will not get any hours."
-                }
-                pass
-            elif Hours < 0.8 * Opp.Hours:
-                hours, remainder = divmod(td.seconds, 3600)
-                minutes, seconds = divmod(remainder, 60)
-                OppMessage = InCompleteOppMessages(hours, minutes)
-                db.session.add(OppMessage)
+            # if Hours <= 0.15 * Opp.Hours:
+            #     message = {
+            #         'header': "Scanner",
+            #         'msg': "You have not completed enough of the opportunity, please either continue the opportunity or you will not get any hours."
+            #     }
+            #     pass
+            # elif Hours < 0.8 * Opp.Hours:
+            hours, remainder = divmod(td.seconds, 3600)
+            minutes, seconds = divmod(remainder, 60)
+            OppMessage = InCompleteOppMessages(hours, minutes)
+            db.session.add(OppMessage)
 
-                user.InCompleteOppMessages.append(OppMessage)
-                Opp.InCompleteOppMessages.append(OppMessage)
+            user.InCompleteOppMessages.append(OppMessage)
+            Opp.InCompleteOppMessages.append(OppMessage)
 
-                message = {
-                    'header': "Scanned",
-                    'msg': "You have only completed part of the opportunty, the sponsor will either give you partial credit or no credit."
-                }
-            elif Hours >= 0.8 * Opp.Hours:
-                user.hours += Opp.Hours
+            message = {
+                'header': "Scanned",
+                'msg': "You have completed the opportunty, the sponsor will be confirming your participation shortly."
+            }
+            # elif Hours >= 0.8 * Opp.Hours:
+            #     user.hours += Opp.Hours
 
-                user.PastOpps.append(Opp)
-                CurrentOpps = pickle.loads(user.CurrentOpps)
-                CurrentOpps.remove(RightDict)
-                user.CurrentOpps = pickle.dumps(CurrentOpps)
+            #     user.PastOpps.append(Opp)
+            #     CurrentOpps = pickle.loads(user.CurrentOpps)
+            #     CurrentOpps.remove(RightDict)
+            #     user.CurrentOpps = pickle.dumps(CurrentOpps)
 
-                message = {
-                    'header': "Scanned",
-                    'msg': 'Thank You, Your Hours were added.'
-                }
+            #     message = {
+            #         'header': "Scanned",
+            #         'msg': 'Thank You, Your Hours were added.'
+            #     }
 
             db.session.add(user)
             db.session.add(Opp)
@@ -254,6 +255,30 @@ def BookAnOpp(user):
         db.session.commit()
         return jsonify({
             'msg': 'Opportunity Booked.'
+        })
+    except Exception:
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
+        return "", 500
+
+
+@app.route('/UnBookAnOpp', methods=["POST"])
+@token_required
+def UnBookAnOpp(user: User):
+    try:
+        try:
+            Id = request.form["OppId"]
+        except KeyError:
+            return jsonify({
+                'msg': 'Please Pass in The Correct Parameters'
+            }), 500
+        Opp = Opportunity.query.get(Id)
+        user.BookedOpps.remove(Opp)
+
+        db.session.commit()
+
+        return jsonify({
+            'msg': "Opportunity UnBooked"
         })
     except Exception:
         db.session.add(Logs(traceback.format_exc()))

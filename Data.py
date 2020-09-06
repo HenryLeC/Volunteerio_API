@@ -3,7 +3,8 @@ from API import db
 from API.database import (
     District, School,
     User, Opportunity,
-    InCompleteOppMessages
+    InCompleteOppMessages,
+    NewUnconfHoursMessages
 )
 import datetime
 import random
@@ -16,6 +17,7 @@ lastSId = 00000000
 lastCId = 10000000
 lastAId = 20000000
 stud = None
+ladm = None
 comms = []
 adms = []
 stus = []
@@ -25,7 +27,7 @@ past = []
 
 # District / School
 d = District("Waterside School District")
-s = School("Waterside Public Schools", 20)
+s = School("Waterside Public School", 20)
 db.session.add(d)
 db.session.add(s)
 
@@ -90,12 +92,13 @@ for aName in NAMES[97:]:
 # Login Adm
 admId = str(lastAId).zfill(8)
 lastAId += 1
-comm = User(
+adm = User(
     "Admin", "password", "Harry",
     admId, d, s, admin=True
 )
 db.session.add(adm)
 adms.append(adm)
+ladm = adm
 db.session.commit()
 # endregion
 
@@ -122,7 +125,7 @@ date = date.replace(hour=8, minute=30)
 date += datetime.timedelta(days=20)
 usr = comms[3]
 opp = Opportunity(
-    "Beach Cleanup", "Suny Isles Beach", date, 4,
+    "Beach Cleanup", "Suny Isles Beach", date, 6,
     "Environment", 40, usr, "Come and help clean up sunny isles beach.", True
 )
 db.session.add(opp)
@@ -132,9 +135,9 @@ futureApp.append(opp)
 date = now()
 date = date.replace(hour=17, minute=0)
 date += datetime.timedelta(days=2)
-usr = adms[0]
+usr = ladm
 opp = Opportunity(
-    "Football Game", "American Heritage", date, 2,
+    "Football Game", "American Heritage", date, 3,
     "School", 10, usr, "Come help setup for the football game",
     True
 )
@@ -143,11 +146,11 @@ futureApp.append(opp)
 
 # Opp 4
 date = now()
-date = date.replace(hour=18, minute=0)
+date = date.replace(hour=7, minute=0)
 date += datetime.timedelta(days=7)
 usr = comms[2]
 opp = Opportunity(
-    "Help Register Voters", "Voter Station", date, 4,
+    "Help Register Voters", "Voter Station", date, 9,
     "Civic", 40, usr, "Help get more voters registered for the upcoming elections", True
 )
 db.session.add(opp)
@@ -167,7 +170,7 @@ date = date.replace(hour=18, minute=30)
 date -= datetime.timedelta(days=5)
 usr = comms[0]
 opp = Opportunity(
-    "Humane Society", "Miami-Dade Humane Society", date, 2,
+    "Humane Society", "Miami-Dade Humane Society", date, 3,
     "Animals", 20, usr, "Come to the Humane Society and help feed and care for the animals",
     True
 )
@@ -180,7 +183,7 @@ date = date.replace(hour=8, minute=30)
 date -= datetime.timedelta(days=20)
 usr = comms[1]
 opp = Opportunity(
-    "Beach Cleanup", "Suny Isles Beach", date, 4,
+    "Beach Cleanup", "Suny Isles Beach", date, 5,
     "Environment", 40, usr, "Come and help clean up sunny isles beach.", True
 )
 db.session.add(opp)
@@ -190,9 +193,9 @@ past.append(opp)
 date = now()
 date = date.replace(hour=17, minute=0)
 date -= datetime.timedelta(days=2)
-usr = adms[3]
+usr = ladm
 opp = Opportunity(
-    "Football Game", "American Heritage", date, 2,
+    "Football Game", "American Heritage", date, 4,
     "School", 10, usr, "Come help setup for the football game",
     True
 )
@@ -201,11 +204,11 @@ past.append(opp)
 
 # Opp 4
 date = now()
-date = date.replace(hour=18, minute=0)
+date = date.replace(hour=8, minute=0)
 date -= datetime.timedelta(days=7)
 usr = comms[3]
 opp = Opportunity(
-    "Help Register Voters", "Voter Station", date, 4,
+    "Help Register Voters", "Voter Station", date, 9,
     "Civic", 40, usr, "Help get more voters registered for the upcoming elections", True
 )
 db.session.add(opp)
@@ -216,27 +219,34 @@ db.session.commit()
 
 # Book Students
 # region
+stusr = stus[:]
+random.shuffle(stusr)
 for opp in futureApp:
-    for stu in random.choices(stus, k=random.randint(opp.MaxVols // 2, opp.MaxVols)):
+    for stu in range(random.randint(round(opp.MaxVols / 2), opp.MaxVols)):
+        stu = stusr.pop()
         stu.BookedOpps.append(opp)
 db.session.commit()
 # endregion
 
 # region Past Students
+stusr = stus[:]
+random.shuffle(stusr)
 for opp in past:
-    for stu in random.choices(stus, k=random.randint(opp.MaxVols // 2, opp.MaxVols)):
+    for i in range(random.randint(round(opp.MaxVols / 2), opp.MaxVols)):
+        stu = stusr.pop()
         complete = random.randint(1, 10)
         if complete == 5:
             msg = InCompleteOppMessages(random.randint(1, opp.Hours - 1), random.randint(1, 59))
+            db.session.add(msg)
             opp.InCompleteOppMessages.append(msg)
             stu.InCompleteOppMessages.append(msg)
-            db.session.add(msg)
             db.session.add(stu)
             db.session.add(opp)
         else:
             stu.PastOpps.append(opp)
             stu.hours += opp.Hours
-db.session.commit()
+    db.session.commit()
+
 # endregion
 
 # region Hours on Student
@@ -250,6 +260,9 @@ unconfs.append({
     'desc': "I worked as a camp counselor for a few days."
 })
 stud.unconfHours = pickle.dumps(unconfs)
+msg = NewUnconfHoursMessages()
+db.session.add(msg)
+stud.UnconfHoursMessages.append(msg)
 
 id = stud.HoursId
 stud.HoursId += 1
