@@ -266,7 +266,7 @@ def Notifications(user: User):
             for Message in IncompleteOpps:
                 CleanMessages.append({
                     'ID': str(Message.id),
-                    'Message': f"{Message.Student.name} only completed part of your opportunity.",
+                    'Message': f"{Message.Student.name} completed your opportunity.",
                     'Student': Message.Student.name,
                     'OppName': Message.Opportunity.Name,
                     'OppHours': Message.Opportunity.Hours,

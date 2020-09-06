@@ -234,8 +234,8 @@ random.shuffle(stusr)
 for opp in past:
     for i in range(random.randint(round(opp.MaxVols / 2), opp.MaxVols)):
         stu = stusr.pop()
-        complete = random.randint(1, 10)
-        if complete == 5:
+        complete = random.randint(1, 4)
+        if complete == 2:
             msg = InCompleteOppMessages(random.randint(1, opp.Hours - 1), random.randint(1, 59))
             db.session.add(msg)
             opp.InCompleteOppMessages.append(msg)
