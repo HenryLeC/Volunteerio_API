@@ -315,7 +315,10 @@ def ConfParticipation(user: User):
                 'msg': "Server Error"
             }), 500
 
-        stu.CurrentOpps = pickle.dumps(pickle.loads(stu.CurrentOpps).remove(RightDict))
+        cOpps = pickle.loads(stu.CurrentOpps)
+        cOpps.remove(RightDict)
+
+        stu.CurrentOpps = pickle.dumps(cOpps)
         stu.PastOpps.append(msg.Opportunity)
 
         db.session.add(stu)
