@@ -317,11 +317,16 @@ def BookedOpps(user):
 def PastOpps(user):
     try:
         PastOpps = user.PastOpps
+        Pasts = user.Past
         PastOppsClean = []
         for opp in PastOpps:
+            for i in Pasts:
+                if i.opp == opp:
+                    past = i
+                    break
             PastOppsClean.append({
                 "Name": opp.Name,
-                "Hours": opp.Hours,
+                "Hours": past.hours,
                 "Time": opp.Time.strftime("%m/%d/%Y, %H:%M")
             })
         confHours = pickle.loads(user.confHours)

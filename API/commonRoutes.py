@@ -3,7 +3,8 @@ from API.auth import (generate_auth_token, token_required,
                       confirm_token, generate_confirmation_token)
 from werkzeug.security import check_password_hash, generate_password_hash
 from API.database import (User, Opportunity, Logs,
-                          NewUnconfHoursMessages, InCompleteOppMessages)
+                          NewUnconfHoursMessages, InCompleteOppMessages,
+                          Past)
 from flask import jsonify, request, redirect, render_template
 import datetime
 import jwt
@@ -131,6 +132,7 @@ def MyOpps(user):
         Opps = user.Opportunities
         CleanOpps = []
         for opp in Opps:
+            opp: Opportunity
             CleanOpps.append({
                 "ID": str(opp.id),
                 "Name": opp.Name,
@@ -140,7 +142,8 @@ def MyOpps(user):
                 "Sponsor": User.query.get(int(opp.SponsorID)).name,
                 "Class": opp.Class,
                 "CurrentVols": len(opp.BookedStudents),
-                "MaxVols": opp.MaxVols
+                "MaxVols": opp.MaxVols,
+                "Confirmed": opp.Confirmed
             })
         return jsonify(CleanOpps)
     except Exception:
@@ -320,6 +323,10 @@ def ConfParticipation(user: User):
 
         stu.CurrentOpps = pickle.dumps(cOpps)
         stu.PastOpps.append(msg.Opportunity)
+        for i in stu.Past:
+            i: Past
+            if i.opp == opp:
+                i.hours = hours
 
         db.session.add(stu)
         db.session.add(opp)

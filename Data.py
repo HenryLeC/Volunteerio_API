@@ -240,10 +240,18 @@ for opp in past:
             db.session.add(msg)
             opp.InCompleteOppMessages.append(msg)
             stu.InCompleteOppMessages.append(msg)
+            cOpps = pickle.loads(stu.CurrentOpps)
+            cOpps.append({"ID": str(opp.id)})
+            stu.CurrentOpps = pickle.dumps(cOpps)
             db.session.add(stu)
             db.session.add(opp)
         else:
             stu.PastOpps.append(opp)
+            for i in stu.Past:
+                if i.opp == opp:
+                    pastD = i
+                    break
+            pastD.hours = opp.Hours
             stu.hours += opp.Hours
     db.session.commit()
 

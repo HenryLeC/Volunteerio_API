@@ -174,6 +174,7 @@ class Past(db.Model):
 
     user = db.relationship(User, backref=db.backref("Past"))
     opp = db.relationship(Opportunity, backref=db.backref("Past"))
+    hours = db.Column(db.Integer, nullable=True)
 
 
 class Logs(db.Model):
