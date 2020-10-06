@@ -14,5 +14,7 @@ SecretKey = "VerySecret"
 
 DatabaseURI = 'sqlite:///' + dbpath + '\\app.db'
 
+SECURITY_PASSWORD_SALT = "This Is Your Salt"
+
 ```
 
