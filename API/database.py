@@ -29,6 +29,7 @@ class User(db.Model, UserMixin):
     unconfHours = db.Column(db.LargeBinary())
     confHours = db.Column(db.LargeBinary())
     CurrentOpps = db.Column(db.LargeBinary())
+    UserGoal = db.Column(db.Integer, nullable=True)
     UnconfHoursMessages = db.relationship("NewUnconfHoursMessages",
                                           backref="Student", lazy=True,
                                           cascade="delete, delete-orphan")
@@ -80,6 +81,19 @@ class User(db.Model, UserMixin):
         self.email = email
         self.firstTime = True
         self.emailConfirmed = False
+        self.UserGoal = None
+
+    def getGoal(self) -> int:
+        userGoal = self.UserGoal
+        schoolGoal = self.School.hoursGoal
+        districtGoal = self.District.hoursGoal
+
+        if userGoal is not None:
+            return userGoal
+        elif schoolGoal is not None:
+            return schoolGoal
+        elif districtGoal is not None:
+            return districtGoal
 
 
 class Opportunity(db.Model):

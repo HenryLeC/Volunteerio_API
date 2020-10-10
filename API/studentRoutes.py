@@ -19,15 +19,7 @@ import io
 @token_required
 def getHours(user: User):
     try:
-        schoolGoal = user.School.hoursGoal
-        districtGoal = user.District.hoursGoal
-        goal = 0
-        if schoolGoal is not None:
-            goal = schoolGoal
-        elif districtGoal is not None:
-            goal = districtGoal
-
-        return jsonify({'hours': str(user.hours), 'goal': goal})
+        return jsonify({'hours': str(user.hours), 'goal': user.getGoal()})
     except Exception:
         db.session.add(Logs(traceback.format_exc()))
         db.session.commit()

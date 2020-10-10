@@ -107,7 +107,7 @@ def deleteHours(user):
 
 @app.route('/StudentsList', methods=["POST"])
 @token_required
-def StudentsList(user):
+def StudentsList(user: User):
     try:
         if not user.is_admin:
             return jsonify({
@@ -131,19 +131,12 @@ def StudentsList(user):
         )).limit(5)
 
         for student in Students:
-            schoolGoal = user.School.hoursGoal
-            districtGoal = user.District.hoursGoal
-            goal = 0
-            if schoolGoal is not None:
-                goal = schoolGoal
-            elif districtGoal is not None:
-                goal = districtGoal
             ReturnList.append({
                 "Name": student.name,
                 "StuId": student.pub_ID,
                 "Hours": str(student.hours),
                 "ID": student.id,
-                "HoursGoal": str(goal)
+                "HoursGoal": str(student.getGoal())
             })
         return jsonify(ReturnList)
     except Exception:
@@ -525,7 +518,7 @@ def StudentReport(user: User):
 
         for stu in users:
             stu: User
-            writer.writerow([stu.name, stu.pub_ID, stu.hours, stu.School.hoursGoal])
+            writer.writerow([stu.name, stu.pub_ID, stu.hours, stu.getGoal()])
 
         csvf.seek(0)
         mem = io.BytesIO(csvf.getvalue().encode('utf-8'))
@@ -537,6 +530,40 @@ def StudentReport(user: User):
             mimetype="text/csv",
             attachment_filename="StudentReport.csv"
         )
+
+    except Exception:
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
+        return "", 500
+
+
+@app.route("/UserSpecificGoal", methods=["POST"])
+@token_required
+def UserSpecificGoal(user: User):
+    try:
+        if not user.is_admin:
+            return jsonify({
+                'msg': 'Must be Administrator to preform this task.'
+            }), 500
+
+        try:
+            user = User.query.get(request.form["userId"])
+            goal = request.form["goal"]
+        except KeyError:
+            return jsonify({
+                'msg': "Plese Send Proper Parameters"
+            })
+
+        if goal != "":
+            user.UserGoal = goal
+        else:
+            user.UserGoal = None
+        db.session.add(user)
+        db.session.commit()
+
+        return jsonify({
+            'msg': 'Success'
+        })
 
     except Exception:
         db.session.add(Logs(traceback.format_exc()))
