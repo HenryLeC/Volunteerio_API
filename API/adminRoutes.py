@@ -561,9 +561,7 @@ def UserSpecificGoal(user: User):
         db.session.add(user)
         db.session.commit()
 
-        return jsonify({
-            'msg': 'Success'
-        })
+        return str(user.getGoal())
 
     except Exception:
         db.session.add(Logs(traceback.format_exc()))
