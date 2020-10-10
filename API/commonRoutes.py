@@ -433,8 +433,8 @@ def resetPasswordRequest():
                 data={
                     "from": "Volunteerio <noreply@volunteerio.us>",
                     "to": [user.email],
-                    "subject": "Email Confirmation",
-                    "text": "Please Confirm Your Email.\n Click {} to confirm. This link will expire in 1 hour.".format("https://volunteerio.us/api/resetPassword/" + token)
+                    "subject": "Password Reset",
+                    "text": "Password rest link requested.\n Click {} to reset. If you didnt request this link please disregard. This link will expire in 1 hour.".format("https://volunteerio.us/api/resetPassword/" + token)
                 }
             )
 
