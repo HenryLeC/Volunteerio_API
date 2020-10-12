@@ -3,3 +3,13 @@ Docs.md
 README.md
 
 .vscode/*
+
+__pycache__/*
+
+API/__pycache__/*
+
+Users.json
+
+Names.json
+
+API/Secrets.py

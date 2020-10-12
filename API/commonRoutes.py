@@ -486,3 +486,8 @@ def resetPasswordWeb(Token):
         db.session.add(Logs(traceback.format_exc()))
         db.session.commit()
         return "", 500
+
+
+@app.route("/health")
+def healthCheck():
+    return "Healthy", 200

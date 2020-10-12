@@ -12,7 +12,15 @@
             "type": "python",
             "request": "launch",
             "program": "setup.py",
-            "console": "integratedTerminal"
+            "console": "integratedTerminal",
+            "env": {
+                "DATABASE_HOSTNAME": "host",
+                "DATABASE_DATABASE": "data",
+                "DATABASE_USERNAME": "uname",
+                "DATABASE_PASSWORD": "pass",
+                "API_SECRET_KEY": "secretKey",
+                "API_PASSWORD_SALT": "passsalt"
+            }
         }
     ]
 }

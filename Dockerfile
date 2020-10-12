@@ -13,5 +13,8 @@ RUN pip install -r requirements.txt
 # Copy the current directory contents into the container at /app 
 ADD . /app
 
+# Copy Docker Secrets
+ADD API/DockerSecrets.py /app/API/Secrets.py
+
 # run the command to start uWSGI
 CMD ["uwsgi", "app.ini", "--wsgi-disable-file-wrapper"]
