@@ -15,4 +15,8 @@ for srv in srv_records:
     srvInfo['port'] = srv.port
     srvInfo['host'] = str(srv.target).rstrip('.')
 
+a_record = dns.resolver.resolve(srvInfo['host'], 'A')
+for a in a_record:
+    srvInfo['host'] = a.address
+
 DatabaseURI = f"postgres://{databaseUsername}:{databasePass}@{srvInfo['host']}:{srvInfo['port']}/{databaseDatabase}?client_encoding=utf8"
