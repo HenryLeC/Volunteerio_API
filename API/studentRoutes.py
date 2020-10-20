@@ -1,7 +1,7 @@
 from flask import request, jsonify, send_file
 from API import app, db
 from API.database import (User, Opportunity, NewUnconfHoursMessages, Logs,
-                          InCompleteOppMessages)
+                          InCompleteOppMessages, Past)
 from API.auth import token_required
 from reportlab.lib.units import inch
 from reportlab.lib import colors
@@ -54,9 +54,9 @@ def add_hours(user: User):
 
         # Add To DB
         user.unconfHours = pickle.dumps(UnConfHrs)
-        if len(user.UnconfHoursMessages) == 0:
+        if len(user.UnConfHoursMessages) == 0:
             Message = NewUnconfHoursMessages()
-            user.UnconfHoursMessages.append(Message)
+            user.UnConfHoursMessages.append(Message)
             db.session.add(Message)
         db.session.add(user)
         db.session.commit()
@@ -88,7 +88,7 @@ def list_opps(user: User):
 
         Opps = Opportunity.query\
             .join(User).filter(
-                User.District == user.District,
+                User.School == user.School,
                 Opportunity.Time > dateFilter,
                 Opportunity.Confirmed,
                 Opportunity.Name.like(nameFilter)
@@ -98,13 +98,14 @@ def list_opps(user: User):
         CleanOpps = []
         for opp in Opps:
             if user not in opp.BookedStudents:
+                opp: Opportunity
                 CleanOpps.append({
                     "ID": str(opp.id),
                     "Name": opp.Name,
                     "Location": opp.Location,
                     "Hours": opp.Hours,
                     "Time": opp.getTime(),
-                    "Sponsor": User.query.get(int(opp.SponsorID)).name,
+                    "Sponsor": User.query.get(int(opp.sponsor_id)).name,
                     "Class": opp.Class,
                     "CurrentVols": len(opp.BookedStudents),
                     "MaxVols": opp.MaxVols
@@ -292,7 +293,7 @@ def BookedOpps(user):
                 "Location": opp.Location,
                 "Hours": opp.Hours,
                 "Time": opp.getTime(),
-                "Sponsor": User.query.get(int(opp.SponsorID)).name,
+                "Sponsor": User.query.get(int(opp.sponsor_id)).name,
                 "Class": opp.Class,
                 "CurrentVols": len(opp.BookedStudents),
                 "MaxVols": opp.MaxVols
@@ -306,14 +307,15 @@ def BookedOpps(user):
 
 @app.route('/PastOpps', methods=["Post"])
 @token_required
-def PastOpps(user):
+def PastOpps(user: User):
     try:
         PastOpps = user.PastOpps
         Pasts = user.Past
         PastOppsClean = []
         for opp in PastOpps:
             for i in Pasts:
-                if i.opp == opp:
+                i: Past
+                if i.opp_id == opp.id:
                     past = i
                     break
             PastOppsClean.append({
@@ -384,7 +386,7 @@ def GenerateDoc(user: User):
         ConfHours = pickle.loads(user.confHours)
 
         for opp in opps:
-            data.append([opp.Name, opp.Time, opp.Hours, opp.Sponsor.name])
+            data.append([opp.Name, opp.Time, opp.Hours, opp.sponsor.name])
         for hour in ConfHours:
             data.append([hour["reason"], "NA", str(hour["hours"]), "NA"])
 
@@ -434,17 +436,7 @@ def GenerateDoc(user: User):
 @token_required
 def Leaderboard(user):
     try:
-        try:
-            filt = request.form["filter"]
-        except KeyError:
-            return jsonify({
-                'msg': 'Please Pass in The Correct Parameters'
-            }), 500
-
-        if filt == "school":
-            users = User.query.filter_by(District=user.District, is_student=True).with_entities(User.name, User.hours).order_by(User.hours.desc()).limit(50).all()
-        elif filt == "district":
-            users = User.query.filter_by(School=user.School, is_student=True).with_entities(User.name, User.hours).order_by(User.hours.desc()).limit(50).all()
+        users = User.query.filter_by(School=user.School, is_student=True).with_entities(User.name, User.hours).order_by(User.hours.desc()).limit(50).all()
 
         usersReturn = []
         for i, user in enumerate(users):

@@ -25,7 +25,6 @@ for u in us:
     u: User
     u.InCompleteOppMessages = []
     u.BookedOpps = []
-    u.District = None
     u.Opportunities = []
     u.School = None
     u.UnconfHoursMessages = []

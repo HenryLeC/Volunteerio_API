@@ -1,7 +1,7 @@
 from flask import request, jsonify, send_file
 from sqlalchemy import or_, and_
 from API import app, db
-from API.database import (User, District, Logs,
+from API.database import (User, Logs,
                           School, Opportunity)
 from API.auth import token_required, verify_auth_token
 import pickle
@@ -43,7 +43,7 @@ def confirmHours(user):
                 ConfHrs.append(Hours)
                 UnconfHrs.remove(Hours)
                 if len(UnconfHrs) == 0:
-                    Student.UnconfHoursMessages = []
+                    Student.UnConfHoursMessages = []
                 Student.hours += Hours['hours']
                 Student.confHours = pickle.dumps(ConfHrs)
                 Student.unconfHours = pickle.dumps(UnconfHrs)
@@ -88,7 +88,7 @@ def deleteHours(user):
                 UnconfHrs = pickle.loads(Student.unconfHours)
                 UnconfHrs.remove(Hours)
                 if len(UnconfHrs) == 0:
-                    Student.UnconfHoursMessages = []
+                    Student.UnConfHoursMessages = []
                 Student.unconfHours = pickle.dumps(UnconfHrs)
 
                 db.session.add(Student)
@@ -123,7 +123,7 @@ def StudentsList(user: User):
         # Filter for students that Have a name or ID like like the Filter.
         Students = User.query.filter(and_(
             User.is_student,
-            User.District == user.District,
+            User.School == user.School,
             or_(
                 User.name.like(Filter),
                 User.pub_ID.like(Filter),
@@ -167,7 +167,7 @@ def StudentHours(user):
         PastOppsClean = []
         for opp in PastOpps:
             for i in Pasts:
-                if i.opp == opp:
+                if i.opp_id == opp.id:
                     past = i
                     break
             PastOppsClean.append({
@@ -234,9 +234,7 @@ def NewStudent():
             try:
                 UserObj = User(user["username"], user["password"],
                                user["name"], user["Id"],
-                               District.query.filter_by(
-                               id=user["District"]
-                               ).first(), student=True)
+                               student=True)
                 db.session.add(UserObj)
             except KeyError:
                 InvalidUsers.append(user)
@@ -250,34 +248,36 @@ def NewStudent():
         return "", 500
 
 
-@app.route('/addDistrict', methods=['POST'])
-@token_required
-def addDistrict(user):
-    try:
-        if not user.is_admin:
-            return jsonify({
-                'msg': 'Must be Administrator to preform this task.'
-            }), 500
-        try:
-            DistrictName = request.form["name"]
-        except KeyError:
-            return jsonify({
-                'msg': "Please Supply a District Name"
-            }), 500
+# region Comments
+# @app.route('/addDistrict', methods=['POST'])
+# @token_required
+# def addDistrict(user):
+#     try:
+#         if not user.is_admin:
+#             return jsonify({
+#                 'msg': 'Must be Administrator to preform this task.'
+#             }), 500
+#         try:
+#             DistrictName = request.form["name"]
+#         except KeyError:
+#             return jsonify({
+#                 'msg': "Please Supply a District Name"
+#             }), 500
 
-        district = District(DistrictName)
-        db.session.add(district)
-        db.session.commit()
+#         district = District(DistrictName)
+#         db.session.add(district)
+#         db.session.commit()
 
-        return jsonify({
-            "msg": f"New District {DistrictName} added with id {district.id}",
-            "name": DistrictName,
-            "id": str(district.id)
-        })
-    except Exception:
-        db.session.add(Logs(traceback.format_exc()))
-        db.session.commit()
-        return "", 500
+#         return jsonify({
+#             "msg": f"New District {DistrictName} added with id {district.id}",
+#             "name": DistrictName,
+#             "id": str(district.id)
+#         })
+#     except Exception:
+#         db.session.add(Logs(traceback.format_exc()))
+#         db.session.commit()
+#         return "", 500
+# endregion
 
 
 @app.route('/addSchool', methods=['POST'])
@@ -290,17 +290,13 @@ def addSchool(user):
             }), 500
         try:
             SchoolName = request.form["name"]
-            DistrictId = request.form["districtId"]
         except KeyError:
             return jsonify({
                 'msg': "Please Supply a District Name"
             }), 500
 
         school = School(SchoolName)
-        district = District.query.get(DistrictId)
-        district.schools.append(school)
         db.session.add(school)
-        db.session.add(district)
         db.session.commit()
 
         return jsonify({
@@ -331,7 +327,7 @@ def ConfDelOpp(user: User):
             })
 
         opp = Opportunity.query.get(oppId)
-        spons = opp.Sponsor
+        spons = opp.sponsor
 
         APIKey = json.loads(open("APIKeys.json", "r").read())["MailGun"]
 
@@ -377,7 +373,7 @@ def UnconfOpps(user: User):
             }), 500
 
         OppMessages = Opportunity.query.join(User).filter(
-            User.District == user.District,
+            User.School == user.School,
             Opportunity.Confirmed.is_(False)
         ).all()
 
@@ -390,7 +386,7 @@ def UnconfOpps(user: User):
                 'Location': Message.Location,
                 'Hours': Message.Hours,
                 'Time': Message.getTime(),
-                'Sponsor': Message.Sponsor.name,
+                'Sponsor': Message.sponsor.name,
                 'Class': Message.Class,
                 'MaxVols': Message.MaxVols
             })
@@ -430,7 +426,6 @@ def addUsers(user: User):
                 request.form["user" + str(i) + "P"],
                 request.form["user" + str(i) + "N"],
                 request.form["user" + str(i) + "I"],
-                user.District,
                 user.School,
                 student=st, admin=ad,
                 teacher=t, community=co
@@ -448,7 +443,7 @@ def addUsers(user: User):
 
 @app.route('/schoolSettings', methods=["POST"])
 @token_required
-def districtSettings(user: User):
+def schoolSettings(user: User):
     try:
         if not user.is_admin:
             return jsonify({
@@ -466,7 +461,7 @@ def districtSettings(user: User):
 
 @app.route("/schoolGoal", methods=["POST"])
 @token_required
-def districtGoal(user: User):
+def schoolGoal(user: User):
     try:
         if not user.is_admin:
             return jsonify({

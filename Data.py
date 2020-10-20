@@ -1,7 +1,7 @@
 import json
 from API import db
 from API.database import (
-    District, School,
+    School,
     User, Opportunity,
     InCompleteOppMessages,
     NewUnconfHoursMessages
@@ -25,10 +25,8 @@ futureApp = []
 past = []
 # endregion
 
-# District / School
-d = District("Waterside School District")
+# School
 s = School("Waterside Public School", 20)
-db.session.add(d)
 db.session.add(s)
 
 # Create Students
@@ -38,7 +36,7 @@ for stuName in NAMES[:94]:
     lastSId += 1
     stu = User(
         stuName, "password", stuName,
-        stuId, d, s, student=True
+        stuId, s, student=True
     )
     db.session.add(stu)
     stus.append(stu)
@@ -47,7 +45,7 @@ stuId = str(lastSId).zfill(8)
 lastSId += 1
 stu = User(
     "Student", "password", "Daniel",
-    stuId, d, s, student=True
+    stuId, s, student=True
 )
 db.session.add(stu)
 stus.append(stu)
@@ -62,7 +60,7 @@ for cName in NAMES[94:97]:
     lastCId += 1
     comm = User(
         cName, "password", cName,
-        comId, d, s, community=True
+        comId, s, community=True
     )
     db.session.add(comm)
     comms.append(comm)
@@ -71,7 +69,7 @@ comId = str(lastCId).zfill(8)
 lastCId += 1
 comm = User(
     "Community", "password", "Michael",
-    comId, d, s, community=True
+    comId, s, community=True
 )
 db.session.add(comm)
 comms.append(comm)
@@ -85,7 +83,7 @@ for aName in NAMES[97:]:
     lastAId += 1
     adm = User(
         aName, "password", aName,
-        comId, d, s, admin=True
+        comId, s, admin=True
     )
     db.session.add(adm)
     adms.append(adm)
@@ -94,7 +92,7 @@ admId = str(lastAId).zfill(8)
 lastAId += 1
 adm = User(
     "Admin", "password", "Harry",
-    admId, d, s, admin=True
+    admId, s, admin=True
 )
 db.session.add(adm)
 adms.append(adm)

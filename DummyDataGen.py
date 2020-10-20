@@ -1,8 +1,7 @@
 import json
 import random
 from API import db
-from API.database import (User, Opportunity, Booked,
-                          Past, District, NewUnconfHoursMessages,
+from API.database import (User, Opportunity, NewUnconfHoursMessages,
                           School, InCompleteOppMessages)
 import datetime
 import pickle
@@ -21,10 +20,8 @@ lastAId = 10000000
 lastCId = 20000000
 
 
-# District
-d = District("Waterside School District")
+# School
 s = School("Waterside Public School", 20)
-db.session.add(d)
 db.session.add(s)
 
 
@@ -34,7 +31,7 @@ for name in stuNames:
     username = name + str(random.randint(0, 20))
     stuId = str(lastSId).zfill(8)
     lastSId += 1
-    Stu = User(username, "password", name, stuId, d, s, student=True)
+    Stu = User(username, "password", name, stuId, s, student=True)
     students.append(Stu)
     db.session.add(Stu)
     user_data[name] = {
@@ -49,7 +46,7 @@ for name in adminNames:
     username = name + str(random.randint(0, 20))
     admId = str(lastAId).zfill(8)
     lastAId += 1
-    Adm = User(username, "password", name, admId, d, s, admin=True)
+    Adm = User(username, "password", name, admId, s, admin=True)
     db.session.add(Adm)
     admins.append(Adm)
     user_data[name] = {
@@ -64,7 +61,7 @@ for name in communityNames:
     username = name + str(random.randint(0, 20))
     comId = str(lastCId).zfill(8)
     lastCId += 1
-    Adm = User(username, "password", name, comId, d, s, community=True)
+    Adm = User(username, "password", name, comId, s, community=True)
     db.session.add(Adm)
     cmembers.append(Adm)
     user_data[name] = {

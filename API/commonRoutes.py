@@ -123,7 +123,7 @@ def SignInStudents(user):
 
 @app.route('/MyOpps', methods=["POST"])
 @token_required
-def MyOpps(user):
+def MyOpps(user: User):
     try:
         if not user.is_admin and not user.is_community:
             return jsonify({
@@ -139,7 +139,7 @@ def MyOpps(user):
                 "Location": opp.Location,
                 "Hours": opp.Hours,
                 "Time": opp.getTime(),
-                "Sponsor": User.query.get(int(opp.SponsorID)).name,
+                "Sponsor": User.query.get(int(opp.sponsor_id)).name,
                 "Class": opp.Class,
                 "CurrentVols": len(opp.BookedStudents),
                 "MaxVols": opp.MaxVols,
@@ -225,28 +225,22 @@ def Notifications(user: User):
 
         if user.is_admin:
             HourMessages = NewUnconfHoursMessages.query.join(User).filter(
-                User.District == user.District).all()
+                User.School == user.School).all()
             # OppMessages = Opportunity.query.join(User).filter(
             #     User.District == user.District,
             #     Opportunity.Confirmed.is_(False)
             # ).all()
             for Message in HourMessages:
-                schoolGoal = user.School.hoursGoal
-                districtGoal = user.District.hoursGoal
-                goal = 0
-                if schoolGoal is not None:
-                    goal = schoolGoal
-                elif districtGoal is not None:
-                    goal = districtGoal
+                Message: NewUnconfHoursMessages
 
                 CleanMessages.append({
-                    'ID': Message.Student.id,
-                    'Name': Message.Student.name,
-                    'StuId': Message.Student.pub_ID,
-                    'Hours': Message.Student.hours,
-                    'Message': f"{Message.Student.name} requested new hours.",
+                    'ID': Message.student.id,
+                    'Name': Message.student.name,
+                    'StuId': Message.student.pub_ID,
+                    'Hours': Message.student.hours,
+                    'Message': f"{Message.student.name} requested new hours.",
                     'Type': "Hour",
-                    'HoursGoal': str(goal)
+                    'HoursGoal': str(Message.student.getGoal())
                 })
             # for Message in OppMessages:
             #     CleanMessages.append({
@@ -263,7 +257,7 @@ def Notifications(user: User):
             #     })
         if user.is_community or user.is_admin:
             IncompleteOpps = InCompleteOppMessages.query.join(Opportunity).filter(
-                Opportunity.Sponsor == user
+                Opportunity.sponsor == user
             ).all()
 
             for Message in IncompleteOpps:
