@@ -412,7 +412,8 @@ def GenerateDoc(user: User):
         elems.append(Spacer(0, 1 * inch))
 
         # Add Paragraph
-        elems.append(Paragraph("* Hours may be incorrect on sponsored opportunities"))
+        elems.append(
+            Paragraph("* Hours may be incorrect on sponsored opportunities"))
 
         # Save amd build PDF to buffer
         p.build(elems)
@@ -436,7 +437,8 @@ def GenerateDoc(user: User):
 @token_required
 def Leaderboard(user):
     try:
-        users = User.query.filter_by(School=user.School, is_student=True).with_entities(User.name, User.hours).order_by(User.hours.desc()).limit(50).all()
+        users = User.query.filter_by(School=user.School, is_student=True).with_entities(
+            User.name, User.hours).order_by(User.hours.desc()).limit(50).all()
 
         usersReturn = []
         for i, user in enumerate(users):
