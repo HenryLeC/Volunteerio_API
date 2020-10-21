@@ -3,7 +3,7 @@ from sqlalchemy import or_, and_
 from API import app, db
 from API.database import (User, Logs,
                           School, Opportunity)
-from API.auth import token_required, verify_auth_token
+from API.auth import token_required,
 import pickle
 import traceback
 import requests
@@ -34,6 +34,7 @@ def confirmHours(user):
 
         # Find The Student
         Student = User.query.get(Id)
+        Student: User
 
         # Preform the move
         for Hours in pickle.loads(Student.unconfHours):
@@ -147,7 +148,7 @@ def StudentsList(user: User):
 
 @app.route('/StudentHours', methods=["POST"])
 @token_required
-def StudentHours(user):
+def StudentHours(user: User):
     try:
         if not user.is_admin:
             return jsonify({
@@ -208,47 +209,49 @@ def StudentHours(user):
         return "", 500
 
 
+# region NewStudent OLD DEPRECATED
 # Implememted Auth Seperately for Json data
-@app.route('/NewStudent', methods=["POST"])
-def NewStudent():
-    try:
-        inputData = request.get_json()
-        InvalidUsers = []
+# @app.route('/NewStudent', methods=["POST"])
+# def NewStudent():
+#     try:
+#         inputData = request.get_json()
+#         InvalidUsers = []
 
-        if 'x-access-token' in inputData:
-            token = inputData['x-access-token']
+#         if 'x-access-token' in inputData:
+#             token = inputData['x-access-token']
 
-        if not token:
-            return jsonify({'message': 'Token is missing!'}), 401
+#         if not token:
+#             return jsonify({'message': 'Token is missing!'}), 401
 
-        current_user = verify_auth_token(token)
-        if not current_user:
-            return jsonify({'message': 'Token is invalid!'}), 401
+#         current_user = verify_auth_token(token)
+#         if not current_user:
+#             return jsonify({'message': 'Token is invalid!'}), 401
 
-        if not current_user.is_admin:
-            return jsonify({
-                'msg': 'Must not be a Student to preform this task'
-            }), 500
+#         if not current_user.is_admin:
+#             return jsonify({
+#                 'msg': 'Must not be a Student to preform this task'
+#             }), 500
 
-        for user in inputData["users"]:
-            try:
-                UserObj = User(user["username"], user["password"],
-                               user["name"], user["Id"],
-                               student=True)
-                db.session.add(UserObj)
-            except KeyError:
-                InvalidUsers.append(user)
-        db.session.commit()
-        return jsonify({
-            "Invalid Users": InvalidUsers
-        })
-    except Exception:
-        db.session.add(Logs(traceback.format_exc()))
-        db.session.commit()
-        return "", 500
+#         for user in inputData["users"]:
+#             try:
+#                 UserObj = User(user["username"], user["password"],
+#                                user["name"], user["Id"],
+#                                student=True)
+#                 db.session.add(UserObj)
+#             except KeyError:
+#                 InvalidUsers.append(user)
+#         db.session.commit()
+#         return jsonify({
+#             "Invalid Users": InvalidUsers
+#         })
+#     except Exception:
+#         db.session.add(Logs(traceback.format_exc()))
+#         db.session.commit()
+#         return "", 500
+# endregion
 
 
-# region Comments
+# region Add District (Districts Removed) DEPRECATED
 # @app.route('/addDistrict', methods=['POST'])
 # @token_required
 # def addDistrict(user):
@@ -282,9 +285,9 @@ def NewStudent():
 
 @app.route('/addSchool', methods=['POST'])
 @token_required
-def addSchool(user):
+def addSchool(user: User):
     try:
-        if not user.is_admin:
+        if not user.is_webmaster:
             return jsonify({
                 'msg': 'Must be Administrator to preform this task.'
             }), 500
@@ -292,7 +295,7 @@ def addSchool(user):
             SchoolName = request.form["name"]
         except KeyError:
             return jsonify({
-                'msg': "Please Supply a District Name"
+                'msg': "Please Supply a School Name"
             }), 500
 
         school = School(SchoolName)
@@ -327,6 +330,7 @@ def ConfDelOpp(user: User):
             })
 
         opp = Opportunity.query.get(oppId)
+        opp: Opportunity
         spons = opp.sponsor
 
         APIKey = json.loads(open("APIKeys.json", "r").read())["MailGun"]
