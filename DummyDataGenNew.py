@@ -45,7 +45,8 @@ for name in AdmNAMES:
     username = name + str(random.randint(0, 20))
     admId = str(lastAId).zfill(8)
     lastAId += 1
-    Adm = User(username, "password", name, admId, s, admin=True, email="test.email@volunteerio.us")
+    Adm = User(username, "password", name, admId, s,
+               admin=True, email="test.email@volunteerio.us")
     db.session.add(Adm)
     admins.append(Adm)
     user_data[name] = {
@@ -77,7 +78,8 @@ days_between_dates = time_between_dates.days
 for usr in admins:
     random_number_of_days = random.randrange(days_between_dates)
     random_date = start_date + datetime.timedelta(days=random_number_of_days)
-    opp = Opportunity(f"Opp{oppsI + 1}", "School", random_date, random.randint(0, 5), "Environment", 20, usr, "Example Opportunity Description", True)
+    opp = Opportunity(f"Opp{oppsI + 1}", "School", random_date, random.randint(
+        0, 5), "Environment", 20, usr, "Example Opportunity Description", True)
     oppsI += 1
     opps.append(opp)
     usr.Opportunities.append(opp)
@@ -87,7 +89,8 @@ for usr in admins:
 for usr in cmembers:
     random_number_of_days = random.randrange(days_between_dates)
     random_date = start_date + datetime.timedelta(days=random_number_of_days)
-    opp = Opportunity(f"Opp{oppsI + 1}", "School", random_date, random.randint(1, 5), "Animals", 20, usr, "Example Opportunity Description", True)
+    opp = Opportunity(f"Opp{oppsI + 1}", "School", random_date, random.randint(
+        1, 5), "Animals", 20, usr, "Example Opportunity Description", True)
     oppsI += 1
     usr.Opportunities.append(opp)
     db.session.add(usr)
@@ -103,7 +106,8 @@ for usr in students:
     for opp in bOpps:
         inComp = random.randint(0, 10)
         if inComp == 3:
-            msg = InCompleteOppMessages(random.randint(int(opp.Hours * 0.15), int(opp.Hours * 0.8)), random.randint(0, 59))
+            msg = InCompleteOppMessages(random.randint(
+                int(opp.Hours * 0.15), int(opp.Hours * 0.8)), random.randint(0, 59))
             db.session.add(msg)
             usr.InCompleteOppMessages.append(msg)
             opp.InCompleteOppMessages.append(msg)
@@ -126,7 +130,8 @@ days_between_dates = time_between_dates.days
 for usr in admins:
     random_number_of_days = random.randrange(days_between_dates)
     random_date = start_date + datetime.timedelta(days=random_number_of_days)
-    opp = Opportunity(f"Opp{oppsI + 1}", "School", random_date, random.randint(1, 5), "Environment", 20, usr, "Example Opportunity Description", True)
+    opp = Opportunity(f"Opp{oppsI + 1}", "School", random_date, random.randint(
+        1, 5), "Environment", 20, usr, "Example Opportunity Description", True)
     oppsI += 1
     opps.append(opp)
     usr.Opportunities.append(opp)
@@ -139,7 +144,8 @@ for usr in cmembers:
     verified = True
     if random.randint(0, 3) == 2:
         verified = False
-    opp = Opportunity(f"Opp{oppsI + 1}", "School", random_date, random.randint(1, 5), "Animals", 20, usr, "Example Opportunity Description", verified)
+    opp = Opportunity(f"Opp{oppsI + 1}", "School", random_date, random.randint(
+        1, 5), "Animals", 20, usr, "Example Opportunity Description", verified)
     oppsI += 1
     if verified:
         opps.append(opp)

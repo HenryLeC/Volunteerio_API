@@ -234,7 +234,8 @@ for opp in past:
         stu = stusr.pop()
         complete = random.randint(1, 4)
         if complete == 2:
-            msg = InCompleteOppMessages(random.randint(1, opp.Hours - 1), random.randint(1, 59))
+            msg = InCompleteOppMessages(random.randint(
+                1, opp.Hours - 1), random.randint(1, 59))
             db.session.add(msg)
             opp.InCompleteOppMessages.append(msg)
             stu.InCompleteOppMessages.append(msg)

@@ -28,17 +28,21 @@ class User(db.Model, UserMixin):
     confHours = db.Column(db.LargeBinary())
     CurrentOpps = db.Column(db.LargeBinary())
     UserGoal = db.Column(db.Integer, nullable=True)
-    UnConfHoursMessages = db.relationship("NewUnconfHoursMessages", back_populates="student")
+    UnConfHoursMessages = db.relationship(
+        "NewUnconfHoursMessages", back_populates="student")
     # UnconfHoursMessages = db.relationship("NewUnconfHoursMessages",
     #                                       backref="Student", lazy=True,
     #                                       cascade="delete, delete-orphan")
-    InCompleteOppMessages = db.relationship("InCompleteOppMessages", back_populates="student")
+    InCompleteOppMessages = db.relationship(
+        "InCompleteOppMessages", back_populates="student")
     # InCompleteOppMessages = db.relationship("InCompleteOppMessages",
     #                                         backref="Student", lazy=True,
     #                                         cascade="delete, delete-orphan")
 
-    PastOpps = db.relationship('Opportunity', secondary="past", back_populates="PastStudents")
-    BookedOpps = db.relationship('Opportunity', secondary="booked", back_populates="BookedStudents")
+    PastOpps = db.relationship(
+        'Opportunity', secondary="past", back_populates="PastStudents")
+    BookedOpps = db.relationship(
+        'Opportunity', secondary="booked", back_populates="BookedStudents")
 
     # Admin
     is_admin = db.Column(db.Boolean)
@@ -111,10 +115,13 @@ class Opportunity(db.Model):
 
     # SponsorID = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-    BookedStudents = db.relationship("User", secondary="booked", back_populates="BookedOpps")
-    PastStudents = db.relationship("User", secondary="past", back_populates="PastOpps")
+    BookedStudents = db.relationship(
+        "User", secondary="booked", back_populates="BookedOpps")
+    PastStudents = db.relationship(
+        "User", secondary="past", back_populates="PastOpps")
 
-    InCompleteOppMessages = db.relationship("InCompleteOppMessages", back_populates="opportunity")
+    InCompleteOppMessages = db.relationship(
+        "InCompleteOppMessages", back_populates="opportunity")
     # InCompleteOppMessages = db.relationship("InCompleteOppMessages",
     #                                         backref="Opportunity", lazy=True,
     #                                         cascade="delete, delete-orphan")
@@ -150,7 +157,8 @@ class InCompleteOppMessages(db.Model):
     MinutesCompleted = db.Column(db.Integer)
 
     opportunity_id = db.Column(db.Integer, db.ForeignKey("opportunity.id"))
-    opportunity = db.relationship("Opportunity", back_populates="InCompleteOppMessages")
+    opportunity = db.relationship(
+        "Opportunity", back_populates="InCompleteOppMessages")
 
     def __init__(self, HoursCompleted, MinutesCompleted):
         self.HoursCompleted = HoursCompleted

@@ -80,7 +80,8 @@ days_between_dates = time_between_dates.days
 for usr in admins:
     random_number_of_days = random.randrange(days_between_dates)
     random_date = start_date + datetime.timedelta(days=random_number_of_days)
-    opp = Opportunity(f"Opp{oppsI + 1}", "School", random_date, random.randint(0, 5), "Environment", 20, usr, True)
+    opp = Opportunity(f"Opp{oppsI + 1}", "School", random_date,
+                      random.randint(0, 5), "Environment", 20, usr, True)
     oppsI += 1
     opps.append(opp)
     usr.Opportunities.append(opp)
@@ -90,7 +91,8 @@ for usr in admins:
 for usr in cmembers:
     random_number_of_days = random.randrange(days_between_dates)
     random_date = start_date + datetime.timedelta(days=random_number_of_days)
-    opp = Opportunity(f"Opp{oppsI + 1}", "School", random_date, random.randint(1, 5), "Animals", 20, usr, True)
+    opp = Opportunity(f"Opp{oppsI + 1}", "School", random_date,
+                      random.randint(1, 5), "Animals", 20, usr, True)
     oppsI += 1
     opps.append(opp)
     usr.Opportunities.append(opp)
@@ -104,11 +106,13 @@ for usr in students:
     for opp in bOpps:
         inComp = random.randint(0, 20)
         if inComp == 3:
-            msg = InCompleteOppMessages(random.randint(int(opp.Hours * 0.15), int(opp.Hours * 0.8)))
+            msg = InCompleteOppMessages(random.randint(
+                int(opp.Hours * 0.15), int(opp.Hours * 0.8)))
             db.session.add(msg)
             usr.InCompleteOppMessages.append(msg)
             opp.InCompleteOppMessages.append(msg)
-            usr.CurrentOpps = pickle.dumps(pickle.loads(usr.CurrentOpps).append({"ID": str(opp.id), "StartTime": opp.Time}))
+            usr.CurrentOpps = pickle.dumps(pickle.loads(usr.CurrentOpps).append(
+                {"ID": str(opp.id), "StartTime": opp.Time}))
         else:
             usr.PastOpps.append(opp)
             usr.hours += opp.Hours
@@ -120,7 +124,8 @@ commus = random.choices(cmembers, k=5)
 for cmem in commus:
     random_number_of_days = random.randrange(days_between_dates)
     random_date = start_date + datetime.timedelta(days=random_number_of_days)
-    opp = Opportunity(f"Opp{oppsI + 1}", "School", random_date, random.randint(0, 5), "Animals", 20, cmem, False)
+    opp = Opportunity(f"Opp{oppsI + 1}", "School", random_date,
+                      random.randint(0, 5), "Animals", 20, cmem, False)
     oppsI += 1
     db.session.add(opp)
 
@@ -134,7 +139,8 @@ days_between_dates = time_between_dates.days
 for usr in admins:
     random_number_of_days = random.randrange(days_between_dates)
     random_date = start_date + datetime.timedelta(days=random_number_of_days)
-    opp = Opportunity(f"Opp{oppsI + 1}", "School", random_date, random.randint(1, 5), "Environment", 20, usr, True)
+    opp = Opportunity(f"Opp{oppsI + 1}", "School", random_date,
+                      random.randint(1, 5), "Environment", 20, usr, True)
     oppsI += 1
     opps.append(opp)
     usr.Opportunities.append(opp)
@@ -144,7 +150,8 @@ for usr in admins:
 for usr in cmembers:
     random_number_of_days = random.randrange(days_between_dates)
     random_date = start_date + datetime.timedelta(days=random_number_of_days)
-    opp = Opportunity(f"Opp{oppsI + 1}", "School", random_date, random.randint(1, 5), "Animals", 20, usr, True)
+    opp = Opportunity(f"Opp{oppsI + 1}", "School", random_date,
+                      random.randint(1, 5), "Animals", 20, usr, True)
     oppsI += 1
     opps.append(opp)
     usr.Opportunities.append(opp)

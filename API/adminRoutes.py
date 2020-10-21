@@ -3,7 +3,7 @@ from sqlalchemy import or_, and_
 from API import app, db
 from API.database import (User, Logs,
                           School, Opportunity)
-from API.auth import token_required,
+from API.auth import token_required
 import pickle
 import traceback
 import requests
