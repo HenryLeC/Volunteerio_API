@@ -17,10 +17,8 @@ class User(db.Model, UserMixin):
     emailConfirmed = db.Column(db.Boolean, nullable=False)
     firstTime = db.Column(db.Boolean, nullable=False)
 
-    District_Id = db.Column(db.Integer, db.ForeignKey('district.id'))
-    District = db.relationship('District', backref="Members", lazy=True)
     School_Id = db.Column(db.Integer, db.ForeignKey('school.id'))
-    School = db.relationship('School', backref="Members", lazy=True)
+    School = db.relationship('School', back_populates="users")
 
     # Student
     HoursId = db.Column(db.Integer)
@@ -30,15 +28,21 @@ class User(db.Model, UserMixin):
     confHours = db.Column(db.LargeBinary())
     CurrentOpps = db.Column(db.LargeBinary())
     UserGoal = db.Column(db.Integer, nullable=True)
-    UnconfHoursMessages = db.relationship("NewUnconfHoursMessages",
-                                          backref="Student", lazy=True,
-                                          cascade="delete, delete-orphan")
-    InCompleteOppMessages = db.relationship("InCompleteOppMessages",
-                                            backref="Student", lazy=True,
-                                            cascade="delete, delete-orphan")
+    UnConfHoursMessages = db.relationship(
+        "NewUnconfHoursMessages", back_populates="student")
+    # UnconfHoursMessages = db.relationship("NewUnconfHoursMessages",
+    #                                       backref="Student", lazy=True,
+    #                                       cascade="delete, delete-orphan")
+    InCompleteOppMessages = db.relationship(
+        "InCompleteOppMessages", back_populates="student")
+    # InCompleteOppMessages = db.relationship("InCompleteOppMessages",
+    #                                         backref="Student", lazy=True,
+    #                                         cascade="delete, delete-orphan")
 
-    PastOpps = db.relationship('Opportunity', secondary="past")
-    BookedOpps = db.relationship('Opportunity', secondary="booked")
+    PastOpps = db.relationship(
+        'Opportunity', secondary="past", back_populates="PastStudents")
+    BookedOpps = db.relationship(
+        'Opportunity', secondary="booked", back_populates="BookedStudents")
 
     # Admin
     is_admin = db.Column(db.Boolean)
@@ -50,13 +54,14 @@ class User(db.Model, UserMixin):
     is_community = db.Column(db.Boolean)
 
     # Admin / Community
-    Opportunities = db.relationship('Opportunity', backref="Sponsor",
-                                    lazy=True)
+    Opportunities = db.relationship('Opportunity', back_populates="sponsor")
+    # Opportunities = db.relationship('Opportunity', backref="Sponsor",
+    #                                 lazy=True)
 
     # WebBackend
     is_webmaster = db.Column(db.Boolean)
 
-    def __init__(self, username, password, name, ID, district, school,
+    def __init__(self, username, password, name, ID, school,
                  email=None, admin=False, community=False, student=False,
                  teacher=False, webmaster=False):
         # If no role set default to student
@@ -75,7 +80,6 @@ class User(db.Model, UserMixin):
         self.CurrentOpps = pickle.dumps([])
         self.pub_ID = ID
         self.HoursId = 1
-        self.District = district
         self.School = school
         self.is_webmaster = webmaster
         self.email = email
@@ -86,14 +90,13 @@ class User(db.Model, UserMixin):
     def getGoal(self) -> int:
         userGoal = self.UserGoal
         schoolGoal = self.School.hoursGoal
-        districtGoal = self.District.hoursGoal
 
         if userGoal is not None:
             return userGoal
         elif schoolGoal is not None:
             return schoolGoal
-        elif districtGoal is not None:
-            return districtGoal
+        else:
+            return 0
 
 
 class Opportunity(db.Model):
@@ -107,14 +110,21 @@ class Opportunity(db.Model):
     Confirmed = db.Column(db.Boolean)
     Description = db.Column(db.String(500))
 
-    SponsorID = db.Column(db.Integer, db.ForeignKey('user.id'))
+    sponsor_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    sponsor = db.relationship("User", back_populates="Opportunities")
 
-    BookedStudents = db.relationship("User", secondary="booked")
-    PastStudents = db.relationship("User", secondary="past")
+    # SponsorID = db.Column(db.Integer, db.ForeignKey('user.id'))
 
-    InCompleteOppMessages = db.relationship("InCompleteOppMessages",
-                                            backref="Opportunity", lazy=True,
-                                            cascade="delete, delete-orphan")
+    BookedStudents = db.relationship(
+        "User", secondary="booked", back_populates="BookedOpps")
+    PastStudents = db.relationship(
+        "User", secondary="past", back_populates="PastOpps")
+
+    InCompleteOppMessages = db.relationship(
+        "InCompleteOppMessages", back_populates="opportunity")
+    # InCompleteOppMessages = db.relationship("InCompleteOppMessages",
+    #                                         backref="Opportunity", lazy=True,
+    #                                         cascade="delete, delete-orphan")
 
     def __init__(self, Name, Location, Time, Hours, Class, MaxVols,
                  Sponsor, Description, Confirmed):
@@ -122,7 +132,7 @@ class Opportunity(db.Model):
         self.Time = Time
         self.Location = Location
         self.Hours = Hours
-        self.SponsorID = Sponsor.id
+        self.sponsor_id = Sponsor.id
         self.Class = Class
         self.MaxVols = MaxVols
         self.Confirmed = Confirmed
@@ -134,38 +144,32 @@ class Opportunity(db.Model):
 
 class NewUnconfHoursMessages(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    StudentId = db.Column(db.Integer, db.ForeignKey("user.id"))
+    student_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    student = db.relationship("User", back_populates="UnConfHoursMessages")
 
 
 class InCompleteOppMessages(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    StudentId = db.Column(db.Integer, db.ForeignKey("user.id"))
+    student_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    student = db.relationship("User", back_populates="InCompleteOppMessages")
+
     HoursCompleted = db.Column(db.Integer)
     MinutesCompleted = db.Column(db.Integer)
-    OpportunityId = db.Column(db.Integer, db.ForeignKey("opportunity.id"))
+
+    opportunity_id = db.Column(db.Integer, db.ForeignKey("opportunity.id"))
+    opportunity = db.relationship(
+        "Opportunity", back_populates="InCompleteOppMessages")
 
     def __init__(self, HoursCompleted, MinutesCompleted):
         self.HoursCompleted = HoursCompleted
         self.MinutesCompleted = MinutesCompleted
 
 
-class District(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String())
-    hoursGoal = db.Column(db.Integer, nullable=True)
-    schools = db.relationship("School", back_populates="district")
-
-    def __init__(self, Name, hoursGoal=None):
-        self.name = Name
-        self.hoursGoal = hoursGoal
-
-
 class School(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String())
     hoursGoal = db.Column(db.Integer, nullable=True)
-    district_id = db.Column(db.Integer, db.ForeignKey("district.id"))
-    district = db.relationship("District", back_populates="schools")
+    users = db.relationship("User", back_populates="School")
 
     def __init__(self, Name, hoursGoal=None):
         self.name = Name
@@ -174,20 +178,18 @@ class School(db.Model):
 
 class Booked(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    User_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    Opp_id = db.Column(db.Integer, db.ForeignKey('opportunity.id'))
-
-    user = db.relationship(User, backref=db.backref("Booked"))
-    opp = db.relationship(Opportunity, backref=db.backref("Booked"))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    opp_id = db.Column(db.Integer, db.ForeignKey('opportunity.id'))
 
 
 class Past(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    User_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    Opp_id = db.Column(db.Integer, db.ForeignKey('opportunity.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    opp_id = db.Column(db.Integer, db.ForeignKey('opportunity.id'))
 
+    # Needed to access hours prop
     user = db.relationship(User, backref=db.backref("Past"))
-    opp = db.relationship(Opportunity, backref=db.backref("Past"))
+
     hours = db.Column(db.Integer, nullable=True)
 
 

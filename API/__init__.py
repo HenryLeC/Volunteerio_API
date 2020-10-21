@@ -17,8 +17,8 @@ app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix='/api')
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-import API.studentRoutes
-import API.adminRoutes
-import API.commonRoutes
-import API.database
-import API.webAdmin
+import API.studentRoutes  # nopep8
+import API.adminRoutes  # nopep8
+import API.commonRoutes  # nopep8
+import API.database  # nopep8
+import API.webAdmin  # noqa
