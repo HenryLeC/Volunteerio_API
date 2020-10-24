@@ -23,11 +23,12 @@ for opp in opps:
 
 for u in us:
     u: User
+    u.InCompleteOppMessages
     u.InCompleteOppMessages = []
     u.BookedOpps = []
     u.Opportunities = []
     u.School = None
-    u.UnconfHoursMessages = []
+    u.UnConfHoursMessages = []
     u.PastOpps = []
     db.session.delete(u)
 

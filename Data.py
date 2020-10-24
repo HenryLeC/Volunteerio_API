@@ -247,7 +247,7 @@ for opp in past:
         else:
             stu.PastOpps.append(opp)
             for i in stu.Past:
-                if i.opp == opp:
+                if i.opp_id == opp.id:
                     pastD = i
                     break
             pastD.hours = opp.Hours
@@ -269,7 +269,7 @@ unconfs.append({
 stud.unconfHours = pickle.dumps(unconfs)
 msg = NewUnconfHoursMessages()
 db.session.add(msg)
-stud.UnconfHoursMessages.append(msg)
+stud.UnConfHoursMessages.append(msg)
 
 id = stud.HoursId
 stud.HoursId += 1

@@ -29,12 +29,14 @@ class User(db.Model, UserMixin):
     CurrentOpps = db.Column(db.LargeBinary())
     UserGoal = db.Column(db.Integer, nullable=True)
     UnConfHoursMessages = db.relationship(
-        "NewUnconfHoursMessages", back_populates="student")
+        "NewUnconfHoursMessages", back_populates="student",
+        cascade="delete, delete-orphan")
     # UnconfHoursMessages = db.relationship("NewUnconfHoursMessages",
     #                                       backref="Student", lazy=True,
     #                                       cascade="delete, delete-orphan")
     InCompleteOppMessages = db.relationship(
-        "InCompleteOppMessages", back_populates="student")
+        "InCompleteOppMessages", back_populates="student",
+        cascade="delete, delete-orphan")
     # InCompleteOppMessages = db.relationship("InCompleteOppMessages",
     #                                         backref="Student", lazy=True,
     #                                         cascade="delete, delete-orphan")
