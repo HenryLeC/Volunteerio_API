@@ -11,7 +11,7 @@
             "name": "Start",
             "type": "python",
             "request": "launch",
-            "program": "setup.py",
+            "program": "app.py",
             "console": "integratedTerminal",
             "env": {
                 "DATABASE_HOSTNAME": "host",
