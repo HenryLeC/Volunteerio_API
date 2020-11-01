@@ -18,3 +18,5 @@ migrations/*
 app.db
 
 API/Secrets.py
+
+debug.log

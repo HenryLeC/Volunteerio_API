@@ -20,6 +20,9 @@ class User(db.Model, UserMixin):
     School_Id = db.Column(db.Integer, db.ForeignKey('school.id'))
     School = db.relationship('School', back_populates="users")
 
+    group_id = db.Column(db.Integer, db.ForeignKey('groups.id'))
+    group = db.relationship('Groups', back_populates="users")
+
     # Student
     HoursId = db.Column(db.Integer)
     is_student = db.Column(db.Boolean)
@@ -91,10 +94,13 @@ class User(db.Model, UserMixin):
 
     def getGoal(self) -> int:
         userGoal = self.UserGoal
+        group = self.group
         schoolGoal = self.School.hoursGoal
 
         if userGoal is not None:
             return userGoal
+        elif group is not None:
+            return group.hoursGoal
         elif schoolGoal is not None:
             return schoolGoal
         else:
@@ -172,6 +178,7 @@ class School(db.Model):
     name = db.Column(db.String())
     hoursGoal = db.Column(db.Integer, nullable=True)
     users = db.relationship("User", back_populates="School")
+    groups = db.relationship("Groups", back_populates="school")
 
     def __init__(self, Name, hoursGoal=None):
         self.name = Name
@@ -203,3 +210,19 @@ class Logs(db.Model):
     def __init__(self, exc: str):
         self.exc = exc
         self.time = datetime.datetime.now()
+
+
+class Groups(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+
+    school_id = db.Column(db.Integer, db.ForeignKey('school.id'))
+    school = db.relationship('School', back_populates="groups")
+
+    users = db.relationship("User", back_populates="group")
+
+    hoursGoal = db.Column(db.Integer)
+    name = db.Column(db.String(100))
+
+    def __init__(self, name, hoursGoal):
+        self.name = name
+        self.hoursGoal = hoursGoal

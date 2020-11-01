@@ -2,7 +2,8 @@ from flask import request, jsonify, send_file
 from sqlalchemy import or_, and_
 from API import app, db
 from API.database import (User, Logs,
-                          School, Opportunity)
+                          School, Opportunity,
+                          Groups)
 from API.auth import token_required
 import pickle
 import traceback
@@ -132,12 +133,15 @@ def StudentsList(user: User):
         )).limit(5)
 
         for student in Students:
+            student: User
             ReturnList.append({
                 "Name": student.name,
                 "StuId": student.pub_ID,
                 "Hours": str(student.hours),
                 "ID": student.id,
-                "HoursGoal": str(student.getGoal())
+                "HoursGoal": str(student.getGoal()),
+                "userSpecific": "true" if student.UserGoal else "false",
+                "group": student.group.name if student.group else "None"
             })
         return jsonify(ReturnList)
     except Exception:
@@ -562,6 +566,106 @@ def UserSpecificGoal(user: User):
 
         return str(user.getGoal())
 
+    except Exception:
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
+        return "", 500
+
+
+@app.route('/makeGroup', methods=["POST"])
+@token_required
+def makeGroup(user: User):
+    try:
+        if not user.is_admin:
+            return jsonify({
+                'msg': 'Must be Administrator to preform this task.'
+            }), 500
+
+        try:
+            goal = request.form["hoursGoal"]
+            name = request.form["name"]
+        except KeyError:
+            return jsonify({
+                'msg': "Plese Send Proper Parameters"
+            })
+
+        school: School = user.School
+        school.groups.append(Groups(name, int(goal)))
+
+        db.session.commit()
+        return jsonify({
+            'msg': "Success!"
+        }), 200
+
+    except Exception:
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
+        return "", 500
+
+
+@app.route('/getGroups', methods=["POST"])
+@token_required
+def getGroups(user: User):
+    try:
+        if not user.is_admin:
+            return jsonify({
+                'msg': 'Must be Administrator to preform this task.'
+            }), 500
+
+        school: School = user.School
+        groups: list[Groups] = school.groups
+        returnClean = []
+
+        for group in groups:
+            students = []
+            for stu in group.users:
+                stu: User
+                students.append({
+                    "name": stu.name,
+                    "id": str(stu.id)
+                })
+            returnClean.append({
+                "name": group.name,
+                "hoursGoal": str(group.hoursGoal),
+                "students": json.dumps(students)
+            })
+
+        return jsonify(returnClean), 200
+
+    except Exception:
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
+        return "", 500
+
+
+@app.route('/changeUserGroup', methods=["POST"])
+@token_required
+def changeUserGroup(user: User):
+    try:
+        if not user.is_admin:
+            return jsonify({
+                'msg': 'Must be Administrator to preform this task.'
+            }), 500
+
+        try:
+            groupName = request.form["groupName"]
+            studentId = request.form["userId"]
+        except KeyError:
+            return jsonify({
+                'msg': "Plese Send Proper Parameters"
+            })
+
+        student = User.query.get(studentId)
+        student: User
+        if groupName == "None":
+            student.group = None
+        else:
+            group = Groups.query.filter(Groups.name == groupName).first()
+            student.group = group
+
+        db.session.commit()
+
+        return str(student.getGoal())
     except Exception:
         db.session.add(Logs(traceback.format_exc()))
         db.session.commit()
