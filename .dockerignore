@@ -13,3 +13,12 @@ Users.json
 Names.json
 
 API/Secrets.py
+
+ECS-migrations
+migrations
+
+debug.log
+
+app.db
+
+.git/*

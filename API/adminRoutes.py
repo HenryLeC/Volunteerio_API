@@ -625,6 +625,7 @@ def getGroups(user: User):
                     "id": str(stu.id)
                 })
             returnClean.append({
+                "id": str(group.id),
                 "name": group.name,
                 "hoursGoal": str(group.hoursGoal),
                 "students": json.dumps(students)
@@ -648,7 +649,7 @@ def changeUserGroup(user: User):
             }), 500
 
         try:
-            groupName = request.form["groupName"]
+            groupId = int(request.form["groupId"])
             studentId = request.form["userId"]
         except KeyError:
             return jsonify({
@@ -657,15 +658,44 @@ def changeUserGroup(user: User):
 
         student = User.query.get(studentId)
         student: User
-        if groupName == "None":
+        if groupId == -10:
             student.group = None
         else:
-            group = Groups.query.filter(Groups.name == groupName).first()
+            group = Groups.query.get(groupId)
             student.group = group
 
         db.session.commit()
 
         return str(student.getGoal())
+    except Exception:
+        db.session.add(Logs(traceback.format_exc()))
+        db.session.commit()
+        return "", 500
+
+
+@app.route('/deleteGroup', methods=["POST"])
+@token_required
+def deleteGroup(user: User):
+    try:
+        if not user.is_admin:
+            return jsonify({
+                'msg': 'Must be Administrator to preform this task.'
+            }), 500
+
+        try:
+            groupId = request.form["groupId"]
+        except KeyError:
+            return jsonify({
+                'msg': "Plese Send Proper Parameters"
+            })
+
+        db.session.delete(Groups.query.get(groupId))
+        db.session.commit()
+
+        return jsonify({
+            'msg': "Success!"
+        })
+
     except Exception:
         db.session.add(Logs(traceback.format_exc()))
         db.session.commit()
