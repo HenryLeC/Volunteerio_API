@@ -10,7 +10,6 @@ from reportlab.platypus import Table, SimpleDocTemplate, TableStyle, Image
 from reportlab.platypus import Paragraph, Spacer
 import pickle
 import datetime
-import jwt
 import traceback
 import io
 
@@ -102,7 +101,7 @@ def list_opps(user: User):
                 CleanOpps.append({
                     "ID": str(opp.id),
                     "Name": opp.Name,
-                    "Location": opp.Location,
+                    "Location": opp.Location if not opp.Virtual else "Virtual",
                     "Hours": opp.Hours,
                     "Time": opp.getTime(),
                     "Sponsor": User.query.get(int(opp.sponsor_id)).name,
@@ -148,9 +147,11 @@ def Clock(user: User):
                 'msg': 'Please Pass in The Correct Parameters'
             }), 500
         try:
-            OppId = jwt.decode(Code, app.config['SECRET_KEY'],
-                               algorithm="HS256")["ID"]
-            Opp = Opportunity.query.get(OppId)
+            # OppId = jwt.decode(Code, app.config['SECRET_KEY'],
+            #                    algorithm="HS256")["ID"]
+            Opp = Opportunity.query.filter(
+                Opportunity.ClockCode == Code).first()
+            OppId = Opp.id
         except(Exception):
             return jsonify({
                 'header': "Error",
@@ -182,6 +183,12 @@ def Clock(user: User):
             minutes, seconds = divmod(remainder, 60)
             OppMessage = InCompleteOppMessages(hours, minutes)
             db.session.add(OppMessage)
+
+            for msg in user.InCompleteOppMessages:
+                msg: InCompleteOppMessages
+                if msg.opportunity == Opp:
+                    user.InCompleteOppMessages.remove(msg)
+                    Opp.InCompleteOppMessages.remove(msg)
 
             user.InCompleteOppMessages.append(OppMessage)
             Opp.InCompleteOppMessages.append(OppMessage)

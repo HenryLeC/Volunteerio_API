@@ -3,6 +3,8 @@ from werkzeug.security import generate_password_hash as hash
 from flask_login import UserMixin
 import pickle
 import datetime
+import random
+import string
 
 
 # User table
@@ -118,6 +120,9 @@ class Opportunity(db.Model):
     Confirmed = db.Column(db.Boolean)
     Description = db.Column(db.String(500))
 
+    Virtual = db.Column(db.Boolean)
+    ClockCode = db.Column(db.String(6), unique=True)
+
     sponsor_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     sponsor = db.relationship("User", back_populates="Opportunities")
 
@@ -135,7 +140,7 @@ class Opportunity(db.Model):
     #                                         cascade="delete, delete-orphan")
 
     def __init__(self, Name, Location, Time, Hours, Class, MaxVols,
-                 Sponsor, Description, Confirmed):
+                 Sponsor, Description, Confirmed, Virtual=False):
         self.Name = Name
         self.Time = Time
         self.Location = Location
@@ -145,6 +150,8 @@ class Opportunity(db.Model):
         self.MaxVols = MaxVols
         self.Confirmed = Confirmed
         self.Description = Description
+        self.Virtual = Virtual
+        self.ClockCode = ''.join(random.choices(string.ascii_letters + string.digits, k=6))
 
     def getTime(self):
         return self.Time.strftime("%a %b %d, %I:%M %p")

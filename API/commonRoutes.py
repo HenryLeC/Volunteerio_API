@@ -7,7 +7,6 @@ from API.database import (User, Opportunity, Logs,
                           Past)
 from flask import jsonify, request, redirect, render_template
 import datetime
-import jwt
 import traceback
 import pickle
 import requests
@@ -72,6 +71,10 @@ def AddOpp(user: User):
             Class = request.form["Class"]
             MaxVols = int(request.form["MaxVols"])
             Description = request.form["Description"]
+            try:
+                Virtual = request.form["Virtual"]
+            except KeyError:
+                Virtual = "False"
         except KeyError:
             return jsonify({
                 'msg': 'Please attach the proper parameters'
@@ -83,7 +86,7 @@ def AddOpp(user: User):
         Parsed = datetime.datetime.strptime(Date, "%Y-%m-%dT%H:%M:%S%z")
 
         Opp = Opportunity(Name, Location, Parsed, Hours, Class,
-                          MaxVols, user, Description, user.is_admin)
+                          MaxVols, user, Description, user.is_admin, True if Virtual == "True" else False)
         user.Opportunities.append(Opp)
 
         db.session.add(Opp)
@@ -113,8 +116,9 @@ def SignInStudents(user):
             return jsonify({
                 'msg': 'Please attach the proper parameters'
             }), 500
-        return jwt.encode({'ID': str(OppId)}, app.config['SECRET_KEY'],
-                          algorithm='HS256')
+        # return jwt.encode({'ID': str(OppId)}, app.config['SECRET_KEY'],
+        #                   algorithm='HS256')
+        return Opportunity.query.get(OppId).ClockCode
     except Exception:
         db.session.add(Logs(traceback.format_exc()))
         db.session.commit()
@@ -263,10 +267,10 @@ def Notifications(user: User):
             for Message in IncompleteOpps:
                 CleanMessages.append({
                     'ID': str(Message.id),
-                    'Message': f"{Message.Student.name} completed your opportunity.",
-                    'Student': Message.Student.name,
-                    'OppName': Message.Opportunity.Name,
-                    'OppHours': Message.Opportunity.Hours,
+                    'Message': f"{Message.student.name} completed your opportunity.",
+                    'Student': Message.student.name,
+                    'OppName': Message.opportunity.Name,
+                    'OppHours': Message.opportunity.Hours,
                     "StuCompleted": f"{Message.HoursCompleted} Hours, {Message.MinutesCompleted} Minutes",
                     'Type': 'IncompleteOpp'
                 })
@@ -294,8 +298,8 @@ def ConfParticipation(user: User):
                 'msg': "Please pass correct parameters"
             }), 500
         msg = InCompleteOppMessages.query.get(msgId)
-        stu = msg.Student
-        opp = msg.Opportunity
+        stu = msg.student
+        opp = msg.opportunity
         db.session.delete(msg)
 
         stu.hours += hours
@@ -316,10 +320,10 @@ def ConfParticipation(user: User):
         cOpps.remove(RightDict)
 
         stu.CurrentOpps = pickle.dumps(cOpps)
-        stu.PastOpps.append(msg.Opportunity)
+        stu.PastOpps.append(msg.opportunity)
         for i in stu.Past:
             i: Past
-            if i.opp == opp:
+            if i.opp_id == opp.id:
                 i.hours = hours
 
         db.session.add(stu)
