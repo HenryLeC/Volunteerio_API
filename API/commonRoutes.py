@@ -367,7 +367,7 @@ def FirstSetup(user: User):
             data={"from": "Volunteerio <noreply@volunteerio.us>",
                   "to": [Email],
                   "subject": "Email Confirmation",
-                  "text": "Please Confirm Your Email.\n Click {} to confirm. This link will expire in 1 hour.".format("https://volunteerio.us/api/confirm/" + generate_confirmation_token(user.id))})
+                  "text": "Please Confirm Your Email.\n Click {} to confirm. This link will expire in 1 hour.".format("https://www.volunteerio.us/api/confirm/" + generate_confirmation_token(user.id))})
 
         return jsonify({
             "msg": "Updated Sucsessfully"
@@ -432,7 +432,7 @@ def resetPasswordRequest():
                     "from": "Volunteerio <noreply@volunteerio.us>",
                     "to": [user.email],
                     "subject": "Password Reset",
-                    "text": "Password rest link requested.\n Click {} to reset. If you didnt request this link please disregard. This link will expire in 1 hour.".format("https://volunteerio.us/api/resetPassword/" + token)
+                    "text": "Password rest link requested.\n Click {} to reset. If you didnt request this link please disregard. This link will expire in 1 hour.".format("https://www.volunteerio.us/api/resetPassword/" + token)
                 }
             )
 

@@ -1,3 +1,4 @@
+from typing import List
 from flask import request, jsonify, send_file
 from API import app, db
 from API.database import (User, Opportunity, NewUnconfHoursMessages, Logs,
@@ -368,7 +369,7 @@ def GenerateDoc(user: User):
         elems = []
 
         # Make Image
-        im = Image("Logo.png", 6.5 * inch, 1.04 * inch)
+        im = Image("Logo.png", 6.5 * inch, 1.52 * inch)
         elems.append(im)
 
         # Add Student Name
@@ -386,16 +387,25 @@ def GenerateDoc(user: User):
 
         # Make Table
         data = [
-            ["Name", "Date", "Hours*", "Sponsor"]
+            ["Name", "Date", "Hours", "Received Hours", "Sponsor"]
         ]
 
+        pasts = user.Past
         opps = user.PastOpps
+        pasts: List[Past]
+        opps: List[Opportunity]
         ConfHours = pickle.loads(user.confHours)
 
-        for opp in opps:
-            data.append([opp.Name, opp.Time, opp.Hours, opp.sponsor.name])
+        for past in pasts:
+            for i in opps:
+                if i.id == past.opp_id:
+                    opp = i
+                    break
+            data.append([opp.Name, opp.Time, opp.Hours,
+                         past.hours, opp.sponsor.name])
         for hour in ConfHours:
-            data.append([hour["reason"], "NA", str(hour["hours"]), "NA"])
+            data.append([hour["reason"], "NA", str(
+                hour["hours"]), str(hour["hours"]), "NA"])
 
         t = Table(data)
         styles = TableStyle([
@@ -419,8 +429,8 @@ def GenerateDoc(user: User):
         elems.append(Spacer(0, 1 * inch))
 
         # Add Paragraph
-        elems.append(
-            Paragraph("* Hours may be incorrect on sponsored opportunities"))
+        # elems.append(
+        #     Paragraph("* Hours may be incorrect on sponsored opportunities"))
 
         # Save amd build PDF to buffer
         p.build(elems)
