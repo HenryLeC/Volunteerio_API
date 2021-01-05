@@ -22,4 +22,5 @@ import API.adminRoutes  # nopep8
 import API.commonRoutes  # nopep8
 import API.database  # nopep8
 import API.websiteRoutes  # nopep8
+import API.errorHandler  # nopep8
 import API.webAdmin  # noqa
