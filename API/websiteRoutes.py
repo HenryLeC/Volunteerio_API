@@ -1,7 +1,9 @@
-from API import app
-from flask import request, redirect
-import requests
 import json
+
+import requests
+from flask import redirect, request
+
+from API import app
 
 
 @app.route('/contactForm', methods=["POST"])

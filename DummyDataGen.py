@@ -1,10 +1,11 @@
-import json
-import random
-from API import db
-from API.database import (User, Opportunity, NewUnconfHoursMessages,
-                          School, InCompleteOppMessages)
 import datetime
+import json
 import pickle
+import random
+
+from API import db
+from API.database import (InCompleteOppMessages, NewUnconfHoursMessages,
+                          Opportunity, School, User)
 
 # Full names list
 NAMES = json.load(open("Names.json", "r"))

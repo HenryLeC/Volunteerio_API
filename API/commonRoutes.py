@@ -1,15 +1,16 @@
-from API import app, db
-from API.auth import (generate_auth_token, token_required,
-                      confirm_token, generate_confirmation_token)
-from werkzeug.security import check_password_hash, generate_password_hash
-from API.database import (User, Opportunity,
-                          NewUnconfHoursMessages, InCompleteOppMessages,
-                          Past)
-from flask import jsonify, request, redirect, render_template
 import datetime
-import pickle
-import requests
 import json
+import pickle
+
+import requests
+from flask import jsonify, redirect, render_template, request
+from werkzeug.security import check_password_hash, generate_password_hash
+
+from API import app, db
+from API.auth import (confirm_token, generate_auth_token,
+                      generate_confirmation_token, token_required)
+from API.database import (InCompleteOppMessages, NewUnconfHoursMessages,
+                          Opportunity, Past, User)
 
 
 @app.route('/')

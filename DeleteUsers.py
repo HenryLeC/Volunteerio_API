@@ -1,5 +1,5 @@
-from API.database import User, School, Opportunity, Booked, Past
 from API import db
+from API.database import Booked, Opportunity, Past, School, User
 
 schId = int(input("Enter School ID: "))
 sch = School.query.get(schId)

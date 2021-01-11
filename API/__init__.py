@@ -1,11 +1,13 @@
 from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-from PrefixMiddleware import PrefixMiddleware
 from flask_cors import CORS
 from flask_migrate import Migrate
-from API.Secrets import SecretKey, DatabaseURI, SECURITY_PASSWORD_SALT
+from flask_sqlalchemy import SQLAlchemy
+from PrefixMiddleware import PrefixMiddleware
+
+from API.Secrets import SECURITY_PASSWORD_SALT, DatabaseURI, SecretKey
 
 app = Flask(__name__)
+
 CORS(app, supports_credentials=True)
 
 # Set Flask Config
@@ -18,10 +20,10 @@ app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix='/api')
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-import API.studentRoutes  # nopep8
 import API.adminRoutes  # nopep8
 import API.commonRoutes  # nopep8
 import API.database  # nopep8
-import API.websiteRoutes  # nopep8
 import API.errorHandler  # nopep8
+import API.studentRoutes  # nopep8
+import API.websiteRoutes  # nopep8
 import API.webAdmin  # noqa

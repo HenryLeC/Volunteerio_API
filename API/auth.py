@@ -1,10 +1,12 @@
-from itsdangerous import (TimedJSONWebSignatureSerializer,
-                          SignatureExpired, BadSignature,
-                          URLSafeTimedSerializer)
-from API.database import User
-from API import app
 from functools import wraps
-from flask import request, jsonify
+
+from flask import jsonify, request
+from itsdangerous import (BadSignature, SignatureExpired,
+                          TimedJSONWebSignatureSerializer,
+                          URLSafeTimedSerializer)
+
+from API import app
+from API.database import User
 
 
 # Generate Auth Token Func

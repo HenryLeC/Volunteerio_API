@@ -1,6 +1,7 @@
-from API.database import Logs
 import traceback
+
 from API import app, db
+from API.database import Logs
 
 
 @app.errorhandler(Exception)

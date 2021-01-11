@@ -1,10 +1,12 @@
-from API import db
-from werkzeug.security import generate_password_hash as hash
-from flask_login import UserMixin
-import pickle
 import datetime
+import pickle
 import random
 import string
+
+from flask_login import UserMixin
+from werkzeug.security import generate_password_hash as hash
+
+from API import db
 
 
 # User table
@@ -151,7 +153,8 @@ class Opportunity(db.Model):
         self.Confirmed = Confirmed
         self.Description = Description
         self.Virtual = Virtual
-        self.ClockCode = ''.join(random.choices(string.ascii_letters + string.digits, k=6))
+        self.ClockCode = ''.join(random.choices(
+            string.ascii_letters + string.digits, k=6))
 
     def getTime(self):
         return self.Time.strftime("%a %b %d, %I:%M %p")

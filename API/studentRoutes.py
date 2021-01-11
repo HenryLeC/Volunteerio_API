@@ -1,17 +1,19 @@
-from typing import List
-from flask import request, jsonify, send_file
-from API import app, db
-from API.database import (User, Opportunity, NewUnconfHoursMessages,
-                          InCompleteOppMessages, Past)
-from API.auth import token_required
-from reportlab.lib.units import inch
-from reportlab.lib import colors
-from reportlab.lib.pagesizes import letter
-from reportlab.platypus import Table, SimpleDocTemplate, TableStyle, Image
-from reportlab.platypus import Paragraph, Spacer
-import pickle
 import datetime
 import io
+import pickle
+from typing import List
+
+from flask import jsonify, request, send_file
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import letter
+from reportlab.lib.units import inch
+from reportlab.platypus import (Image, Paragraph, SimpleDocTemplate, Spacer,
+                                Table, TableStyle)
+
+from API import app, db
+from API.auth import token_required
+from API.database import (InCompleteOppMessages, NewUnconfHoursMessages,
+                          Opportunity, Past, User)
 
 
 @app.route("/hours", methods=["POST"])

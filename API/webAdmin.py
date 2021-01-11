@@ -1,9 +1,10 @@
-from API import app
-from flask_login import (login_user, login_required, LoginManager,
-                         logout_user, current_user)
+from flask import redirect, render_template, request, url_for
+from flask_login import (LoginManager, current_user, login_required,
+                         login_user, logout_user)
 from werkzeug.security import check_password_hash
-from flask import request, redirect, render_template, url_for
-from API.database import User, Logs
+
+from API import app
+from API.database import Logs, User
 
 login_manager = LoginManager()
 login_manager.init_app(app)

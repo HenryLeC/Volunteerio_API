@@ -1,4 +1,5 @@
 import os
+
 import dns.resolver
 
 databaseHost = os.environ['DATABASE_HOSTNAME']

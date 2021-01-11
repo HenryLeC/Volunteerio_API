@@ -1,14 +1,11 @@
-import json
-from API import db
-from API.database import (
-    School,
-    User, Opportunity,
-    InCompleteOppMessages,
-    NewUnconfHoursMessages
-)
 import datetime
-import random
+import json
 import pickle
+import random
+
+from API import db
+from API.database import (InCompleteOppMessages, NewUnconfHoursMessages,
+                          Opportunity, School, User)
 
 # Helper Vars
 # region
@@ -245,6 +242,7 @@ for opp in past:
             db.session.add(stu)
             db.session.add(opp)
         else:
+            pastD = None
             stu.PastOpps.append(opp)
             for i in stu.Past:
                 if i.opp_id == opp.id:

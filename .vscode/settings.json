@@ -29,5 +29,4 @@
     "**/debug.log": true,
     "**/venv": true
   },
-  "FSharp.suggestGitignore": false
 }

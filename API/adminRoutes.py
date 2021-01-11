@@ -1,15 +1,15 @@
-from flask import request, jsonify, send_file
-from sqlalchemy import or_, and_
-from API import app, db
-from API.database import (User,
-                          School, Opportunity,
-                          Groups)
-from API.auth import token_required
-import pickle
-import requests
-import json
 import csv
 import io
+import json
+import pickle
+
+import requests
+from flask import jsonify, request, send_file
+from sqlalchemy import and_, or_
+
+from API import app, db
+from API.auth import token_required
+from API.database import Groups, Opportunity, School, User
 
 
 @app.route('/confirmHours', methods=["POST"])

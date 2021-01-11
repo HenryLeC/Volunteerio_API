@@ -1,5 +1,5 @@
 from API import db
-from API.database import User, School
+from API.database import School, User
 
 
 def makeDB():
