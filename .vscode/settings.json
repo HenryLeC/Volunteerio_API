@@ -1,14 +1,33 @@
 {
-  "python.pythonPath": "C:\\Users\\henry\\AppData\\Local\\Programs\\Python\\Python38-32\\python.exe",
+  "python.pythonPath": "c:\\Users\\henry\\Desktop\\Volunteerio_API\\venv\\Scripts\\python.exe",
   "python.linting.pylintArgs": [],
-  "python.venvFolders": [
-    "C:\\Users\\Henry LeCompte\\Desktop\\mVolunteerio\\env"
-  ],
   "python.linting.flake8Enabled": true,
   "python.linting.pylintEnabled": false,
   "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": true
+  },
   "python.formatting.provider": "autopep8",
   "python.linting.flake8Args": [
     "--ignore", "E501,E402"
-  ]
+  ],
+  "python.testing.pytestArgs": [
+    "tests"
+  ],
+  "python.testing.unittestEnabled": false,
+  "python.testing.nosetestsEnabled": false,
+  "python.testing.pytestEnabled": true,
+  "python.testing.autoTestDiscoverOnSaveEnabled": false,
+  "files.exclude": {
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/__pycache__": true,
+    "**/.pytest_cache": true,
+    "**/debug.log": true,
+    "**/venv": true
+  },
+  "FSharp.suggestGitignore": false
 }

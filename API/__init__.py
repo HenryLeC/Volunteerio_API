@@ -12,6 +12,7 @@ CORS(app, supports_credentials=True)
 app.config['SECRET_KEY'] = SecretKey
 app.config['SQLALCHEMY_DATABASE_URI'] = DatabaseURI
 app.config['SECURITY_PASSWORD_SALT'] = SECURITY_PASSWORD_SALT
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.wsgi_app = PrefixMiddleware(app.wsgi_app, prefix='/api')
 
 db = SQLAlchemy(app)
