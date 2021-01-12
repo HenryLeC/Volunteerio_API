@@ -13,7 +13,7 @@ stu_acc_token = ""
 
 @pytest.fixture(scope="module", autouse=True)
 def set_up():
-    app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///test.db"
+    app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///../test.db"
     app.config['TESTING'] = True
 
     makeDB()
@@ -21,7 +21,7 @@ def set_up():
 
 @pytest.fixture
 def client():
-    app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///test.db"
+    app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:///../test.db"
     app.config['TESTING'] = True
 
     yield app.test_client()
