@@ -95,7 +95,7 @@ def list_opps(user: User):
                 "Location": opp.Location if not opp.Virtual else "Virtual",
                 "Hours": opp.Hours,
                 "Time": opp.getTime(),
-                "Sponsor": User.query.get(int(opp.sponsor_id)).name,
+                "Sponsor": User.query.get(opp.sponsor_id).name,
                 "Class": opp.Class,
                 "CurrentVols": len(opp.BookedStudents),
                 "MaxVols": opp.MaxVols
@@ -111,7 +111,7 @@ def oppInfo(user: User):
     except KeyError:
         return jsonify({'msg': "Please Supply all Paramaters"}), 500
 
-    opp = Opportunity.query.get(int(id))
+    opp = Opportunity.query.get(id)
     return jsonify({
         "Location": opp.Location,
         "Description": opp.Description
@@ -266,7 +266,7 @@ def BookedOpps(user):
             "Location": opp.Location,
             "Hours": opp.Hours,
             "Time": opp.getTime(),
-            "Sponsor": User.query.get(int(opp.sponsor_id)).name,
+            "Sponsor": User.query.get(opp.sponsor_id).name,
             "Class": opp.Class,
             "CurrentVols": len(opp.BookedStudents),
             "MaxVols": opp.MaxVols

@@ -148,7 +148,7 @@ def StudentHours(user: User):
             'msg': "Please Supply a Student Id"
         }), 500
 
-    student = User.query.get(int(StudentId))
+    student = User.query.get(StudentId)
 
     PastOpps = student.PastOpps
     Pasts = student.Past
@@ -192,80 +192,6 @@ def StudentHours(user: User):
         "Hours": ConfHoursClean + UnConfHoursClean
     }
     return jsonify(FullClean)
-
-
-# region NewStudent OLD DEPRECATED
-# Implememted Auth Seperately for Json data
-# @app.route('/NewStudent', methods=["POST"])
-# def NewStudent():
-#     try:
-#         inputData = request.get_json()
-#         InvalidUsers = []
-
-#         if 'x-access-token' in inputData:
-#             token = inputData['x-access-token']
-
-#         if not token:
-#             return jsonify({'message': 'Token is missing!'}), 401
-
-#         current_user = verify_auth_token(token)
-#         if not current_user:
-#             return jsonify({'message': 'Token is invalid!'}), 401
-
-#         if not current_user.is_admin:
-#             return jsonify({
-#                 'msg': 'Must not be a Student to preform this task'
-#             }), 500
-
-#         for user in inputData["users"]:
-#             try:
-#                 UserObj = User(user["username"], user["password"],
-#                                user["name"], user["Id"],
-#                                student=True)
-#                 db.session.add(UserObj)
-#             except KeyError:
-#                 InvalidUsers.append(user)
-#         db.session.commit()
-#         return jsonify({
-#             "Invalid Users": InvalidUsers
-#         })
-#     except Exception:
-#         db.session.add(Logs(traceback.format_exc()))
-#         db.session.commit()
-#         return "", 500
-# endregion
-
-
-# region Add District (Districts Removed) DEPRECATED
-# @app.route('/addDistrict', methods=['POST'])
-# @token_required
-# def addDistrict(user):
-#     try:
-#         if not user.is_admin:
-#             return jsonify({
-#                 'msg': 'Must be Administrator to preform this task.'
-#             }), 500
-#         try:
-#             DistrictName = request.form["name"]
-#         except KeyError:
-#             return jsonify({
-#                 'msg': "Please Supply a District Name"
-#             }), 500
-
-#         district = District(DistrictName)
-#         db.session.add(district)
-#         db.session.commit()
-
-#         return jsonify({
-#             "msg": f"New District {DistrictName} added with id {district.id}",
-#             "name": DistrictName,
-#             "id": str(district.id)
-#         })
-#     except Exception:
-#         db.session.add(Logs(traceback.format_exc()))
-#         db.session.commit()
-#         return "", 500
-# endregion
 
 
 @app.route('/addSchool', methods=['POST'])
@@ -574,7 +500,7 @@ def changeUserGroup(user: User):
         }), 500
 
     try:
-        groupId = int(request.form["groupId"])
+        groupId = request.form["groupId"]
         studentId = request.form["userId"]
     except KeyError:
         return jsonify({

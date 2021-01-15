@@ -16,6 +16,11 @@ com_clock_code = ""
 adm_msg_id = ""
 com_msg_id = ""
 
+com_opp_id = ""
+adm_opp_id = ""
+
+STUDENT_NAME = b"User, User 1"
+
 
 @pytest.fixture(scope="module", autouse=True)
 def set_up():
@@ -105,14 +110,17 @@ def test_list_uncof_opps(client: FlaskClient):
         "x-access-token": adm_acc_token
     })
 
-    assert b"2" in unconf_opps.data
+    global com_opp_id
+    com_opp_id = json.loads(unconf_opps.data)[0]["ID"]
+
+    assert bytes(com_opp_id, "UTF-8") in unconf_opps.data
 
 
 def test_confirm_opp(client: FlaskClient):
     conf_opp = client.post("/api/ConfDelOpp", data={
         "x-access-token": adm_acc_token,
         "Mode": "Confirm",
-        "ID": 2
+        "ID": com_opp_id
     })
 
     assert b'Sucsess' in conf_opp.data
@@ -127,15 +135,18 @@ def test_view_marketplace(client: FlaskClient):
         "filterName": ""
     })
 
-    assert b"1" in opps.data
-    assert b"2" in opps.data
+    global adm_opp_id
+    adm_opp_id = json.loads(opps.data)[0]["ID"]
+
+    assert bytes(adm_opp_id, "UTF-8") in opps.data
+    assert bytes(com_opp_id, "UTF-8") in opps.data
 
 
 def test_book_opps(client: FlaskClient):
     # Opp 1
     book = client.post("/api/BookAnOpp", data={
         "x-access-token": stu_acc_token,
-        "OppId": 1
+        "OppId": adm_opp_id
     })
 
     assert b"Opportunity Booked." in book.data
@@ -143,7 +154,7 @@ def test_book_opps(client: FlaskClient):
     # Opp 2
     book = client.post("/api/BookAnOpp", data={
         "x-access-token": stu_acc_token,
-        "OppId": 2
+        "OppId": com_opp_id
     })
 
     assert b"Opportunity Booked." in book.data
@@ -154,14 +165,14 @@ def test_view_booked_opps(client: FlaskClient):
         "x-access-token": stu_acc_token
     })
 
-    assert b"1" in view_opps.data
-    assert b"2" in view_opps.data
+    assert bytes(adm_opp_id, "UTF-8") in view_opps.data
+    assert bytes(com_opp_id, "UTF-8") in view_opps.data
 
 
 def test_unbook_opp(client: FlaskClient):
     unbook = client.post("/api/UnBookAnOpp", data={
         "x-access-token": stu_acc_token,
-        "OppId": 2
+        "OppId": com_opp_id
     })
 
     assert b"Opportunity UnBooked" in unbook.data
@@ -172,38 +183,38 @@ def test_view_my_opps(client: FlaskClient):
         "x-access-token": adm_acc_token
     })
 
-    assert b"1" in my_opps.data
+    assert bytes(adm_opp_id, "UTF-8") in my_opps.data
 
     my_opps = client.post("/api/MyOpps", data={
         "x-access-token": com_acc_token
     })
 
-    assert b"2" in my_opps.data
+    assert bytes(com_opp_id, "UTF-8") in my_opps.data
 
 
 def test_view_booked_students(client: FlaskClient):
     # Admin
     students = client.post("/api/BookedStudents", data={
         "x-access-token": adm_acc_token,
-        "OppId": 1
+        "OppId": adm_opp_id
     })
 
-    assert b"1" in students.data
+    assert STUDENT_NAME in students.data
 
     # Community
     students = client.post("/api/BookedStudents", data={
         "x-access-token": com_acc_token,
-        "OppId": 2
+        "OppId": com_opp_id
     })
 
-    assert b"1" not in students.data
+    assert STUDENT_NAME not in students.data
 
 
 def test_get_opp_codes(client: FlaskClient):
     # Admin
     opp_code = client.post("/api/SignInStudents", data={
         "x-access-token": adm_acc_token,
-        "OppId": 1
+        "OppId": adm_opp_id
     })
 
     assert opp_code.status_code == 200
@@ -213,7 +224,7 @@ def test_get_opp_codes(client: FlaskClient):
     # Community
     opp_code = client.post("/api/SignInStudents", data={
         "x-access-token": com_acc_token,
-        "OppId": 2
+        "OppId": com_opp_id
     })
 
     assert opp_code.status_code == 200
@@ -296,14 +307,14 @@ def test_confirm_participation(client: FlaskClient):
 def test_delete_opp(client: FlaskClient):
     del_opp = client.post("/api/DeleteOpp", data={
         "x-access-token": adm_acc_token,
-        "OppId": 1
+        "OppId": adm_opp_id
     })
 
     assert b"Opportunity Deleted" in del_opp.data
 
     del_opp = client.post("/api/DeleteOpp", data={
         "x-access-token": com_acc_token,
-        "OppId": 2
+        "OppId": com_opp_id
     })
 
     assert b"Opportunity Deleted" in del_opp.data

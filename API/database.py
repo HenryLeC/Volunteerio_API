@@ -2,6 +2,7 @@ import datetime
 import pickle
 import random
 import string
+import uuid
 
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash as hash
@@ -9,10 +10,14 @@ from werkzeug.security import generate_password_hash as hash
 from API import db
 
 
+def generate_uuid():
+    return str(uuid.uuid4())
+
+
 # User table
 class User(db.Model, UserMixin):
     # All
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(), primary_key=True, default=generate_uuid)
     username = db.Column(db.String(), unique=True, nullable=False)
     password = db.Column(db.String(), unique=True, nullable=False)
     name = db.Column(db.String(), nullable=False)
@@ -112,7 +117,7 @@ class User(db.Model, UserMixin):
 
 
 class Opportunity(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(), primary_key=True, default=generate_uuid)
     Time = db.Column(db.DateTime())
     Location = db.Column(db.String())
     Hours = db.Column(db.Integer)
@@ -161,13 +166,13 @@ class Opportunity(db.Model):
 
 
 class NewUnconfHoursMessages(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(), primary_key=True, default=generate_uuid)
     student_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     student = db.relationship("User", back_populates="UnConfHoursMessages")
 
 
 class InCompleteOppMessages(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(), primary_key=True, default=generate_uuid)
     student_id = db.Column(db.Integer, db.ForeignKey("user.id"))
     student = db.relationship("User", back_populates="InCompleteOppMessages")
 
@@ -184,7 +189,7 @@ class InCompleteOppMessages(db.Model):
 
 
 class School(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(), primary_key=True, default=generate_uuid)
     name = db.Column(db.String())
     hoursGoal = db.Column(db.Integer, nullable=True)
     users = db.relationship("User", back_populates="School")
@@ -196,13 +201,13 @@ class School(db.Model):
 
 
 class Booked(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(), primary_key=True, default=generate_uuid)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     opp_id = db.Column(db.Integer, db.ForeignKey('opportunity.id'))
 
 
 class Past(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(), primary_key=True, default=generate_uuid)
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     opp_id = db.Column(db.Integer, db.ForeignKey('opportunity.id'))
 
@@ -213,7 +218,7 @@ class Past(db.Model):
 
 
 class Logs(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(), primary_key=True, default=generate_uuid)
     exc = db.Column(db.String())
     time = db.Column(db.DateTime())
 
@@ -223,7 +228,7 @@ class Logs(db.Model):
 
 
 class Groups(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.String(), primary_key=True, default=generate_uuid)
 
     school_id = db.Column(db.Integer, db.ForeignKey('school.id'))
     school = db.relationship('School', back_populates="groups")

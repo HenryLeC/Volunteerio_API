@@ -132,7 +132,7 @@ def MyOpps(user: User):
             "Location": opp.Location,
             "Hours": opp.Hours,
             "Time": opp.getTime(),
-            "Sponsor": User.query.get(int(opp.sponsor_id)).name,
+            "Sponsor": User.query.get(opp.sponsor_id).name,
             "Class": opp.Class,
             "CurrentVols": len(opp.BookedStudents),
             "MaxVols": opp.MaxVols,
@@ -178,7 +178,7 @@ def DeleteOpp(user):
             'msg': 'Please attach the proper parameters'
         }), 500
 
-    Opp = Opportunity.query.get(int(OppId))
+    Opp = Opportunity.query.get(OppId)
     Opp: Opportunity
 
     # Fun issues (Wont Delete Opp with Booked or Past Students)
@@ -259,7 +259,7 @@ def ConfParticipation(user: User):
             'msg': "Must not be a student to preform this action"
         })
     try:
-        msgId = int(request.form["ID"])
+        msgId = request.form["ID"]
         hours = int(request.form["Hours"])
     except KeyError:
         return({
