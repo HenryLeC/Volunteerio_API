@@ -3,6 +3,7 @@ import json
 import pickle
 
 import requests
+from dateutil import parser
 from flask import jsonify, redirect, render_template, request
 from werkzeug.security import check_password_hash, generate_password_hash
 
@@ -79,10 +80,13 @@ def AddOpp(user: User):
             'msg': 'Please attach the proper parameters'
         }), 500
 
-    # Take Colon Seperated UTC offset and make it non Colon Seperated
-    if ":" == Date[-3:-2]:
-        Date = Date[:-3] + Date[-2:]
-    Parsed = datetime.datetime.strptime(Date, "%Y-%m-%dT%H:%M:%S%z")
+    try:
+        # Take Colon Seperated UTC offset and make it non Colon Seperated
+        if ":" == Date[-3:-2]:
+            Date = Date[:-3] + Date[-2:]
+        Parsed = datetime.datetime.strptime(Date, "%Y-%m-%dT%H:%M:%S%z")
+    except Exception:
+        Parsed = parser.isoparse(Date)
 
     Opp = Opportunity(Name, Location, Parsed, Hours, Class,
                       MaxVols, user, Description, user.is_admin, True if Virtual == "True" else False)
@@ -217,7 +221,9 @@ def Notifications(user: User):
                 'Hours': Message.student.hours,
                 'Message': f"{Message.student.name} requested new hours.",
                 'Type': "Hour",
-                'HoursGoal': str(Message.student.getGoal())
+                'HoursGoal': str(Message.student.getGoal()),
+                'userSpecific': "true" if Message.student.UserGoal else "false",
+                "group": Message.student.group.name if Message.student.group else "None"
             })
         # for Message in OppMessages:
         #     CleanMessages.append({

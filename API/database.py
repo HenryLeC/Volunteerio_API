@@ -26,10 +26,10 @@ class User(db.Model, UserMixin):
     emailConfirmed = db.Column(db.Boolean, nullable=False)
     firstTime = db.Column(db.Boolean, nullable=False)
 
-    School_Id = db.Column(db.Integer, db.ForeignKey('school.id'))
+    School_Id = db.Column(db.String(), db.ForeignKey('school.id'))
     School = db.relationship('School', back_populates="users")
 
-    group_id = db.Column(db.Integer, db.ForeignKey('groups.id'))
+    group_id = db.Column(db.String(), db.ForeignKey('groups.id'))
     group = db.relationship('Groups', back_populates="users")
 
     # Student
@@ -130,10 +130,10 @@ class Opportunity(db.Model):
     Virtual = db.Column(db.Boolean)
     ClockCode = db.Column(db.String(6), unique=True)
 
-    sponsor_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    sponsor_id = db.Column(db.String(), db.ForeignKey('user.id'))
     sponsor = db.relationship("User", back_populates="Opportunities")
 
-    # SponsorID = db.Column(db.Integer, db.ForeignKey('user.id'))
+    # SponsorID = db.Column(db.String(), db.ForeignKey('user.id'))
 
     BookedStudents = db.relationship(
         "User", secondary="booked", back_populates="BookedOpps")
@@ -167,19 +167,19 @@ class Opportunity(db.Model):
 
 class NewUnconfHoursMessages(db.Model):
     id = db.Column(db.String(), primary_key=True, default=generate_uuid)
-    student_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    student_id = db.Column(db.String(), db.ForeignKey('user.id'))
     student = db.relationship("User", back_populates="UnConfHoursMessages")
 
 
 class InCompleteOppMessages(db.Model):
     id = db.Column(db.String(), primary_key=True, default=generate_uuid)
-    student_id = db.Column(db.Integer, db.ForeignKey("user.id"))
+    student_id = db.Column(db.String(), db.ForeignKey("user.id"))
     student = db.relationship("User", back_populates="InCompleteOppMessages")
 
     HoursCompleted = db.Column(db.Integer)
     MinutesCompleted = db.Column(db.Integer)
 
-    opportunity_id = db.Column(db.Integer, db.ForeignKey("opportunity.id"))
+    opportunity_id = db.Column(db.String(), db.ForeignKey("opportunity.id"))
     opportunity = db.relationship(
         "Opportunity", back_populates="InCompleteOppMessages")
 
@@ -202,14 +202,14 @@ class School(db.Model):
 
 class Booked(db.Model):
     id = db.Column(db.String(), primary_key=True, default=generate_uuid)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    opp_id = db.Column(db.Integer, db.ForeignKey('opportunity.id'))
+    user_id = db.Column(db.String(), db.ForeignKey('user.id'))
+    opp_id = db.Column(db.String(), db.ForeignKey('opportunity.id'))
 
 
 class Past(db.Model):
     id = db.Column(db.String(), primary_key=True, default=generate_uuid)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-    opp_id = db.Column(db.Integer, db.ForeignKey('opportunity.id'))
+    user_id = db.Column(db.String(), db.ForeignKey('user.id'))
+    opp_id = db.Column(db.String(), db.ForeignKey('opportunity.id'))
 
     # Needed to access hours prop
     user = db.relationship(User, backref=db.backref("Past"))
@@ -230,7 +230,7 @@ class Logs(db.Model):
 class Groups(db.Model):
     id = db.Column(db.String(), primary_key=True, default=generate_uuid)
 
-    school_id = db.Column(db.Integer, db.ForeignKey('school.id'))
+    school_id = db.Column(db.String(), db.ForeignKey('school.id'))
     school = db.relationship('School', back_populates="groups")
 
     users = db.relationship("User", back_populates="group")
